@@ -12,7 +12,7 @@ export function Button({
       case "primary":
         return "btn-primary bg-orange-600";
       case "secondary":
-        return "btn-secondary bg-gray-400";
+        return "btn-secondary bg-gray-300";
       case "ghost":
         return "btn-ghost border border-gray-300 bg-transparent text-gray-600";
       default:
