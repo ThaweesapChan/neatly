@@ -1,7 +1,9 @@
+import Homepage from "./homepage";
+
 export default function Home() {
   return (
     <div>
-      <h1>test</h1>
+      <Homepage />
     </div>
   );
 }
