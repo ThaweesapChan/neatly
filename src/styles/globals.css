@@ -20,38 +20,3 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
-
-/* Utility Classes for Buttons */
-.btn-pri-org500 {
-  @apply bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-500;
-}
-.btn-pri-org600 {
-  @apply bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-600;
-}
-.btn-pri-org700 {
-  @apply bg-orange-700 text-white py-2 px-4 rounded hover:bg-orange-700;
-}
-.btn-pri-gray300 {
-  @apply bg-gray-300 text-gray-600 py-2 px-4 rounded hover:bg-gray-300;
-}
-.btn-sec-org400 {
-  @apply bg-white border-orange-400 text-orange-400 py-2 px-4 rounded hover:bg-orange-400;
-}
-.btn-sec-org500 {
-  @apply bg-white border-orange-500 text-orange-500 py-2 px-4 rounded hover:bg-orange-500;
-}
-.btn-sec-org600 {
-  @apply bg-white border-orange-600 text-orange-600 py-2 px-4 rounded hover:bg-orange-600;
-}
-.btn-sec-gray400 {
-  @apply bg-white border-gray-400 text-gray-400 py-2 px-4 rounded hover:bg-gray-300;
-}
-.btn-ghost-org500 {
-  @apply bg-transparent text-orange-500 py-2 px-4 rounded hover:bg-orange-100;
-}
-.btn-ghost-org400 {
-  @apply bg-transparent text-orange-400 py-2 px-4 rounded hover:bg-orange-100;
-}
-.btn-ghost-gray500 {
-  @apply bg-transparent text-gray-500 py-2 px-4 rounded hover:bg-gray-100;
-}
