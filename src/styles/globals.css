@@ -17,8 +17,10 @@
 
 body {
   color: var(--foreground);
+  height: 100vh;
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+
 }
 
 /* Utility Classes for Buttons */
