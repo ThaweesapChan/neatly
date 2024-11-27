@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { Button } from "@/component/button";
 
 function Herosection() {
@@ -12,9 +12,9 @@ function Herosection() {
       }}
     >
       {/* กล่องข้อความ */}
-      <div className="flex items-center justify-center font-notoSerif font-medium  text-white text-center rounded-lg px-4 py- mt-16 shadow-lg w-11/12 max-w-3xl md:flex ">
+      <div className="flex items-center justify-center font-notoSerif font-medium text-white text-center px-4 py-8  shadow-lg w-11/12 max-w-3xl md:flex">
         <p
-          className="text-6xl leading-snug"
+          className="text-6xl leading-tight tracking-tight"
           style={{
             letterSpacing: "-0.02em",
             textUnderlinePosition: "from-font",
@@ -27,7 +27,7 @@ function Herosection() {
 
       {/* กล่องแบบฟอร์ม */}
       <div className="md:w-full md:flex md:items-center flex flex-row md:mt-10">
-        <div className="bg-white bg-opacity-90 p-6 rounded w-80 mt-12 my-12 shadow-lg md:w-full md:flex md:py relative md:justify-end md:py-10">
+        <div className="bg-white  p-6 rounded w-80 mt-12 my-12 shadow-lg md:w-full md:flex md:py relative md:justify-end md:py-10">
           {/* Check In */}
           <div className="mb-6 md:mb-0 md:mr-4 flex-1 ">
             <label
@@ -107,4 +107,4 @@ function Herosection() {
   );
 }
 
-export default Herosection
+export default Herosection;
