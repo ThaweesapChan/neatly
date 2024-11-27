@@ -12,7 +12,7 @@ export default function RoomsSuits({ label = "", src = "", onClick }) {
       <article>
         <figure>
           {/* Mobile layout */}
-          <div className="flex h-[1755px] flex-col gap-4 md:hidden">
+          <div className="flex flex-col gap-4 md:hidden">
             <RoomsSuitsPost
               label="Superior Garden View"
               src="/asset/superior.jpeg"
