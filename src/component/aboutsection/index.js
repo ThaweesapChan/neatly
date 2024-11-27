@@ -1,12 +1,12 @@
 import React from "react";
-/* import {
+import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
- */
+
 function Aboutsection() {
   return (
     <>
@@ -34,8 +34,7 @@ function Aboutsection() {
               and also rentals are provided to explore the area.
             </p>
           </div>
-
-          {/* <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center">
             <Carousel
               opts={{
                 align: "start",
@@ -56,7 +55,7 @@ function Aboutsection() {
               <CarouselPrevious />
               <CarouselNext />
             </Carousel>
-          </div> */}
+          </div>
         </div>
       </section>
       ;
