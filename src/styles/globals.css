@@ -19,20 +19,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Utility Classes for Buttons */
-.btn-primary {
-  @apply text-white text-base leading-4 font-semibold	text-center rounded h-12 gap-[10];
-}
-/*เหลือใส่ font gap-[10]*/
-
-.btn-secondary {
-  @apply text-white bg-white border text-base leading-4 font-semibold text-center rounded h-12 gap-[10];
-}
-
-.btn-ghost {
-  @apply text-white text-base leading-4 font-semibold	text-center rounded h-12 gap-[10];
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
