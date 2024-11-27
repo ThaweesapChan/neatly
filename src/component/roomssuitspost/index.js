@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function RoomsSuits({ label = "", src = "", onClick }) {
+export default function RoomsSuitsPost({ label = "", src = "", onClick }) {
   return (
     <div className="relative w-full h-[250px] md:h-full ">
       {/* รูปภาพ */}
@@ -35,3 +35,5 @@ export default function RoomsSuits({ label = "", src = "", onClick }) {
     </div>
   );
 }
+
+
