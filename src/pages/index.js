@@ -1,12 +1,12 @@
 import Homepage from "./homepage";
-import Navbar from "@/component/navbar"
+import Navbar from "@/component/navbar";
 import Footer from "@/component/footer";
-
 
 export default function Home() {
   return (
     <div>
-      <Navbar/>
+      {/* landing page */}
+      <Navbar />
       <Homepage />
       <Footer />
     </div>
