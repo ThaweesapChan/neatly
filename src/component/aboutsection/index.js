@@ -1,12 +1,12 @@
 import React from "react";
-import {
+/* import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
+ */
 function Aboutsection() {
   return (
     <>
@@ -19,7 +19,7 @@ function Aboutsection() {
           <div className="md:w-[80%]">
             <p className="p-4 text-center font-inter text-base text-gray-700">
               Set in Bangkok, Thailand. Neatly Hotel offers 5-star accommodation
-              with an outdoor pool, kids' club, sports facilities and a fitness
+              with an outdoor pool, kids club, sports facilities and a fitness
               centre. There is also a spa, an indoor pool and saunas.
             </p>
             <p className="p-4 text-center font-inter text-base text-gray-700">
