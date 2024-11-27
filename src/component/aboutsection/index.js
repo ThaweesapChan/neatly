@@ -11,8 +11,8 @@ function Aboutsection() {
   return (
     <>
       {/* about section */}
-      <section>
-        <h1 className="m-5 translate-x-10 font-notoSerif text-4xl font-semibold text-green-800 md:mr-40">
+      <section className="mt-48">
+        <h1 className="m-5 translate-x-20 font-notoSerif text-4xl font-semibold text-green-800 md:mr-40">
           Neatly Hotel
         </h1>
         <div className="flex flex-col items-center justify-center">
@@ -35,7 +35,7 @@ function Aboutsection() {
             </p>
           </div>
 
-          <div className="flex items-center justify-center">
+          {/* <div className="flex items-center justify-center">
             <Carousel
               opts={{
                 align: "start",
@@ -56,7 +56,7 @@ function Aboutsection() {
               <CarouselPrevious />
               <CarouselNext />
             </Carousel>
-          </div>
+          </div> */}
         </div>
       </section>
       ;
