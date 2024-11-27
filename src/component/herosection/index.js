@@ -4,7 +4,7 @@ import { Button } from "@/component/button";
 function Herosection() {
   return (
     <main
-      className="relative w-full h-screen md:w-[90rem] md:h-[56.25rem] md:top-[6.25rem] md:opacity-100 md:px-16 bg-cover bg-center flex flex-col items-center justify-center "
+      className="relative w-full h-screen md:w-full md:h-[56.25rem] md:opacity-100 md:px-16 bg-cover bg-center flex flex-col items-center justify-center "
       style={{
         backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.6) 19.66%, rgba(0, 0, 0, 0) 100%), url("/asset/loginduochair.jpeg")`, // ตรวจสอบ path รูปภาพ
         backgroundSize: "cover",
@@ -26,7 +26,7 @@ function Herosection() {
       </div>
 
       {/* กล่องแบบฟอร์ม */}
-      <div className="md:w-full md:flex md:items-center flex flex-row md:mt-10">
+      <div className="md:w-[1120px] md:flex md:items-center flex flex-row md:mt-10">
         <div className="bg-white  p-6 rounded w-80 mt-12 my-12 shadow-lg md:w-full md:flex md:py relative md:justify-end md:py-10">
           {/* Check In */}
           <div className="mb-6 md:mb-0 md:mr-4 flex-1 ">
