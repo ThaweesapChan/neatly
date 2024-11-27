@@ -12,7 +12,7 @@ import {
 function Footer() {
   return (
     <>
-      <footer className="bg-green-800 p-4 md:p-10 md:px-28 md:py-16">
+      <footer className="bg-green-800 p-4 text-white md:p-10 md:px-28 md:py-16">
         <div className="mx-5 my-8 justify-between md:flex">
           <div className="mb-5 font-inter">
             <Image
