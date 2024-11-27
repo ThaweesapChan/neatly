@@ -97,9 +97,9 @@ function Herosection() {
             Search
           </button> */}
           <Button
-            variant="primary"
-            label="Search"
-            other="w-full md:w-36 md:translate-y-9 "
+            type="primary"
+            name="Search"
+            style="w-full md:w-36 md:translate-y-9 "
           />
         </div>
       </div>
