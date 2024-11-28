@@ -11,7 +11,7 @@ function Aboutsection() {
   return (
     <>
       {/* about section */}
-      <section className="mt-48">
+      <section className="mt-20">
         <h1 className="m-5 translate-x-20 font-notoSerif text-4xl font-semibold text-green-800 md:mr-40">
           Neatly Hotel
         </h1>
