@@ -1,18 +1,16 @@
-// components/RegisterForm.js
 import { useState } from "react";
 import InputField from "@/component/form";
 import { Button } from "@/component/button";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    dateOfBirth: "",
+    phone_number: "",
+    date_of_birth: "",
     country: "",
   });
 
@@ -27,30 +25,36 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // การตรวจสอบข้อมูล (เช่น password matching, ฟอร์แมต email, etc.)
 
-    // ส่งข้อมูลไปยัง Supabase
-    // ตัวอย่างเชื่อมต่อกับ Supabase API:
-    // await supabase.auth.signUp({
-    //   email: formData.email,
-    //   password: formData.password,
-    //   data: { firstName: formData.firstName, lastName: formData.lastName, ... }
-    // });
 
-    // ตรวจสอบการจับคู่รหัสผ่าน
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+    // ตรวจสอบว่า email ถูกต้อง
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert("Invalid email format");
       return;
     }
 
-    // ตรวจสอบรูปแบบอีเมลล์
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailPattern.test(formData.email)) {
-      setError("Please enter a valid email address.");
-      return;
+    // ส่งข้อมูลไปยัง API
+    try {
+      const response = await fetch("/api/testpost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Registration successful!");
+      } else {
+        alert(result.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while submitting the form.");
     }
-    
-    console.log(formData); // แสดงข้อมูลในคอนโซล
   };
 
   return (
@@ -58,8 +62,8 @@ const RegisterForm = () => {
       <InputField
         label="First Name"
         type="text"
-        name="firstName"
-        value={formData.firstName}
+        name="first_name"
+        value={formData.first_name}
         onChange={handleChange}
         placeholder="Enter your first name"
         required
@@ -67,8 +71,8 @@ const RegisterForm = () => {
       <InputField
         label="Last Name"
         type="text"
-        name="lastName"
-        value={formData.lastName}
+        name="last_name"
+        value={formData.last_name}
         onChange={handleChange}
         placeholder="Enter your last name"
         required
@@ -99,20 +103,12 @@ const RegisterForm = () => {
         placeholder="Enter your password"
         required
       />
-      <InputField
-        label="Confirm Password"
-        type="password"
-        name="confirmPassword"
-        value={formData.confirmPassword}
-        onChange={handleChange}
-        placeholder="Confirm your password"
-        required
-      />
+
       <InputField
         label="Phone Number"
         type="text"
-        name="phoneNumber"
-        value={formData.phoneNumber}
+        name="phone_number"
+        value={formData.phone_number}
         onChange={handleChange}
         placeholder="Enter your phone number"
         required
@@ -121,9 +117,9 @@ const RegisterForm = () => {
         <label htmlFor="dateOfBirth">Date of Birth</label>
         <input
           type="date"
-          id="dateOfBirth"
-          name="dateOfBirth"
-          value={formData.dateOfBirth}
+          id="date_of_birth"
+          name="date_of_birth"
+          value={formData.date_of_birth}
           onChange={handleChange}
           className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
@@ -147,9 +143,10 @@ const RegisterForm = () => {
         </select>
       </div>
 
-      <Button type="1" name="Register" style="w-[150PX]" />
+      <Button type="submit" name="Register" style="w-[150px]" />
     </form>
   );
 };
 
 export default RegisterForm;
+//confirm pass ไม่อยู่ในตาราง db
