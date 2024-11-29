@@ -25,36 +25,43 @@ const RegisterForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+ e.preventDefault();
 
-    // ตรวจสอบว่า email ถูกต้อง
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      alert("Invalid email format");
-      return;
-    }
+ // ตรวจสอบว่า password และ confirmPassword ตรงกัน
+ if (formData.password !== formData.confirmPassword) {
+   alert("Passwords do not match");
+   return;
+ }
 
-    // ส่งข้อมูลไปยัง API *** เปลี่ยนเป็น axios
-    try {
-      const response = await fetch("/api/testpost", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+ // ตรวจสอบว่า email ถูกต้อง
+ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+ if (!emailRegex.test(formData.email)) {
+   alert("Invalid email format");
+   return;
+ }
 
-      const result = await response.json();
+ // ส่งข้อมูลไปยัง API โดยไม่ส่ง confirmPassword
+ try {
+   const { confirmPassword, ...dataToSubmit } = formData; // ตัด confirmPassword ออก
+   const response = await fetch("/api/register", {
+     method: "POST",
+     headers: {
+       "Content-Type": "application/json",
+     },
+     body: JSON.stringify(dataToSubmit),
+   });
 
-      if (response.ok) {
-        alert("Registration successful!");
-      } else {
-        alert(result.message || "Something went wrong!");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred while submitting the form.");
-    }
+   const result = await response.json();
+
+   if (response.ok) {
+     alert("Registration successful!");
+   } else {
+     alert(result.message || "Something went wrong!");
+   }
+ } catch (error) {
+   console.error(error);
+   alert("An error occurred while submitting the form.");
+ }
   };
 
   return (
@@ -136,7 +143,6 @@ const RegisterForm = () => {
               placeholder="Enter your phone number"
               required
             />
-
             <div className="form-group my-[16px] w-full font-inter">
               <label
                 htmlFor="dateOfBirth"
@@ -146,22 +152,17 @@ const RegisterForm = () => {
               </label>
               <input
                 type="date"
-                id="date_of_birth"
-                name="date_of_birth"
-                value={formData.date_of_birth}
-                onChange={handleChange}
-                title="Select your date of birth" // แสดงคำแนะนำเมื่อโฟกัสไปที่ input
-                className="mt-1 block w-full rounded-md border border-gray-300 pl-3 pr-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                style={{
-                  height: "48px",
-                  fontSize: "16px",
-                  fontWeight: 400,
-                  borderRadius: "4px",
-                  borderWidth: "1px",
-                }}
+                id="checkout"
+                name="checkout"
+                className="w-full rounded border border-gray-300 p-3 text-gray-400"
               />
+              <style jsx>{`
+                input[type="date"]::-webkit-calendar-picker-indicator {
+                  color: gray;
+                  opacity: 0.5;
+                }
+              `}</style>
             </div>
-
             <div className="form-group my-[16px] w-full font-inter">
               <label
                 htmlFor="country"
@@ -182,8 +183,8 @@ const RegisterForm = () => {
                   borderWidth: "1px",
                 }}
               >
-                <option className="text-gray-300" value="" disabled>
-                  Select your country
+                <option className="text-gray-300" value="" disabled selected>
+                  <h1> Select your country</h1>
                 </option>
                 <option>Thailand</option>
                 <option>United States</option>
@@ -191,17 +192,16 @@ const RegisterForm = () => {
                 <option>Other</option>
               </select>
             </div>
-
             {/*input picture*/}
-
-            <div className="">
+            <div className="my-10 border-t-2 border-gray-400"></div>
+            <div className="flex flex-col items-start gap-6">
               <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">
                 Profile Picture
               </h1>
               <button className="w-[50%] bg-gray-600 bg-opacity-15">
-                <div className="flex aspect-[3/2] h-full w-full items-center justify-center">
-                  <span>+</span>
-                  <h1>Upload photo</h1>
+                <div className="flex aspect-[3/2] h-full w-full flex-col items-center justify-center">
+                  <div className="text-5xl text-orange-600">+</div>
+                  <h1 className="text-orange-600">Upload photo</h1>
                 </div>
               </button>
             </div>
@@ -222,4 +222,3 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
-//confirm pass ไม่อยู่ในตาราง db
