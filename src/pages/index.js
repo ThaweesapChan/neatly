@@ -1,8 +1,14 @@
 import Homepage from "./homepage";
+import Navbar from "@/component/navbar";
+import Footer from "@/component/footer";
+import Searchresult from "./searchresult";
 export default function Home() {
   return (
     <div>
-      <Homepage />
+      {/* landing page */}
+      <Navbar />
+      <Searchresult />
+      <Footer />
     </div>
   );
 }
