@@ -1,11 +1,13 @@
 import React from "react";
 import RoomsSuitsPost from "../roomssuitspost";
+
 export default function RoomsSuits({ label = "", src = "", onClick }) {
   return (
     <section className="h-full gap-[40px] bg-white pb-[40px] pt-[40px]">
       <div className="flex flex-col gap-4">
 
       </div>
+
       <header>
         <h1 className="mb-10 h-[55px] text-center font-notoSerif text-[44px] font-medium leading-[55px] tracking-[-2%] text-green-800">
           Rooms & Suits

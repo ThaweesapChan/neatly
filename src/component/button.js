@@ -5,6 +5,7 @@ export function Button({ type = "primary", name = "", style = "", onClick }) {
 
   // Determine buttonClass based on the type
   const buttonClass = (() => {
+
     switch (type) {
       case "1":
         return "h-12 gap-2.5 text-white bg-orange-600";
@@ -12,6 +13,7 @@ export function Button({ type = "primary", name = "", style = "", onClick }) {
         return "h-12 gap-2.5 text-orange-500 border-orange-500 bg-white border-2";
       case "3":
         return "h-12 text-orange-500";
+
       default:
         return ""; // Default case if no type matches
     }
