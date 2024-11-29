@@ -8,7 +8,9 @@ export default function Home() {
   return (
     <div>
       {/* landing page */}
-      <Homepage />
+      <Navbar />
+      <Searchresult />
+      <Footer />
     </div>
   );
 }
