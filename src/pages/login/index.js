@@ -98,7 +98,7 @@ export default function LoginPage() {
         />
 
         {/* กลุ่มเนื้อหาหลังรูปภาพ */}
-        <div className="md: md:gap-10 md:ml-16 flex flex-col gap-14 p-10 md:mt-48 md:w-[452px] md:p-0">
+        <div className="md: flex flex-col gap-10 p-10 md:ml-16 md:mt-48 md:w-[452px] md:gap-10 md:p-0">
           <h1 className="h-14 w-80 font-notoSerif text-5xl font-medium text-green-800 md:text-7xl">
             Log In
           </h1>
@@ -111,7 +111,7 @@ export default function LoginPage() {
                 Username or Email
               </label>
               <input
-                className="w-full rounded border border-gray-300 p-4 font-inter text-gray-400"
+                className="w-full rounded border border-gray-300 p-4 font-inter text-gray-900 placeholder-gray-400"
                 id="usernameOrEmail"
                 type="text"
                 placeholder="Enter your username or email"
@@ -127,7 +127,7 @@ export default function LoginPage() {
                 Password
               </label>
               <input
-                className="w-full rounded border border-gray-300 p-4 text-gray-400"
+                className="w-full rounded border border-gray-300 p-4 text-gray-900 placeholder-gray-400"
                 id="password"
                 type="password"
                 placeholder="Enter your password"
