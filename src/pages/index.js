@@ -1,5 +1,5 @@
 
-import LoginPage from "./auth/login";
+import LoginPage from "./login";
 export default function Home() {
   return (
     <div>

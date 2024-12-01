@@ -6,7 +6,7 @@ function Herosection() {
     <main
       className="relative flex h-screen w-full flex-col items-center justify-center bg-cover bg-center md:h-[56.25rem] md:w-full md:px-16 md:opacity-100"
       style={{
-        backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.6) 19.66%, rgba(0, 0, 0, 0) 100%), url("/asset/loginduochair.jpeg ")`, // ตรวจสอบ path รูปภาพ
+        backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.6) 19.66%, rgba(0, 0, 0, 0) 100%), url("/asset/loginduochair.jpeg")`, // ตรวจสอบ path รูปภาพ
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
