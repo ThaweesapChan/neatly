@@ -4,7 +4,6 @@ import { Button } from "@/component/button";
 function Herosection() {
   return (
     <main
-
       className="relative flex h-screen w-full flex-col items-center justify-center bg-cover bg-center md:h-[56.25rem] md:w-full md:px-16 md:opacity-100"
       style={{
         backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.6) 19.66%, rgba(0, 0, 0, 0) 100%), url("/asset/loginduochair.jpeg ")`, // ตรวจสอบ path รูปภาพ
@@ -28,7 +27,7 @@ function Herosection() {
 
       {/* กล่องแบบฟอร์ม */}
 
-      <div className="flex flex-row md:mt-10 md:flex md:w-[1120px] md:items-center ">
+      <div className="flex flex-row md:mt-10 md:flex md:w-[1120px] md:items-center">
         <div className="md:py relative my-12 mt-12 w-80 rounded bg-white p-6 shadow-lg md:flex md:w-full md:justify-end md:py-10">
           {/* Check In */}
           <div className="mb-6 flex-1 md:mb-0 md:mr-4">
@@ -42,9 +41,7 @@ function Herosection() {
               type="date"
               id="checkin"
               name="checkin"
-
               className="w-full rounded border border-gray-300 p-3 text-gray-400"
-
             />
             <style jsx>{`
               input[type="date"]::-webkit-calendar-picker-indicator {
@@ -59,7 +56,7 @@ function Herosection() {
             <label
               htmlFor="checkout"
               className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
-
+            >
               Check Out
             </label>
             <input
@@ -81,18 +78,16 @@ function Herosection() {
             <label
               htmlFor="rooms-guests"
               className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
-
             >
               Rooms & Guests
             </label>
             <select
               id="rooms-guests"
               name="rooms-guests"
-
+              defaultValue=""
               className="w-full rounded border border-gray-300 p-4 text-gray-400"
-
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 1 room, 2 guests {/* ข้อความตัวอย่าง */}
               </option>
               <option value="1">1 room, 2 guests</option>
@@ -101,12 +96,10 @@ function Herosection() {
             </select>
           </div>
 
-      
           <Button
             type="primary"
             name="Search"
             style="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white bg-orange-600"
-
           />
         </div>
       </div>
