@@ -172,6 +172,7 @@ const RegisterForm = () => {
               <select
                 id="country"
                 name="country"
+                defaultValue=""
                 className="mt-1 block w-full rounded-[4px] border border-gray-300 pl-3 font-inter shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 style={{
                   height: "48px",
@@ -181,7 +182,7 @@ const RegisterForm = () => {
                   borderWidth: "1px",
                 }}
               >
-                <option className="text-gray-300" value="" disabled selected>
+                <option className="text-gray-300" value="" disabled>
                   Select your country
                 </option>
                 <option>Thailand</option>
