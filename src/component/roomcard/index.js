@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 function Roomcard() {
-  /* ค่า value ตัวอย่าง ค่อเอามจาก db ที่หลัง */
+  /* ค่า value ตัวอย่าง ค่อยเอามจาก db ที่หลัง */
   const [room] = useState({
     title: "Superior Garden View",
     image: "/asset/room.jpeg",
@@ -21,11 +21,12 @@ function Roomcard() {
     return number - result;
   }
   const discountedPrice = cal(room.originalPrice, 0.1935);
-  /* fn ส่วนลด */
+ 
+
 
   return (
-    <div className="mt-5 flex min-h-screen w-full items-center justify-center bg-white">
-      <div className="flex w-full flex-col items-center bg-white md:max-h-[400px] md:max-w-[80%] md:flex-row">
+    <div className=" flex min-h-screen w-full items-center justify-center bg-white">
+      <div className="flex h-full w-full flex-col items-center bg-white md:max-h-[400px] md:max-w-[80%] md:flex-row">
         <Image
           src={room.image}
           alt="Mountain view from hotel room"
@@ -61,9 +62,11 @@ function Roomcard() {
 
           <div className="space-y-1">
             <div className="flex flex-col items-end">
+              {/* ราคาเต็ม */}
               <p className="text-muted-foreground font-inter text-sm text-gray-700 line-through">
                 {room.currency} {room.originalPrice.toFixed(2)}
               </p>
+              {/* ราคาลด */}
               <h3 className="font-inter text-2xl font-semibold text-gray-900">
                 {room.currency} {discountedPrice.toFixed(2)}
               </h3>
