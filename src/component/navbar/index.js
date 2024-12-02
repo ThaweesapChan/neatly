@@ -54,7 +54,7 @@ function Navbar() {
           </button>
 
           {/* Mobile view */}
-          {/* Hamburger */}
+          {/* Hamburger button */}
 
           <div
             className="hamburger text-2xl text-black md:hidden"
