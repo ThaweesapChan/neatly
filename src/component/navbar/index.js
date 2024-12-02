@@ -42,7 +42,7 @@ function Navbar() {
           </button>
 
           {/* Mobile view */}
-          {/* Hamburger Button*/}
+          {/* Hamburger */}
 
           <div
             className="hamburger text-2xl text-black md:hidden"
