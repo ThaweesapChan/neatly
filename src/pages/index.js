@@ -1,5 +1,4 @@
-import LogoutPage from "./logout";
-import LoginPage from "./login";
+import Homepage from "./homepage";
 export default function Home() {
   return (
     <div>

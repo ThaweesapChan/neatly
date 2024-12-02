@@ -145,7 +145,7 @@ export default function LoginPage() {
             </button>
             {/* ข้อความพร้อมลิงก์ไปยังหน้าลงทะเบียน */}
             <p className="-mt-4 font-inter text-base font-normal text-gray-700">
-              Don't have an account yet?{" "}
+              Don&apos;t have an account yet?{" "}
               <Link
                 href="/register"
                 className="font-openSans text-base font-semibold text-orange-500 hover:underline"

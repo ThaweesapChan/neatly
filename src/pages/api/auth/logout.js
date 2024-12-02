@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Call Supabase's signOut method
+    // Call Supabase is signOut method
     const { error } = await supabase.auth.signOut();
 
     if (error) {
