@@ -85,7 +85,7 @@ function Herosection() {
               id="rooms-guests"
               name="rooms-guests"
               defaultValue=""
-              className="w-full rounded border border-gray-300 p-4 text-gray-400"
+              className="w-full p-4 rounded border border-gray-300 text-gray-400"
             >
               <option value="" disabled>
                 1 room, 2 guests {/* ข้อความตัวอย่าง */}
