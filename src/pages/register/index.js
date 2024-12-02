@@ -15,7 +15,7 @@ const RegisterForm = () => {
     country: "",
     confirmPassword: "",
   });
-
+  /* test for deployment */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
