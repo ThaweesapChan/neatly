@@ -1,13 +1,22 @@
 import React from "react";
 import Image from "next/image";
 import { useState } from "react";
-import { Link } from "react-scroll";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleScrollTo = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    if (isOpen) {
+      toggleMenu();
+    }
   };
 
   return (
@@ -20,21 +29,24 @@ function Navbar() {
             <Image src="/asset/logo.png" width={170} height={100} alt="logo" />
           </div>
           <ul className="ml-10 hidden items-center gap-10 font-openSans text-sm font-normal text-black md:flex">
-            {/* Use Link for scrolling */}
-            <li className="cursor-pointer">
-              <Link to="about-neatly" smooth={true} duration={500}>
-                About Neatly
-              </Link>
+            {/* Use buttons for scrolling */}
+            <li
+              className="cursor-pointer"
+              onClick={() => handleScrollTo("about-neatly")}
+            >
+              About Neatly
             </li>
-            <li className="cursor-pointer">
-              <Link to="service-facilities" smooth={true} duration={500}>
-                Service & Facilities
-              </Link>
+            <li
+              className="cursor-pointer"
+              onClick={() => handleScrollTo("service-facilities")}
+            >
+              Service & Facilities
             </li>
-            <li className="cursor-pointer">
-              <Link to="rooms-suites" smooth={true} duration={500}>
-                Rooms & Suites
-              </Link>
+            <li
+              className="cursor-pointer"
+              onClick={() => handleScrollTo("rooms-suites")}
+            >
+              Rooms & Suites
             </li>
           </ul>
           <button className="ml-auto hidden font-openSans text-sm font-normal text-orange-500 md:block">
@@ -67,36 +79,24 @@ function Navbar() {
             </div>
 
             <ul className="m-8 flex flex-col items-start gap-8 font-openSans text-xl font-normal text-black">
-              {/* Use Link for scrolling */}
-              <li className="cursor-pointer">
-                <Link
-                  to="about-neatly"
-                  smooth={true}
-                  duration={500}
-                  onClick={toggleMenu}
-                >
-                  About Neatly
-                </Link>
+              {/* Use buttons for scrolling */}
+              <li
+                className="cursor-pointer"
+                onClick={() => handleScrollTo("about-neatly")}
+              >
+                About Neatly
               </li>
-              <li className="cursor-pointer">
-                <Link
-                  to="service-facilities"
-                  smooth={true}
-                  duration={500}
-                  onClick={toggleMenu}
-                >
-                  Service & Facilities
-                </Link>
+              <li
+                className="cursor-pointer"
+                onClick={() => handleScrollTo("service-facilities")}
+              >
+                Service & Facilities
               </li>
-              <li className="cursor-pointer">
-                <Link
-                  to="rooms-suites"
-                  smooth={true}
-                  duration={500}
-                  onClick={toggleMenu}
-                >
-                  Rooms & Suites
-                </Link>
+              <li
+                className="cursor-pointer"
+                onClick={() => handleScrollTo("rooms-suites")}
+              >
+                Rooms & Suites
               </li>
               <hr className="my-4 w-full rounded-md border-b bg-gray-300" />
             </ul>
