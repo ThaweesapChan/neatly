@@ -16,10 +16,21 @@
 }
 
 body {
-
-
   font-family: Arial, Helvetica, sans-serif;
+}
 
+/* Utility Classes for Buttons */
+.btn-primary {
+  @apply h-12 gap-[10] rounded text-center text-base font-semibold leading-4 text-white;
+}
+/*เหลือใส่ font gap-[10]*/
+
+.btn-secondary {
+  @apply h-12 gap-[10] rounded border bg-white text-center text-base font-semibold leading-4 text-white;
+}
+
+.btn-ghost {
+  @apply h-12 gap-[10] rounded text-center text-base font-semibold leading-4 text-white;
 }
 
 @layer base {
