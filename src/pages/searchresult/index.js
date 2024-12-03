@@ -1,7 +1,30 @@
 import React from "react";
 import Roomcard from "@/component/roomcard";
 import { Button } from "@/component/button";
-function Searchresult() {
+import { useState } from "react";
+import axios from "axios";
+async function Searchresult() {
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [roomType, setRoomType] = useState("");
+  const [roomDetial, setRoomDetial] = useState([]);
+
+  const response = await axios.get(
+    `/api/searchroom?check_in=${checkIn}&check_out=${checkOut}&room_type=${roomType}`,
+  );
+  console.log(response);
+  setRoomDetial(response);
+
+  if (!response.ok) {
+    const { error } = await response.json();
+    console.error("Error:", error);
+    return;
+  }
+
+  useEffect(() => {
+    Searchresult();
+  }, [checkIn, checkOut, roomType]);
+
   return (
     <>
       {/* กล่องแบบฟอร์ม */}
@@ -16,6 +39,7 @@ function Searchresult() {
               Check In
             </label>
             <input
+              onChange={(e) => setCheckIn(e.target.value)}
               type="date"
               id="checkin"
               name="checkin"
@@ -37,6 +61,7 @@ function Searchresult() {
               Check Out
             </label>
             <input
+              onChange={(e) => setCheckOut(e.target.value)}
               type="date"
               id="checkout"
               name="checkout"
@@ -58,11 +83,12 @@ function Searchresult() {
               Rooms & Guests
             </label>
             <select
+              onChange={(e) => setRoomType(e.target.value)}
               id="rooms-guests"
               name="rooms-guests"
               className="w-full rounded border border-gray-300 p-4 text-gray-400"
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 1 room, 2 guests {/* ข้อความตัวอย่าง */}
               </option>
               <option value="1">1 room, 2 guests</option>
@@ -80,7 +106,11 @@ function Searchresult() {
         </div>
       </div>
 
-      <Roomcard />
+      <div>
+        {roomDetial.map((room) => {
+          <Roomcard value={room.room_id} room={room} />;
+        })}
+      </div>
     </>
   );
 }

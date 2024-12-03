@@ -2,9 +2,9 @@ import React from "react";
 import Image from "next/image";
 import { useState } from "react";
 
-function Roomcard() {
+function Roomcard({ room }) {
   /* ค่า value ตัวอย่าง ค่อยเอามจาก db ที่หลัง */
-  const [room] = useState({
+  /* const [room] = useState({
     title: "Superior Garden View",
     image: "/asset/room.jpeg",
     guests: 2,
@@ -14,21 +14,18 @@ function Roomcard() {
       "Rooms (36sqm) with full garden views, 1 single bed, bathroom with bathtub & shower.",
     originalPrice: 3100,
     currency: "THB",
-  });
-  /* fn ส่วนลด */
+  }) */ /* fn ส่วนลด */
   function cal(number, discout) {
     let result = number * discout;
     return number - result;
   }
   const discountedPrice = cal(room.originalPrice, 0.1935);
- 
-
 
   return (
-    <div className=" flex min-h-screen w-full items-center justify-center bg-white">
+    <div className="flex min-h-screen w-full items-center justify-center bg-white">
       <div className="flex h-full w-full flex-col items-center bg-white md:max-h-[400px] md:max-w-[80%] md:flex-row">
         <Image
-          src={room.image}
+          src={room.room_image_url}
           alt="Mountain view from hotel room"
           className="h-[265px] w-full md:w-[453px]"
           width={453}
@@ -38,12 +35,12 @@ function Roomcard() {
         <div className="space-y-4 p-4">
           <div>
             <h2 className="font-inter text-2xl font-semibold text-black">
-              {room.title}
+              {room.room_type}
             </h2>
-            <div className="text-muted-foreground mt-2 flex gap-4 text-sm">
+            <div className="mt-2 flex gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <span className="font-inter text-gray-700">
-                  {room.guests} Guests
+                  {/* {room.guests} Guests */}
                 </span>
               </div>
               <div className="flex items-center gap-1">
@@ -51,28 +48,28 @@ function Roomcard() {
               </div>
               <div className="flex items-center gap-1">
                 <span className="font-inter text-gray-700">
-                  {room.size} sqm
+                  {/*  {room.size} sqm */}
                 </span>
               </div>
             </div>
           </div>
-          <p className="text-muted-foreground font-inter text-sm text-gray-700">
-            {room.description}
+          <p className="font-inter text-sm text-gray-700 text-muted-foreground">
+            {/* {room.description} */}
           </p>
 
           <div className="space-y-1">
             <div className="flex flex-col items-end">
               {/* ราคาเต็ม */}
-              <p className="text-muted-foreground font-inter text-sm text-gray-700 line-through">
-                {room.currency} {room.originalPrice.toFixed(2)}
+              <p className="font-inter text-sm text-gray-700 text-muted-foreground line-through">
+                {room.price} {/* {room.originalPrice.toFixed(2)} */}
               </p>
               {/* ราคาลด */}
               <h3 className="font-inter text-2xl font-semibold text-gray-900">
-                {room.currency} {discountedPrice.toFixed(2)}
+                {room.price} {/* {discountedPrice.toFixed(2)} */}
               </h3>
             </div>
 
-            <div className="text-muted-foreground flex flex-col items-end font-inter text-sm text-gray-700">
+            <div className="flex flex-col items-end font-inter text-sm text-gray-700 text-muted-foreground">
               <p className="font-inter">Per Night</p>
               (Including Taxes & Fees)
             </div>
