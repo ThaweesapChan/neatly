@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useAuth } from "@/lib/AuthContext";
+import { useRouter } from "next/router";
 import supabase from "@/utils/supabaseClient";
 import Navbar from "@/component/navbar";
 import Link from "next/link";
 
 export default function LoginPage() {
+  const { setIsLoggedIn } = useAuth();
+  const router = useRouter();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -74,6 +78,11 @@ export default function LoginPage() {
       // เก็บ JWT Token ไว้ใน Local Storage
       localStorage.setItem("token", data.token);
       alert("Login successful! Token saved to local storage.");
+
+      // อัพเดตสถานะของ customer ว่า login เข้ามาแล้ว
+      setIsLoggedIn(true);
+      // เมื่อ login สำเร็จแล้วจะ redirect to homepage
+      router.push("/");
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
     } finally {
