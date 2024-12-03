@@ -77,7 +77,7 @@ export default function LoginPage() {
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
     } finally {
-      setLoading(false); // ยกเลิกสถานะโหลด
+      setLoading(false); // ยกเลิกสถานะโหลด..
     }
   }
 
