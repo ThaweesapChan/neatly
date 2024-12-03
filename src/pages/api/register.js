@@ -1,19 +1,23 @@
-// pages/api/getUsers.js
 import supabase from "@/utils/supabaseClient";
 
 export default async function handler(req, res) {
-  if (req.method === "GET") {
-    const { data, error } = await supabase.from("users").select("*");
+  if (req.method === "POST") {
+    const newUsers = { ...req.body }; // รับข้อมูลจาก request body
 
-
-    console.log("นี่คือ", data);
-    if (error) {
-      return res.status(500).json({ error: error.message });
+    try {
+      // Insert ข้อมูลลงในตาราง users
+      const { data, error } = await supabase.auth.signUp(newUsers);
+      //await supabase.from("users").insert([newUsers]); // ใส่ข้อมูลที่ต้องการ
+     //await supabase.auth.signUp(newUsers)
+      if (error) {
+        throw error;
+      }
+//เอาไอดีที่ได้มาใส่ด้วย
+      res.status(200).json({ success: true, data }); // ส่ง response กลับ
+    } catch (error) {
+      res.status(400).json({ success: false, message: error.message }); // ส่ง error response กลับ
     }
-
-    return res.status(200).json(data);
   } else {
-    return res.status(405).json({ error: "Method not allowed" });
+    res.status(405).json({ message: "Method not allowed" }); // ถ้าไม่ใช่ POST
   }
 }
-
