@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import InputField from "@/component/form";
 import { Button } from "@/component/button";
 import Navbar from "@/component/navbar";
@@ -149,10 +149,8 @@ const RegisterForm = () => {
               </label>
               <input
                 type="date"
-                id="dateOfBirth"
-                name="date_of_birth"
-                value={formData.date_of_birth}
-                onChange={handleChange}
+                id="checkout"
+                name="checkout"
                 className="w-full rounded border border-gray-300 p-3 text-gray-400"
               />
               <style jsx>{`
@@ -172,8 +170,7 @@ const RegisterForm = () => {
               <select
                 id="country"
                 name="country"
-                value={formData.country}
-                onChange={handleChange}
+                defaultValue=""
                 className="mt-1 block w-full rounded-[4px] border border-gray-300 pl-3 font-inter shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 style={{
                   height: "48px",
@@ -183,17 +180,17 @@ const RegisterForm = () => {
                   borderWidth: "1px",
                 }}
               >
-                <option value="" disabled>
+                <option className="text-gray-300" value="" disabled>
                   Select your country
                 </option>
-                {country.map((country, index) => (
-                  <option key={index} value={country.name}>
-                    {country.name}
-                  </option>
-                ))}
+                <option>Thailand</option>
+                <option>United States</option>
+                <option>United Kingdom</option>
+                <option>Other</option>
               </select>
             </div>
 
+            
             {/*input picture*/}
             <div className="my-10 border-t-2 border-gray-400"></div>
             <div className="flex flex-col items-start gap-6">
@@ -208,6 +205,7 @@ const RegisterForm = () => {
               </button>
             </div>
 
+
             {/*button*/}
             <div className="mt-6">
               <Button
@@ -221,17 +219,18 @@ const RegisterForm = () => {
         </article>
       </div>
 
+
       {/*DeskTop*/}
       <div className="hidden md:block">
         <div
-          className="w-screen px-[12%] pb-16 pt-12"
+          className="w-screen px-[12%] pt-12"
           style={{
             backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.6) 19.66%, rgba(0, 0, 0, 0) 100%), url("/asset/loginduochair.jpeg")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
-          <div className="flex h-full w-full flex-col gap-20 bg-gray-100 p-[7%] pb-11">
+          <div className="flex h-full w-full flex-col gap-[300px] bg-yellow-600 px-[7%] pb-11">
             {/* เนื้อหาหรือองค์ประกอบเพิ่มเติมในส่วนนี้ */}
             <h1 className="font-notoSerif text-5xl font-medium text-green-800">
               Register
@@ -244,8 +243,8 @@ const RegisterForm = () => {
               <div>
                 {/* ส่วนของ form*/}
                 {/* ส่วนของ form ซ้าย*/}
-                <div className="flex w-full justify-between gap-[5%] bg-gray-100">
-                  <div className="w-[50%] bg-gray-100">
+                <div className="flex w-full justify-between gap-[5%] bg-slate-600">
+                  <div className="w-[50%] bg-red-600">
                     <InputField
                       label="First Name"
                       type="text"
@@ -292,8 +291,7 @@ const RegisterForm = () => {
                       <select
                         id="country"
                         name="country"
-                        value={formData.country}
-                        onChange={handleChange}
+                        defaultValue=""
                         className="mt-1 block w-full rounded-[4px] border border-gray-300 pl-3 font-inter shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         style={{
                           height: "48px",
@@ -306,16 +304,15 @@ const RegisterForm = () => {
                         <option className="text-gray-300" value="" disabled>
                           Select your country
                         </option>
-                        {country.map((country, index) => (
-                          <option key={index} value={country.name}>
-                            {country.name}
-                          </option>
-                        ))}
+                        <option>Thailand</option>
+                        <option>United States</option>
+                        <option>United Kingdom</option>
+                        <option>Other</option>
                       </select>
                     </div>
                   </div>
                   {/* ส่วนของ form ขวา*/}
-                  <div className="w-[50%] bg-gray-100">
+                  <div className="w-[50%] bg-green-950">
                     <InputField
                       label="Last Name"
                       type="text"
@@ -351,10 +348,8 @@ const RegisterForm = () => {
                       </label>
                       <input
                         type="date"
-                        id="dateOfBirth"
-                        name="date_of_birth"
-                        value={formData.date_of_birth}
-                        onChange={handleChange}
+                        id="checkout"
+                        name="checkout"
                         className="w-full rounded border border-gray-300 p-3 text-gray-400"
                       />
                       <style jsx>{`
@@ -392,6 +387,7 @@ const RegisterForm = () => {
           </div>
         </div>
       </div>
+
     </section>
   );
 };
