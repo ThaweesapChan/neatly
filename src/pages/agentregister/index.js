@@ -61,7 +61,7 @@ const RegisterForm = () => {
     // ส่งข้อมูลไปยัง API โดยไม่ส่ง confirmPassword
     try {
       const { confirmPassword, ...dataToSubmit } = formData; // ตัด confirmPassword ออก
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/agentregister", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -247,7 +247,7 @@ const RegisterForm = () => {
             backgroundPosition: "center",
           }}
         >
-          <div className="flex h-full w-full flex-col gap-20 bg-gray-100 p-[7%] pb-11">
+          <div className="flex h-full w-full flex-col gap-20 bg-white p-[7%] pb-11">
             {/* เนื้อหาหรือองค์ประกอบเพิ่มเติมในส่วนนี้ */}
             <h1 className="font-notoSerif text-5xl font-medium text-green-800">
               Register
@@ -260,8 +260,8 @@ const RegisterForm = () => {
               <div>
                 {/* ส่วนของ form*/}
                 {/* ส่วนของ form ซ้าย*/}
-                <div className="flex w-full justify-between gap-[5%] bg-gray-100">
-                  <div className="w-[50%] bg-gray-100">
+                <div className="flex w-full justify-between gap-[5%] bg-white">
+                  <div className="w-[50%] bg-white">
                     <InputField
                       label="First Name"
                       type="text"
@@ -331,7 +331,7 @@ const RegisterForm = () => {
                     </div>
                   </div>
                   {/* ส่วนของ form ขวา*/}
-                  <div className="w-[50%] bg-gray-100">
+                  <div className="w-[50%] bg-white">
                     <InputField
                       label="Last Name"
                       type="text"

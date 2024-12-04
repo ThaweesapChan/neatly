@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
       const {
         username,
-        role = "customer",
+        role = "agent",
         profile_picture_url,
         first_name,
         last_name,
