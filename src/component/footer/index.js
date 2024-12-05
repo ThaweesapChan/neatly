@@ -10,6 +10,13 @@ import {
 } from "lucide-react";
 
 function Footer() {
+  const handleScrollTo = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
       <footer className="bg-green-800 p-4 text-white md:p-10 md:px-28 md:py-16">
@@ -20,7 +27,8 @@ function Footer() {
               width={200}
               height={50}
               alt="logo"
-              className="my-8 md:mb-12 md:mt-0"
+              className="my-8 cursor-pointer md:mb-12 md:mt-0"
+              onClick={() => handleScrollTo("nav-bar")}
             />
 
             <h1 className="my-2 text-xl font-semibold">Neatly Hotel</h1>

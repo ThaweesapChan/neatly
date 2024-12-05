@@ -5,6 +5,7 @@ import Footer from "@/component/footer";
 import Herosection from "@/component/herosection";
 import RoomsSuits from "@/component/roomssuits";
 import Servicesection from "@/component/servicesection";
+import Testimonial from "@/component/testimonial";
 function Homepage() {
   return (
     <div>
@@ -13,6 +14,7 @@ function Homepage() {
       <Aboutsection />
       <Servicesection />
       <RoomsSuits />
+      <Testimonial />
       <Footer />
     </div>
   );
