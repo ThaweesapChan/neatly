@@ -1,8 +1,11 @@
-import RoomDetail from "./roomdetail";
+
+import Homepage from "./homepage";
 export default function Home() {
   return (
     <div>
-      <RoomDetail />
+     
+      <Homepage/>
+
     </div>
   );
 }
