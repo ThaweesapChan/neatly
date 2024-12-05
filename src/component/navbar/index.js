@@ -6,9 +6,15 @@ import { useAuth } from "@/lib/AuthContext";
 import { UserRound, CreditCard, BriefcaseBusiness, LogOut } from "lucide-react";
 import { HiBell } from "react-icons/hi2";
 import axios from "axios";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function Navbar() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const router = useRouter();
@@ -19,6 +25,16 @@ function Navbar() {
 
   const handleLogin = () => {
     router.push("/login");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/api/auth/logout");
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLoggedIn(false); // เปลี่ยนสถานะที่ customer loggedin เป็น false
+    router.push("/");
   };
 
   const handleHomepage = () => {
@@ -38,8 +54,15 @@ function Navbar() {
   // get customer name from API
   async function getData() {
     try {
-      let response = await axios.get("/api/getbooking");
-      setName(response.data.data);
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await axios.get("/api/getUser", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setName(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -98,20 +121,46 @@ function Navbar() {
                 </span>
               </button>
 
-              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
-                <Image
-                  src="/asset/profile-pic.png"
-                  alt="Profile picture"
-                  width={40}
-                  height={40}
-                  className="object-cover"
-                />
-              </div>
-              <span className="font-openSans text-lg font-semibold text-gray-700">
-                {name.user?.first_name || null}
-                {"  "}
-                {name.user?.last_name || null}
-              </span>
+              {/* Dropdown for User Profile */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex cursor-pointer items-center gap-2">
+                    <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
+                      <Image
+                        src="/asset/profile-pic.png"
+                        alt="Profile picture"
+                        width={40}
+                        height={40}
+                        className="object-cover"
+                      />
+                    </div>
+                    <span className="font-openSans text-sm font-normal text-gray-700">
+                      {name.data?.first_name || ""}
+                      {"  "}
+                      {name.data?.last_name || ""}
+                    </span>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuItem>
+                    <UserRound className="mr-2 text-gray-500" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <CreditCard className="mr-2 text-gray-500" />
+                    Payment Method
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <BriefcaseBusiness className="mr-2 text-gray-500" />
+                    Booking History
+                  </DropdownMenuItem>
+                  <hr className="my-2 w-full rounded-md border-b bg-gray-300" />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 text-gray-500" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             <button
@@ -183,20 +232,23 @@ function Navbar() {
             {isLoggedIn && (
               <>
                 <div className="m-8">
-                  <div className="mb-8 ml-2 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
-                    <Image
-                      src="/asset/profile-pic.png"
-                      alt="Profile picture"
-                      width={40}
-                      height={40}
-                      className="object-cover"
-                    />
+                  <div className="flex items-center gap-5">
+                    <div className="mb-8 ml-2 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
+                      <Image
+                        src="/asset/profile-pic.png"
+                        alt="Profile picture"
+                        width={40}
+                        height={40}
+                        className="object-cover"
+                      />
+                    </div>
+                    <span className="-translate-y-4 font-openSans text-sm font-normal text-gray-700">
+                      {name.data?.first_name || null}
+                      {"  "}
+                      {name.data?.last_name || null}
+                    </span>
                   </div>
-                  <span className="font-openSans text-lg font-semibold text-gray-700">
-                    {name.user?.first_name || null}
-                    {"  "}
-                    {name.user?.last_name || null}
-                  </span>
+
                   <hr className="my-4 w-full rounded-md border-b bg-gray-300" />
                   <ul className="flex flex-col items-start gap-8 font-openSans text-xl font-normal text-gray-700">
                     <li className="flex w-full items-center gap-7 p-4">
@@ -213,7 +265,10 @@ function Navbar() {
                     </li>
                     <hr className="w-full rounded-md border-b bg-gray-300" />
                     <li className="flex w-full cursor-pointer items-center gap-7 p-4">
-                      <LogOut className="text-gray-500" />
+                      <LogOut
+                        className="text-gray-500"
+                        onClick={handleLogout}
+                      />
                       Log out
                     </li>
                   </ul>
