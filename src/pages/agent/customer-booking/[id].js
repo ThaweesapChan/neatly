@@ -13,7 +13,7 @@ function BookingDetailPage() {
 
   const getBookingById = async (bookingId) => {
     try {
-      const response = await axios.get(`/api/getBookingById?id=${bookingId}`);
+      const response = await axios.get(`/api/getbookingbyid?id=${bookingId}`);
       setBookingDetail(response.data);
 
       // Calculate Total price
