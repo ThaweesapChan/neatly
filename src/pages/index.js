@@ -1,11 +1,8 @@
-
-import Homepage from "./homepage";
+import RoomDetail from "./roomdetail";
 export default function Home() {
   return (
     <div>
-     
-      <Homepage/>
-
+      <RoomDetail />
     </div>
   );
 }
