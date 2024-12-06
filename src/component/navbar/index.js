@@ -30,8 +30,11 @@ function Navbar() {
   const handleLogout = async () => {
     try {
       await axios.post("/api/auth/logout");
+
+      // ลบข้อมูล token ออกจาก localStorage
+      localStorage.removeItem("token");
     } catch (error) {
-      console.error(error);
+      console.error("Logout Error:", error.message);
     }
     setIsLoggedIn(false); // เปลี่ยนสถานะที่ customer loggedin เป็น false
     router.push("/");
@@ -57,7 +60,7 @@ function Navbar() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const response = await axios.get("/api/getuser", {
+      const response = await axios.get("/api/getUser", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -243,9 +246,9 @@ function Navbar() {
                       />
                     </div>
                     <span className="-translate-y-4 font-openSans text-sm font-normal text-gray-700">
-                      {name.data?.first_name || null}
+                      {name.data?.first_name || ""}
                       {"  "}
-                      {name.data?.last_name || null}
+                      {name.data?.last_name || ""}
                     </span>
                   </div>
 

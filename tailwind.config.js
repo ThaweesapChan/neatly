@@ -100,6 +100,6 @@ module.exports = {
   },
   plugins: [
     require("tailwindcss-animate"), // เพิ่ม tailwindcss-animate plugin
-    require("daisyui"), // เพิ่ม daisyui plugin
+    /* require("daisyui"), // เพิ่ม daisyui plugin */
   ],
 };
