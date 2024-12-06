@@ -77,8 +77,8 @@ export default function LoginPage() {
 
       // เก็บ JWT Token ไว้ใน Local Storage
       localStorage.setItem("token", data.token);
-      alert("Login successful! Token saved to local storage.");
-
+     console.log("Login successful!");
+     
       // อัพเดตสถานะของ customer ว่า login เข้ามาแล้ว
       setIsLoggedIn(true);
       // เมื่อ login สำเร็จแล้วจะ redirect to homepage
