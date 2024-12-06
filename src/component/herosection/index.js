@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@/component/button";
+import { Button } from "../button";
 
 function Herosection() {
   return (
@@ -85,7 +85,7 @@ function Herosection() {
               id="rooms-guests"
               name="rooms-guests"
               defaultValue=""
-              className="w-full p-4 rounded border border-gray-300 text-gray-400"
+              className="w-full rounded border border-gray-300 p-4 text-gray-400"
             >
               <option value="" disabled>
                 1 room, 2 guests {/* ข้อความตัวอย่าง */}
@@ -97,9 +97,9 @@ function Herosection() {
           </div>
 
           <Button
-            type="primary"
-            name="Search"
-            style="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white bg-orange-600"
+            variant="primary"
+            label="Search"
+            other="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
           />
         </div>
       </div>

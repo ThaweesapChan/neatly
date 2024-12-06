@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Roomcard from "@/component/roomcard";
 import axios from "axios";
+import { Button } from "@/component/button";
 
 const Searchresult = () => {
   const [checkIn, setCheckIn] = useState("");
@@ -90,12 +91,12 @@ const Searchresult = () => {
           </div>
 
           {/* ปุ่ม Search */}
-          <button
-            className="w-[100px] h-[50px] rounded-sm border border-orange-500 bg-white text-orange-500"
+          <Button
             onClick={fetchRooms}
-          >
-            Search
-          </button>
+            variant="primary"
+            label="Search"
+            other="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
+          />
         </div>
       </div>
 
