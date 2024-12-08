@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/component/navbar";
 import Footer from "@/component/footer";
+import axios from "axios";
 import {
   Carousel,
   CarouselContent,
@@ -19,11 +20,8 @@ export default function RoomDetail() {
   // Fetch room data from API
   async function fetchRoomData() {
     try {
-      const response = await fetch("/api/getRoomdetail");
-      if (!response.ok) {
-        throw new Error("Failed to fetch room details");
-      }
-      const data = await response.json();
+      const response = await axios.get("/api/getRoomdetail");
+      const data = await response.data;
       setRoomData(data);
     } catch (err) {
       setError(err.message);
@@ -165,11 +163,9 @@ export default function RoomDetail() {
       </div>
 
       {/* RoomsSuits and Footer */}
-      <div className="mt-10 md:mt-28 flex h-[34rem] w-full flex-col items-center justify-center bg-[#E6EBE9] md:h-[45rem]">
-        {/* Heading for "Other Rooms" */}
-        <div className="md:mb-20 flex w-full flex-col items-center justify-center">
-          {/* Heading for "Other Rooms" */}
-          <p className="font-notoSerif text-4xl md:text-5xl font-medium text-[#2F3E35]">
+      <div className="mt-10 flex h-[34rem] w-full flex-col items-center justify-center bg-[#E6EBE9] md:mt-28 md:h-[45rem]">
+        <div className="flex w-full flex-col items-center justify-center md:mb-20">
+          <p className="font-notoSerif text-4xl font-medium text-[#2F3E35] md:text-5xl">
             Other Rooms
           </p>
         </div>
@@ -177,9 +173,9 @@ export default function RoomDetail() {
         {/* Carousel */}
         <Carousel
           opts={{
-            align: "start", // เลื่อนจากด้านซ้าย
+            align: "start",
           }}
-          className="flex h-96 w-full overflow-hidden  md:h-[25rem]"
+          className="flex h-96 w-full overflow-hidden md:h-[25rem]"
         >
           <CarouselContent className="flex h-full">
             {posts.map((post, index) => (
