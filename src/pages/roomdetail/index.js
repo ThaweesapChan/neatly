@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/component/navbar";
-import RoomsSuits from "@/component/roomssuits";
 import Footer from "@/component/footer";
 import {
   Carousel,
@@ -10,6 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import RoomsSuitsPost from "@/component/roomssuitspost";
 
 export default function RoomDetail() {
   const [roomData, setRoomData] = useState(null);
@@ -53,15 +53,26 @@ export default function RoomDetail() {
     "/asset/superior.jpeg",
   ];
 
+  const posts = [
+    { label: "Superior Garden View", src: "/asset/superior.jpeg" },
+    { label: "Deluxe", src: "/asset/deluxe.jpeg" },
+    { label: "Superior", src: "/asset/room.jpeg" },
+    { label: "Premier Sea View", src: "/asset/premier.jpeg" },
+    { label: "Supreme", src: "/asset/supreme.jpeg" },
+    { label: "Suite", src: "/asset/room2.jpeg" },
+  ];
+
+  console.log(posts);
+
   return (
-    <div className="w-full">
+    <div className="w-full bg-[#F7F7FB]">
       {/* Navbar Section */}
       <div className="w-full">
         <Navbar />
       </div>
 
       {/* Carousel Section */}
-      <div className="w-full">
+      <div className="w-full md:mt-14">
         <Carousel
           opts={{
             align: "start",
@@ -104,7 +115,7 @@ export default function RoomDetail() {
                 </p>
               </div>
 
-              <div className="flex flex-row  justify-between font-inter md:flex md:flex-col md:items-end">
+              <div className="flex flex-row justify-between font-inter md:flex md:flex-col md:items-end">
                 <div className="text-center md:text-right">
                   <p className="m-1 font-inter text-base text-gray-700 line-through">
                     THB 3,100.00
@@ -129,9 +140,7 @@ export default function RoomDetail() {
           </div>
 
           <div className="mt-16 h-full w-full md:mt-20">
-            <h3 className="font-inter text-xl font-semibold">
-              Room Amenities
-            </h3>
+            <h3 className="font-inter text-xl font-semibold">Room Amenities</h3>
             <div className="mt-6 px-4">
               <ul className="grid list-inside list-disc grid-cols-1 gap-x-10 font-inter text-base text-gray-700 md:grid-cols-2">
                 <li className="m-0">Safe in Room</li>
@@ -156,12 +165,37 @@ export default function RoomDetail() {
       </div>
 
       {/* RoomsSuits and Footer */}
-      <div className="w-full">
-     
+      <div className="mt-10 md:mt-28 flex h-[34rem] w-full flex-col items-center justify-center bg-[#E6EBE9] md:h-[45rem]">
+        {/* Heading for "Other Rooms" */}
+        <div className="md:mb-20 flex w-full flex-col items-center justify-center">
+          {/* Heading for "Other Rooms" */}
+          <p className="font-notoSerif text-4xl md:text-5xl font-medium text-[#2F3E35]">
+            Other Rooms
+          </p>
+        </div>
+
+        {/* Carousel */}
+        <Carousel
+          opts={{
+            align: "start", // เลื่อนจากด้านซ้าย
+          }}
+          className="flex h-96 w-full overflow-hidden  md:h-[25rem]"
+        >
+          <CarouselContent className="flex h-full">
+            {posts.map((post, index) => (
+              <CarouselItem
+                key={index}
+                className="flex h-full w-full shrink-0 basis-3/4 items-center justify-center"
+              >
+                <RoomsSuitsPost label={post.label} src={post.src} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-4 z-10 text-zinc-200" />
+          <CarouselNext className="absolute right-4 z-10 text-zinc-200" />
+        </Carousel>
       </div>
-      <div className="w-full">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }
