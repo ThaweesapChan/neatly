@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import supabase from "@/utils/supabaseClient";
 import Navbar from "@/component/navbar";
 import Link from "next/link";
+import axios from "axios";
 
 export default function LoginPage() {
   const { setIsLoggedIn } = useAuth();
@@ -77,12 +78,28 @@ export default function LoginPage() {
 
       // เก็บ JWT Token ไว้ใน Local Storage
       localStorage.setItem("token", data.token);
-     console.log("Login successful!");
-     
+      console.log("Login successful!");
+
+      // ดึงข้อมูลมาเช็ค role
+      const userResponse = await axios.get("/api/getUser", {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      });
+
+      const userData = userResponse.data.data;
+
+      console.log("Login successful!");
+
       // อัพเดตสถานะของ customer ว่า login เข้ามาแล้ว
       setIsLoggedIn(true);
-      // เมื่อ login สำเร็จแล้วจะ redirect to homepage
-      router.push("/");
+
+      // ทำการ redirect ตาม role
+      if (userData.role === "agent") {
+        router.push("/agent/customer-booking");
+      } else {
+        router.push("/");
+      }
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
     } finally {

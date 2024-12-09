@@ -8,8 +8,28 @@ import {
   Box,
   LogOut,
 } from "lucide-react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useAuth } from "@/lib/AuthContext";
 
 function Sidebar() {
+  const router = useRouter();
+  const { setIsLoggedIn } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/api/auth/logout");
+
+      // ลบข้อมูล token ออกจาก localStorage
+      localStorage.removeItem("token");
+    } catch (error) {
+      console.error("Logout Error:", error.message);
+    }
+
+    setIsLoggedIn(false);
+    router.push("/login");
+  };
+
   return (
     <>
       {/* Sidebar */}
@@ -62,9 +82,12 @@ function Sidebar() {
           </ul>
         </div>
         <hr className="w-full rounded-md border-b border-green-700" />
-        <div className="m-4 flex grow justify-center gap-5 font-inter font-medium leading-6 text-green-200">
+        <div
+          className="m-4 flex grow cursor-pointer justify-center gap-5 font-inter font-medium leading-6 text-green-200"
+          onClick={handleLogout}
+        >
           <LogOut />
-          <Link href="/">Log Out</Link>
+          Log Out
         </div>
       </aside>
     </>
