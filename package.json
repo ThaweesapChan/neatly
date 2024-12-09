@@ -20,6 +20,7 @@
     "embla-carousel-react": "^8.5.1",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.461.0",
+    "micro": "^10.0.1",
     "next": "^15.0.3",
     "pg": "^8.13.1",
     "react": "^19.0.0-rc-66855b96-20241106",
@@ -27,6 +28,7 @@
     "react-icons": "^5.4.0",
     "react-multi-carousel": "^2.8.5",
     "react-responsive-carousel": "^3.2.23",
+    "stripe": "^17.4.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
   },
