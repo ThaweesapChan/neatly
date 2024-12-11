@@ -1,7 +1,7 @@
 import supabase from "@/utils/supabaseClient";
 import { connectionPool } from "@/utils/db";
 import multer from "multer";
-import { cloudinaryUpload } from "@/utils/upload";
+//import { cloudinaryUpload } from "@/utils/upload";
 
 export const config = {
   api: {
@@ -86,7 +86,7 @@ export default async function handler(req, res) {
         }
 
         // อัปโหลดไฟล์ avatar ไปยัง Cloudinary
-        const avatarUrl = await cloudinaryUpload(req.files["avatar"][0]);
+        //const avatarUrl = await cloudinaryUpload(req.files["avatar"][0]);
 
         // อัปเดต URL ของ avatar ในฐานข้อมูล
         const { data: updatedData, error: updateError } = await supabase
