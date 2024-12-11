@@ -1,14 +1,11 @@
-import Homepage from "./homepage";
-import Navbar from "@/component/navbar";
-import Footer from "@/component/footer";
-import Searchresult from "../component/searchresult";
 
-import Searchresultpage from "./searchresultpage/idex";
+import Homepage from "./homepage";
 export default function Home() {
   return (
     <div>
-      {/* landing page */}
-      <Homepage />
+     
+      <Homepage/>
+
     </div>
   );
 }
