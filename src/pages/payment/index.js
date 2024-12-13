@@ -1,10 +1,12 @@
 import Navbar from "@/component/navbar";
-import Basicinformation from "./step1";
+import Step3 from "@/component/payment/step3/step3";
+import { FormCash } from "@/component/payment/step3/cash";
 
 export default function Booking() {
   return (
     <>
-      <Basicinformation />
+      <Navbar />
+      <Step3 />
     </>
   );
 }
