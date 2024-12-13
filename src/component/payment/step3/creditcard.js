@@ -184,7 +184,7 @@ export function FormCreditCard() {
 export default function CreditCard() {
   return (
     <Elements stripe={stripePromise}>
-      <FormCreditCard/>
+      <FormCreditCard />
     </Elements>
   );
 }
