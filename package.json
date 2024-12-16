@@ -11,21 +11,28 @@
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
-    "@radix-ui/react-slot": "^1.1.0",
     "@stripe/react-stripe-js": "^3.0.0",
     "@stripe/stripe-js": "^5.2.0",
+    "@supabase/supabase-js": "^2.47.5",
+    "@radix-ui/react-slot": "^1.1.1",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
-    "@supabase/supabase-js": "^2.47.2",
+    
+
     "axios": "^1.7.8",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "embla-carousel-react": "^8.5.1",
+
+    "express": "^4.21.2",
+
     "esm": "^3.2.25",
     "fs": "^0.0.1-security",
+
     "jsonwebtoken": "^9.0.2",
+    "lucide": "^0.468.0",
     "lucide-react": "^0.461.0",
     "micro": "^10.0.1",
     "multer": "^1.4.5-lts.1",
@@ -39,7 +46,10 @@
     "stripe": "^17.4.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^11.0.3"
+
+    "uuid": "^11.0.3",
+    "uuidv4": "^6.2.13"
+
   },
   "devDependencies": {
     "daisyui": "^4.12.14",

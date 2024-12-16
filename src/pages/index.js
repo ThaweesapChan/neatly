@@ -1,8 +1,8 @@
-import Homepage from "./homepage";
+import RoomProperty from "./agent/roomproperty";
 export default function Home() {
   return (
     <div>
-      <Homepage />
+      <RoomProperty />
     </div>
   );
 }
