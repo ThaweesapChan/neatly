@@ -2,9 +2,9 @@ import React from "react";
 
 export default function Bookingdetail() {
   return (
-    <>
+    <div>
       <div className="space-y-4 rounded-lg bg-[#2F4C43] p-4 text-white">
-        <div className="flex items-center justify-between bg-">
+        <div className="bg- flex items-center justify-between">
           <h2 className="flex items-center gap-2">
             <svg
               className="h-5 w-5"
@@ -68,5 +68,6 @@ export default function Bookingdetail() {
         </p>
       </div>
     </>
+    </div>
   );
 }
