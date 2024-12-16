@@ -11,6 +11,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/component/button";
+import PaymentFailed from "../../../pages/payment/payment-failed";
 
 // โหลด Stripe ด้วย Publishable Key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
@@ -26,6 +27,10 @@ export function FormCreditCard() {
   const handleBack = () => {
     console.log("Back button clicked");
     router.push("http://localhost:3000");
+  };
+
+  const handlePaymentFailed = () => {
+    router.push("http://localhost:3000/payment/payment-failed");
   };
 
   const handleSubmit = async (e) => {
@@ -52,6 +57,7 @@ export function FormCreditCard() {
     });
 
     if (error) {
+      handlePaymentFailed();
       console.error("Error creating payment method:", error);
       alert("Error: " + error.message);
     } else {
@@ -184,7 +190,7 @@ export function FormCreditCard() {
 export default function CreditCard() {
   return (
     <Elements stripe={stripePromise}>
-      <FormCreditCard/>
+      <FormCreditCard />
     </Elements>
   );
 }
