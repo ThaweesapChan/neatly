@@ -186,7 +186,7 @@ export function FormCreditCard() {
   );
 }
 
-// Test Component ที่ครอบ Step3 ด้วย <Elements>
+// Test Component ที่ครอบ Step3 ด้วย <Elements>//
 export default function CreditCard() {
   return (
     <Elements stripe={stripePromise}>
