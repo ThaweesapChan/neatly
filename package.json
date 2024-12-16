@@ -33,7 +33,8 @@
     "stripe": "^17.4.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "daisyui": "^4.12.14",
