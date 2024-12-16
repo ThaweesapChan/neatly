@@ -62,9 +62,9 @@ export default function Testimonial() {
   };
 
   return (
-    <div className="relative mx-auto w-full bg-green-200 px-4 pb-44 pt-16">
-      <div className="space-y-12 text-center">
-        <h2 className="mb-8 font-notoSerif text-5xl font-medium text-green-800">
+    <div className="relative mx-auto w-full bg-[#E6EBE9] px-4 pb-44 pt-16 md:py-48">
+      <div className="space-y-16 text-center">
+        <h2 className="mb-8 font-notoSerif text-5xl font-medium text-green-800 md:-translate-y-12">
           Our Customer Says
         </h2>
 
