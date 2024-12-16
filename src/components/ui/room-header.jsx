@@ -9,7 +9,7 @@ export default function RoomHeader() {
 
   // ฟังก์ชันที่จะทำงานเมื่อคลิกปุ่ม
   const handleCreateRoom = () => {
-    router.push("/createRoom"); // ลิงค์ไปยังหน้า createRoom
+    router.push("/agent/roomproperty/createRoom"); // ลิงค์ไปยังหน้า createRoom
   };
 
   return (
