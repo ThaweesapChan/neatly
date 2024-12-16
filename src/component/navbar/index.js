@@ -275,7 +275,10 @@ function Navbar() {
                       <CreditCard className="text-gray-500" />
                       Payment Method
                     </li>
-                    <li className="flex w-full items-center gap-7 p-4">
+                    <li
+                      className="flex w-full items-center gap-7 p-4"
+                      onClick={handleHistory}
+                    >
                       <BriefcaseBusiness className="text-gray-500" />
                       Booking History
                     </li>
