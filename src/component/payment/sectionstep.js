@@ -1,4 +1,4 @@
-export function SectionsStep() {
+export function SectionsStep3() {
   return (
     <div className="flex items-start justify-start bg-slate-200">
       <div className="m-12 space-y-4 p-2">

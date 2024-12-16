@@ -1,15 +1,19 @@
-import CreditCard from "@/component/payment/step3/creditcard";
-import Cash from "@/component/payment/step3/cash";
-import { ConditionRefund, SectionsStep } from "@/component/payment/sectionstep";
+import CreditCard from "@/component/payment/creditcard";
+import Cash from "@/component/payment/cash";
+import {
+  ConditionRefund,
+  SectionsStep3,
+} from "@/component/payment/sectionstep";
 import { useState } from "react";
+import Bookingdetail from "../../../component/payment/bookingdetail";
 
 export default function Step3() {
   const [selectedPayment, setSelectedPayment] = useState("credit");
 
   return (
     <>
-      <SectionsStep />
-      <div className="flex justify-start bg-slate-200">
+      <SectionsStep3 />
+      <div className="flex h-max justify-start bg-slate-200">
         <div className="flex h-screen w-[1150px] gap-4 bg-slate-200 px-12">
           {/* ด้านซ้าย */}
           <div className="mx-auto h-max w-96 rounded border bg-white p-4 shadow-md md:w-[690px]">
@@ -52,9 +56,10 @@ export default function Step3() {
 
           {/* ด้านขวา */}
           <div className="flex flex-col gap-4">
-            <div className="hidden h-12 bg-green-800 md:block md:w-[385px]">
-              Booking Detail
+            <div className="hidden md:block md:w-[385px]">
+              <Bookingdetail />
             </div>
+
             <div className="hidden md:block">
               <ConditionRefund />
             </div>
