@@ -16,7 +16,7 @@ import {
 function Navbar() {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState({});
   const router = useRouter();
 
   const toggleMenu = () => {
@@ -42,6 +42,10 @@ function Navbar() {
 
   const handleHomepage = () => {
     router.push("/");
+  };
+
+  const handleHistory = () => {
+    router.push("/bookinghistory");
   };
 
   const handleScrollTo = (id) => {
@@ -72,8 +76,10 @@ function Navbar() {
   }
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (isLoggedIn) {
+      getData();
+    }
+  }, [isLoggedIn]);
 
   return (
     <>
@@ -90,6 +96,7 @@ function Navbar() {
               width={170}
               height={100}
               alt="logo"
+              style={{ width: "170px", height: "auto" }}
               onClick={handleHomepage}
             />
           </div>
@@ -138,9 +145,9 @@ function Navbar() {
                       />
                     </div>
                     <span className="font-openSans text-sm font-normal text-gray-700">
-                      {name.data?.first_name || ""}
+                      {name?.data?.first_name || ""}
                       {"  "}
-                      {name.data?.last_name || ""}
+                      {name?.data?.last_name || ""}
                     </span>
                   </div>
                 </DropdownMenuTrigger>
@@ -153,7 +160,7 @@ function Navbar() {
                     <CreditCard className="mr-2 text-gray-500" />
                     Payment Method
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleHistory}>
                     <BriefcaseBusiness className="mr-2 text-gray-500" />
                     Booking History
                   </DropdownMenuItem>
@@ -193,7 +200,13 @@ function Navbar() {
             } transition-transform duration-300 ease-in-out md:hidden`}
           >
             <div className="flex items-center justify-between border-b border-gray-200 p-4">
-              <Image src="/asset/logo.png" width={150} height={50} alt="logo" />
+              <Image
+                src="/asset/logo.png"
+                width={150}
+                height={50}
+                alt="logo"
+                style={{ width: "150px", height: "auto" }}
+              />
               <button className="mx-4 text-2xl text-black" onClick={toggleMenu}>
                 ✕
               </button>
@@ -246,9 +259,9 @@ function Navbar() {
                       />
                     </div>
                     <span className="-translate-y-4 font-openSans text-sm font-normal text-gray-700">
-                      {name.data?.first_name || ""}
+                      {name?.data?.first_name || ""}
                       {"  "}
-                      {name.data?.last_name || ""}
+                      {name?.data?.last_name || ""}
                     </span>
                   </div>
 
