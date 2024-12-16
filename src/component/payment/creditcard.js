@@ -1,5 +1,7 @@
 import { ConditionRefund } from "@/component/payment/sectionstep";
+import Bookingdetail from "@/component/payment/bookingdetail";
 import { useState } from "react";
+import { useBooking } from "@/lib/BookingContext";
 import { useRouter } from "next/router";
 import {
   CardExpiryElement,
@@ -11,7 +13,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/component/button";
-import PaymentFailed from "../../../pages/payment/payment-failed";
+import PaymentFailed from "../../pages/payment/payment-failed";
 
 // โหลด Stripe ด้วย Publishable Key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
@@ -24,9 +26,11 @@ export function FormCreditCard() {
   const [promotionCode, setPromotionCode] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { bookingData, setBookingData } = useBooking();
+
   const handleBack = () => {
     console.log("Back button clicked");
-    router.push("http://localhost:3000");
+    router.push("http://localhost:3000/payment/step2");
   };
 
   const handlePaymentFailed = () => {
@@ -61,8 +65,12 @@ export function FormCreditCard() {
       console.error("Error creating payment method:", error);
       alert("Error: " + error.message);
     } else {
-      console.log("PaymentMethod created:", paymentMethod);
-      console.log("Payment method created successfully!");
+      setBookingData((prev) => ({
+        ...prev,
+        paymentMethod: { cardOwner, promotionCode },
+      }));
+      console.log("Updated Booking Context:", bookingData);
+      console.log("PaymentMethod created success:", paymentMethod);
     }
 
     setLoading(false);
@@ -156,8 +164,9 @@ export function FormCreditCard() {
         </div>
 
         {/* Booking Detail */}
-
-        <div className="h-12 w-full bg-green-800 md:hidden">Booking Detail</div>
+        <div className="md:hidden">
+          <Bookingdetail />
+        </div>
 
         {/* Conditions refund */}
         <div className="md:hidden">
