@@ -3,6 +3,7 @@ import { SectionsStep1 } from "@/component/payment/sectionstep";
 
 export default function Basicinformation() {
   return (
+    /* Page 1 */
     <div>
       <div>
         <SectionsStep1 />
