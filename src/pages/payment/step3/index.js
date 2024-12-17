@@ -1,5 +1,7 @@
 import CreditCard from "@/component/payment/creditcard";
 import Cash from "@/component/payment/cash";
+import Navbar from "@/component/navbar";
+
 import {
   ConditionRefund,
   SectionsStep3,
@@ -12,9 +14,10 @@ export default function Step3() {
 
   return (
     <>
+      <Navbar />
       <SectionsStep3 />
-      <div className="flex h-max justify-start bg-slate-200">
-        <div className="flex h-screen w-[1150px] gap-4 bg-slate-200 px-12">
+      <div className="mb-8 flex w-screen justify-center bg-slate-100">
+        <div className="flex h-screen w-[1150px] gap-4 bg-slate-100 px-12">
           {/* ด้านซ้าย */}
           <div className="mx-auto h-max w-96 rounded border bg-white p-4 shadow-md md:w-[690px]">
             {/* ปุ่มเลือกการชำระเงิน */}
@@ -33,7 +36,6 @@ export default function Step3() {
                   Credit Card
                 </h1>
               </button>
-
               {/* ปุ่ม Cash */}
               <button
                 onClick={() => setSelectedPayment("cash")}
@@ -47,19 +49,16 @@ export default function Step3() {
                 <h1 className="font-inter text-xl font-semibold">Cash</h1>
               </button>
             </div>
-
             {/* แสดงคอมโพเนนต์ตามปุ่มที่เลือก */}
             <div>
               {selectedPayment === "credit" ? <CreditCard /> : <Cash />}
             </div>
           </div>
-
           {/* ด้านขวา */}
           <div className="flex flex-col gap-4">
             <div className="hidden md:block md:w-[385px]">
               <Bookingdetail />
             </div>
-
             <div className="hidden md:block">
               <ConditionRefund />
             </div>

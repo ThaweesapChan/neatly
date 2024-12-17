@@ -1,5 +1,5 @@
 import Navbar from "@/component/navbar";
-import Basicinformation from "./step1/idex";
+import Basicinformation from "./step1";
 
 export default function Booking() {
   return (

@@ -1,13 +1,48 @@
 import React from "react";
+import Navbar from "@/component/navbar";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useBooking } from "@/lib/BookingContext";
 import { SectionsStep1 } from "@/component/payment/sectionstep";
 
 export default function Basicinformation() {
+  const router = useRouter();
+  const { bookingData, setBookingData } = useBooking(); // ใช้ Context
+  const [formData, setFormData] = useState({
+    firstName: bookingData.basicInfo.firstName || "",
+    lastName: bookingData.basicInfo.lastName || "",
+    email: bookingData.basicInfo.email || "",
+    phoneNumber: bookingData.basicInfo.phoneNumber || "",
+    dateOfBirth: bookingData.basicInfo.dateOfBirth || "",
+    country: bookingData.basicInfo.country || "",
+  });
+  console.log(formData)
+
+  // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ฟังก์ชันเมื่อกดปุ่ม Back
+  const handleBack = () => {
+    router.push("http://localhost:3000/homepage");
+  };
+
+  // ฟังก์ชันเมื่อกดปุ่ม Next
+  const handleNext = (e) => {
+    e.preventDefault();
+    setBookingData((prev) => ({
+      ...prev,
+      basicInfo: { ...formData },
+    }));
+    router.push("http://localhost:3000/payment/step2");
+  };
+
   return (
-    /* Page 1 */
     <div>
-      <div>
-        <SectionsStep1 />
-      </div>
+      <Navbar />
+      <SectionsStep1 />
       <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
         <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm">
           <div className="space-y-2">
@@ -16,7 +51,8 @@ export default function Basicinformation() {
             </h1>
           </div>
 
-          <form className="space-y-6">
+          {/* ฟอร์มกรอกข้อมูล */}
+          <form className="space-y-6" onSubmit={handleNext}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label
@@ -29,6 +65,8 @@ export default function Basicinformation() {
                   type="text"
                   id="firstName"
                   name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   placeholder="Enter your first name"
                 />
@@ -45,6 +83,8 @@ export default function Basicinformation() {
                   type="text"
                   id="lastName"
                   name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   placeholder="Enter your last name"
                 />
@@ -62,6 +102,8 @@ export default function Basicinformation() {
                 type="email"
                 id="email"
                 name="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter your email"
               />
@@ -78,6 +120,8 @@ export default function Basicinformation() {
                 type="tel"
                 id="phoneNumber"
                 name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter your phone number"
               />
@@ -94,6 +138,8 @@ export default function Basicinformation() {
                 type="date"
                 id="dateOfBirth"
                 name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
@@ -108,6 +154,8 @@ export default function Basicinformation() {
               <select
                 id="country"
                 name="country"
+                value={formData.country}
+                onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               >
                 <option value="">Select your country</option>
@@ -125,6 +173,7 @@ export default function Basicinformation() {
               <button
                 type="button"
                 className="rounded-md border border-gray-300 bg-white px-4 py-2 font-inter text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                onClick={handleBack}
               >
                 Back
               </button>
