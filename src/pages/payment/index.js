@@ -1,11 +1,11 @@
 import Navbar from "@/component/navbar";
-import Step3 from "@/pages/payment/step3";
+import Basicinformation from "./step1/idex";
 
 export default function Booking() {
   return (
     <>
       <Navbar />
-      <Step3 />
+      <Basicinformation />
     </>
   );
 }
