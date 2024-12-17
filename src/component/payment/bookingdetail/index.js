@@ -27,34 +27,33 @@ export default function Bookingdetail() {
           </span>
         </div>
 
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div>
-              <div className="text-gray-300">Check-in</div>
-              <div>After 2:00 PM</div>
-            </div>
-            <div>
-              <div className="text-gray-300">Check-out</div>
-              <div>Before 12:00 PM</div>
-            </div>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div>
+            <div className="text-gray-300">Check-in</div>
+            <div>After 2:00 PM</div>
           </div>
-
-          <div className="text-sm">
-            <div>Th, 19 Oct 2022 - Fri, 20 Oct 2022</div>
-            <div>2 Guests</div>
+          <div>
+            <div className="text-gray-300">Check-out</div>
+            <div>Before 12:00 PM</div>
           </div>
+        </div>
 
-          <div className="border-t border-gray-600 pt-2">
-            <div className="flex items-center justify-between text-sm">
-              <span>Superior Garden View Room</span>
-              <span>2,500.00</span>
-            </div>
+        <div className="text-sm">
+          <div>Th, 19 Oct 2022 - Fri, 20 Oct 2022</div>
+          <div>2 Guests</div>
+        </div>
+
+        <div className="border-t border-gray-600 pt-2">
+          <div className="flex items-center justify-between text-sm">
+            <span>Superior Garden View Room</span>
+            <span>2,500.00</span>
           </div>
+        </div>
 
-          <div className="border-t border-gray-600 pt-2">
-            <div className="flex items-center justify-between">
-              <span>Total</span>
-              <span className="text-lg font-semibold">THB 2,500.00</span>
-            </div>
+        <div className="border-t border-gray-600 pt-2">
+          <div className="flex items-center justify-between">
+            <span>Total</span>
+            <span className="text-lg font-semibold">THB 2,500.00</span>
           </div>
         </div>
       </div>
