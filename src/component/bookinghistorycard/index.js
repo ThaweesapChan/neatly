@@ -74,7 +74,7 @@ function BookingHistoryCard() {
 
   return (
     <>
-      <div className="card-container w-full space-y-6">
+      <div className="card-container w-full md:space-y-6 md:px-20">
         {bookings.map((booking) => {
           const matchedImage =
             roompicture.find((room) => room.label === booking.rooms.room_type)
@@ -83,7 +83,7 @@ function BookingHistoryCard() {
           return (
             <div
               key={booking.booking_id}
-              className="booking-card overflow-hidden rounded-lg bg-white shadow-md"
+              className="booking-card overflow-hidden rounded-lg shadow-md md:shadow-none"
             >
               <div className="md:flex">
                 {/* รูปภาพ */}
@@ -93,7 +93,7 @@ function BookingHistoryCard() {
                     width={500}
                     height={250}
                     alt={booking.rooms.room_type}
-                    className="h-48 w-full object-cover md:h-full"
+                    className="h-48 w-full object-cover md:h-full md:rounded-md md:object-contain md:object-top"
                   />
                 </div>
 
@@ -109,19 +109,19 @@ function BookingHistoryCard() {
                   </div>
 
                   {/* วันที่ Check-in และ Check-out */}
-                  <div className="my-6 font-inter text-gray-800">
-                    <p className="md:flex">
+                  <div className="my-6 font-inter text-gray-800 md:flex md:gap-8">
+                    <p className="md:flex md:flex-col">
                       <p className="font-semibold">Check-in:</p>{" "}
                       {formatDate(booking.check_in_date)} | After 2:00 PM
                     </p>
-                    <p className="md:flex">
+                    <p className="md:flex md:flex-col">
                       <p className="font-semibold">Check-out:</p>{" "}
                       {formatDate(booking.check_out_date)} | Before 12:00 PM
                     </p>
                   </div>
 
                   {/* Booking Detail */}
-                  <div className="bg-gray-50 p-4 font-inter">
+                  <div className="bg-gray-200 p-4 font-inter shadow-sm">
                     <button
                       onClick={() => toggleDetails(booking.booking_id)}
                       className="flex w-full items-center justify-between"
@@ -148,8 +148,10 @@ function BookingHistoryCard() {
                           </span>
                           <span>
                             Payment success via{" "}
-                            {booking.payment[0]?.payment_method || "N/A"} -
-                            ***888
+                            <span className="font-semibold">
+                              {booking.payment[0]?.payment_method || "N/A"}
+                            </span>{" "}
+                            - ***888
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -159,11 +161,11 @@ function BookingHistoryCard() {
                           </span>
                         </div>
                         <div className="flex justify-between text-gray-700">
-                          <span>{booking.standard_requests}</span>
+                          <span>{booking.special_requests}</span>
                           <span className="mb-2 font-semibold text-gray-900">
-                            {/* {parseFloat(200).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                        })} */}
+                            {parseFloat(200).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                            })}
                           </span>
                         </div>
                         <div className="flex justify-between text-gray-700">
@@ -185,20 +187,12 @@ function BookingHistoryCard() {
                             )}
                           </span>
                         </div>
-                        <div className="bg-[#E4E6ED] p-4">
+                        <div className="bg-gray-300 p-4">
                           <p className="font-semibold text-gray-700">
                             Additional Request
                           </p>
                           <div className="text-gray-500">
-                            {booking.special_requests
-                              ? Object.entries(
-                                  typeof booking.special_requests === "string"
-                                    ? JSON.parse(booking.special_requests)
-                                    : booking.special_requests,
-                                ).map(([key, value]) => (
-                                  <p key={key}>{value}</p>
-                                ))
-                              : "None"}
+                            {booking.additional_request}
                           </div>
                         </div>
                       </div>
@@ -206,31 +200,32 @@ function BookingHistoryCard() {
                   </div>
 
                   {/* ปุ่ม */}
-                  <div className="mt-6 flex flex-wrap gap-2">
+                  <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
                     <button
                       onClick={handleRoomDetail}
-                      className="flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none"
+                      className="z-10 flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none md:cursor-pointer"
                     >
                       Room Detail
                     </button>
 
                     {booking.canChangeDate && (
-                      <button className="flex-grow rounded-md bg-orange-500 px-4 py-2 font-semibold text-white md:flex-none">
+                      <button className="z-10 flex-grow rounded-md bg-orange-500 px-4 py-2 font-semibold text-white md:flex-none">
                         Change Date
                       </button>
                     )}
                   </div>
 
                   {/* Cancel Button */}
-                  <div className="mt-2 text-right">
+                  <div className="mt-2 text-right md:flex md:-translate-y-12">
                     {booking.canCancelBooking && (
-                      <button className="px-4 py-2 font-medium text-orange-500 hover:text-red-600">
+                      <button className="px-4 py-2 font-semibold text-orange-500 hover:text-red-600">
                         Cancel Booking
                       </button>
                     )}
                   </div>
                 </div>
               </div>
+              <hr className="my-10 w-full border-b bg-gray-900" />
             </div>
           );
         })}
