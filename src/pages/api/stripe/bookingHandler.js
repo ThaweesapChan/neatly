@@ -9,35 +9,25 @@ export default async function bookingHandler(req, res) {
   if (req.method === "POST") {
     console.log("Request received:", req.body);
     const {
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      bookingDate,
+      basicInfo,
+      specialRequest,
       checkInDate,
       checkOutDate,
-      specialRequests,
-      amount,
-      guests,
-      totalPrice,
-      country,
-      promotionCode,
       originalPrice,
-      dateOfBirth,
+      promotionCode,
+      totalPrice,
+      amount,
     } = req.body;
 
     try {
-      // สร้าง booking_id
-      const bookingId = uuidv4();
-      console.log("Generated bookingId:", bookingId); // ตรวจสอบการสร้าง bookingId
-
       // Validate request body to ensure required fields are provided
       if (
-        !firstName ||
-        !lastName ||
-        !email ||
-        !phoneNumber ||
-        !bookingDate ||
+        !basicInfo.firstName ||
+        !basicInfo.lastName ||
+        !basicInfo.email ||
+        !basicInfo.phoneNumber ||
+        !basicInfo.dateOfBirth ||
+        !basicInfo.country ||
         !checkInDate ||
         !checkOutDate ||
         !totalPrice
@@ -46,33 +36,42 @@ export default async function bookingHandler(req, res) {
         return res.status(400).json({ message: "Missing required fields" });
       }
 
+      // สร้าง booking_id
+      const bookingId = uuidv4();
+      console.log("Generated bookingId:", bookingId); // ตรวจสอบการสร้าง bookingId
+
       // บันทึกข้อมูลการจองใน Database
-      const { error } = await supabase.from("bookings").insert({
+      // Prepare booking data
+      const bookingData = {
         booking_id: bookingId,
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone_number: phoneNumber,
-        booking_date: bookingDate,
+        first_name: basicInfo.firstName,
+        last_name: basicInfo.lastName,
+        email: basicInfo.email,
+        phone_number: basicInfo.phoneNumber,
+        date_of_birth: basicInfo.dateOfBirth,
+        country: basicInfo.country,
         check_in_date: checkInDate,
         check_out_date: checkOutDate,
-        special_requests: specialRequests,
-        amount: amount,
-        country: country,
-        date_of_birth: dateOfBirth,
+        special_requests: specialRequest?.specialRequests || null,
+        standard_requests: specialRequest?.standardRequests || null,
+        additional_request: specialRequest?.additionalRequest || null, // ใช้ String ไม่ใช่ Array
         original_price: originalPrice,
-        promotion_code: promotionCode,
+        promotion_code: promotionCode || null,
+        status: "pending",
+        total_price: totalPrice,
+      };
 
-        guests,
-        status: "pending", // เริ่มต้นเป็น pending
-        total_price: totalPrice, // ระบุ total_price
-      });
+      // Insert booking to database
+      const { error: insertError } = await supabase
+        .from("bookings")
+        .insert(bookingData);
 
-      if (error) {
-        console.error("Error inserting booking to database:", error); // Log error ที่เกิดจาก Supabase
-        return res
-          .status(500)
-          .json({ message: "Failed to save booking", error });
+      if (insertError) {
+        console.error("Error inserting booking to database:", insertError);
+        return res.status(500).json({
+          message: "Failed to save booking",
+          error: insertError,
+        });
       }
 
       console.log("Booking saved successfully in database"); // ตรวจสอบว่า INSERT สำเร็จ
