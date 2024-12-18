@@ -1,20 +1,12 @@
-'use client'
+"use client";
 
-import { useState } from "react"
-import Sidebar from "@/component/sidebar"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-// import { Textarea } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Plus, Upload } from 'lucide-react'
+import { useState } from "react";
+import Sidebar from "@/component/sidebar";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Plus, Upload } from "lucide-react";
 
 export default function CreateRoom() {
   const [formData, setFormData] = useState({
@@ -29,24 +21,24 @@ export default function CreateRoom() {
     mainImage: null,
     imageGallery: [],
     amenities: [],
-  })
+  });
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const data = {
       roomNumber: formData.roomNumber || null,
-      roomType: formData.roomType,
+      roomType: formData.roomType || "",
       roomSize: formData.roomSize || null,
-      bedType: formData.bedType,
-      guests: formData.guests,
+      bedType: formData.bedType || "",
+      guests: formData.guests || 0,
       pricePerNight: formData.pricePerNight || null,
       promotionPrice: formData.promotionPrice || null,
-      roomDescription: formData.roomDescription,
-      mainImage: formData.mainImage,
-      imageGallery: formData.imageGallery,
-      amenities: formData.amenities.join(","),
-    }
+      roomDescription: formData.roomDescription || "",
+      mainImage: formData.mainImage || null,
+      imageGallery: formData.imageGallery || [],
+      amenities: formData.amenities.join(",") || "",
+    };
 
     try {
       const response = await fetch("/api/createRoom", {
@@ -55,24 +47,24 @@ export default function CreateRoom() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      })
+      });
 
-      const result = await response.json()
-      console.log(result)
+      const result = await response.json();
+      console.log(result);
     } catch (error) {
-      console.error("Error creating room:", error)
+      console.error("Error creating room:", error);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <Sidebar/>
-    
+      <Sidebar />
+
       {/* Main Content */}
       <div className="flex-1 p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-semibold">Create New Room</h1>
             <div className="space-x-2">
               <Button variant="outline">Cancel</Button>
@@ -80,7 +72,7 @@ export default function CreateRoom() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="rounded-lg bg-white p-6 shadow">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -99,11 +91,20 @@ export default function CreateRoom() {
                   <Label htmlFor="roomType">Room Type</Label>
                   <Input
                     id="roomType"
+                    list="roomOptions"
                     value={formData.roomType}
                     onChange={(e) =>
                       setFormData({ ...formData, roomType: e.target.value })
                     }
                   />
+                  <datalist id="roomOptions">
+                    <option value="Superior Garden View" />
+                    <option value="Deluxe" />
+                    <option value="Premier Sea View" />
+                    <option value="Superior" />
+                    <option value="Supreme" />
+                    <option value="Suite" />
+                  </datalist>
                 </div>
 
                 <div className="space-y-2">
@@ -118,23 +119,24 @@ export default function CreateRoom() {
                   />
                 </div>
 
-                {/* <div className="space-y-2">
+                <div className="space-y-2">
                   <Label htmlFor="bedType">Bed Type</Label>
-                  <Select
+                  <Input
+                    id="bedType"
+                    list="bedOptions"
                     value={formData.bedType}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, bedType: value })
+                    onChange={(e) =>
+                      setFormData({ ...formData, bedType: e.target.value })
                     }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select bed type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Double bed">Double bed</SelectItem>
-                      <SelectItem value="Single bed">Single bed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div> */}
+                    className="w-full"
+                  />
+                  <datalist id="bedOptions">
+                    <option value="Single bed" />
+                    <option value="Double bed" />
+                    <option value="Queen bed" />
+                    <option value="King bed" />
+                  </datalist>
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="guests">Guests</Label>
@@ -155,7 +157,10 @@ export default function CreateRoom() {
                     type="number"
                     value={formData.pricePerNight}
                     onChange={(e) =>
-                      setFormData({ ...formData, pricePerNight: e.target.value })
+                      setFormData({
+                        ...formData,
+                        pricePerNight: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -167,7 +172,10 @@ export default function CreateRoom() {
                     type="number"
                     value={formData.promotionPrice}
                     onChange={(e) =>
-                      setFormData({ ...formData, promotionPrice: e.target.value })
+                      setFormData({
+                        ...formData,
+                        promotionPrice: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -188,7 +196,7 @@ export default function CreateRoom() {
               <div className="space-y-4">
                 <div>
                   <Label>Main Image</Label>
-                  <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-8">
+                  <div className="mt-2 rounded-lg border-2 border-dashed border-gray-300 p-8">
                     <div className="flex flex-col items-center">
                       <Upload className="h-8 w-8 text-gray-400" />
                       <p className="mt-2 text-sm text-gray-500">Upload Photo</p>
@@ -198,10 +206,12 @@ export default function CreateRoom() {
 
                 <div>
                   <Label>Image Gallery</Label>
-                  <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-8">
+                  <div className="mt-2 rounded-lg border-2 border-dashed border-gray-300 p-8">
                     <div className="flex flex-col items-center">
                       <Upload className="h-8 w-8 text-gray-400" />
-                      <p className="mt-2 text-sm text-gray-500">Upload Photos</p>
+                      <p className="mt-2 text-sm text-gray-500">
+                        Upload Photos
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -218,7 +228,7 @@ export default function CreateRoom() {
                       // Handle adding amenity
                     }}
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="mr-2 h-4 w-4" />
                     Add Amenity
                   </Button>
                 </div>
@@ -228,6 +238,5 @@ export default function CreateRoom() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
