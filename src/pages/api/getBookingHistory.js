@@ -20,6 +20,7 @@ export default async function handler(req, res) {
       await supabase.auth.getUser(token);
 
     if (userError || !userData?.user) {
+      // console.error("Token validation failed:", userError?.message);
       return res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
 
@@ -33,6 +34,7 @@ export default async function handler(req, res) {
         booking_id,
         check_in_date,
         check_out_date,
+        guests,
         total_price,
         special_requests,
         standard_requests,
@@ -42,14 +44,19 @@ export default async function handler(req, res) {
           room_type,
           room_image_url,
           price
-        )
+        ),
         payment:payments ( payment_method )
       `,
       )
       .eq("user_id", userId) // Filter เฉพาะ user นี้
       .order("booking_date", { ascending: false }); // เรียงตาม booking_date ใหม่ -> เก่า
 
-    if (response.error) throw response.error;
+    if (error) {
+      // console.error("Supabase Error:", error.message);
+      return res
+        .status(500)
+        .json({ message: "Database query error", error: error.message });
+    }
 
     if (!bookings || bookings.length === 0) {
       return res
@@ -57,17 +64,33 @@ export default async function handler(req, res) {
         .json({ message: "No bookings found", bookings: [] });
     }
 
-    const enrichedBookings = bookings.map((booking) => {
+    const updatedBookings = bookings.map((booking) => {
       const checkInDate = new Date(booking.check_in_date);
       const checkOutDate = new Date(booking.check_out_date);
+      const bookingTime = new Date(booking.booking_date);
+      const now = new Date();
+
+      // คำนวณจำนวนวันที่พัก
       const stay = Math.ceil(
         (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24),
       );
-      return { ...booking, stay };
+
+      // คำนวณ canCancelBooking , canChangeDate และ canRefund
+      const canCancelBooking = now < checkInDate; // ปุ่ม cancel ได้เฉพาะก่อนวัน check-in
+      const canChangeDate = (now - bookingTime) / 3600000 < 24; // ไม่เกิน 24 ชั่วโมง
+      const canRefund = canChangeDate;
+
+      return {
+        ...booking,
+        stay,
+        canCancelBooking,
+        canChangeDate,
+        canRefund,
+      };
     });
 
     // ส่งข้อมูลกลับไปให้ frontend
-    res.status(200).json({ bookings: enrichedBookings });
+    res.status(200).json({ bookings: updatedBookings });
   } catch (err) {
     console.error("API Error:", err.message);
     res.status(500).json({ message: "Internal Server Error" });
