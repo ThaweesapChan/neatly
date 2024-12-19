@@ -13,6 +13,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/component/button";
+
 import PaymentFailed from "../../pages/payment/payment-failed";
 
 // โหลด Stripe ด้วย Publishable Key
@@ -63,7 +64,6 @@ export function FormCreditCard() {
     if (error) {
       handlePaymentFailed();
       console.error("Error creating payment method:", error);
-      alert("Error: " + error.message);
     } else {
       setBookingData((prev) => ({
         ...prev,
@@ -187,7 +187,7 @@ export function FormCreditCard() {
               loading ? "cursor-not-allowed bg-gray-400" : "bg-orange-500"
             }`}
           >
-            {loading ? "Processing..." : "Next"}
+            {loading ? "Processing..." : "Confirm Booking"}
           </button>
         </div>
       </form>

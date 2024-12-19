@@ -16,7 +16,7 @@ export default function Basicinformation() {
     dateOfBirth: bookingData.basicInfo.dateOfBirth || "",
     country: bookingData.basicInfo.country || "",
   });
-  console.log(formData)
+  console.log(formData);
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -62,6 +62,7 @@ export default function Basicinformation() {
                   First name
                 </label>
                 <input
+                  required
                   type="text"
                   id="firstName"
                   name="firstName"
@@ -80,6 +81,7 @@ export default function Basicinformation() {
                   Last name
                 </label>
                 <input
+                  required
                   type="text"
                   id="lastName"
                   name="lastName"
@@ -99,6 +101,7 @@ export default function Basicinformation() {
                 Email
               </label>
               <input
+                required
                 type="email"
                 id="email"
                 name="email"
@@ -117,6 +120,7 @@ export default function Basicinformation() {
                 Phone number
               </label>
               <input
+                required
                 type="tel"
                 id="phoneNumber"
                 name="phoneNumber"
@@ -135,6 +139,7 @@ export default function Basicinformation() {
                 Date of Birth
               </label>
               <input
+                required
                 type="date"
                 id="dateOfBirth"
                 name="dateOfBirth"
