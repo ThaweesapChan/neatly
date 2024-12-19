@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import CancelModal from "../modal";
 
 function BookingHistoryCard() {
   const [bookings, setBookings] = useState([]);
@@ -10,6 +11,24 @@ function BookingHistoryCard() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const [openDetails, setOpenDetails] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  const handleCancelClick = (booking) => {
+    setSelectedBooking(booking); // เก็บ Booking ที่เลือกใน state
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedBooking(null);
+  };
+
+  const handleConfirmCancel = () => {
+    console.log("Cancel confirmed for booking:", selectedBooking);
+    // ไว้ใส่ Logic การยกเลิก Booking
+    handleCloseModal();
+  };
 
   const handleRoomDetail = () => {
     router.push("/roomdetail");
@@ -85,7 +104,7 @@ function BookingHistoryCard() {
               key={booking.booking_id}
               className="booking-card overflow-hidden rounded-lg shadow-md md:shadow-none"
             >
-              <div className="md:flex">
+              <div className="md:flex md:gap-6">
                 {/* รูปภาพ */}
                 <div className="md:w-1/3">
                   <Image
@@ -203,7 +222,7 @@ function BookingHistoryCard() {
                   <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
                     <button
                       onClick={handleRoomDetail}
-                      className="z-10 flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none md:cursor-pointer"
+                      className="z-10 flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none md:cursor-pointer md:hover:text-orange-400"
                     >
                       Room Detail
                     </button>
@@ -218,11 +237,22 @@ function BookingHistoryCard() {
                   {/* Cancel Button */}
                   <div className="mt-2 text-right md:flex md:-translate-y-12">
                     {booking.canCancelBooking && (
-                      <button className="px-4 py-2 font-semibold text-orange-500 hover:text-red-600">
+                      <button
+                        className="px-4 py-2 font-semibold text-orange-500 hover:text-red-600"
+                        onClick={() => handleCancelClick(booking)}
+                      >
                         Cancel Booking
                       </button>
                     )}
                   </div>
+                  {/* Cancel Modal */}
+                  {isModalOpen && (
+                    <CancelModal
+                      booking={selectedBooking} // ส่ง Booking ที่เลือก
+                      onClose={handleCloseModal} // ฟังก์ชันปิด Modal
+                      onConfirm={handleConfirmCancel} // ฟังก์ชันยืนยันการยกเลิก
+                    />
+                  )}
                 </div>
               </div>
               <hr className="my-10 w-full border-b bg-gray-900" />
