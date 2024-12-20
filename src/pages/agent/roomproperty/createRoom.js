@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus} from "lucide-react";
 import RoomUploadForm from "@/components/ui/createRoomImage";
+import CreateAmenities from "@/components/ui/createAmenites";
 
 
 export default function CreateRoom() {
@@ -211,32 +212,23 @@ export default function CreateRoom() {
                   className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2"
                 />
               </div>
-              <hr />
 
               <div className="space-y-2">
-                <p className="font-inter text-lg font-semibold text-[#9AA1B9]">
+                <hr/>
+                <p className="font-inter text-lg font-semibold text-[#9AA1B9] mt-4">
                   Room Image
                 </p>
                 <RoomUploadForm />
               </div>
 
               <div>
-                <p className="font-inter text-lg font-semibold text-[#9AA1B9]">
+                <hr />
+                <p className="mt-4 font-inter text-lg font-semibold text-[#9AA1B9]">
                   Room Amenities
                 </p>
-                <Label>Room Amenities</Label>
+
                 <div className="mt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      // Handle adding amenity
-                    }}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Amenity
-                  </Button>
+                  <CreateAmenities />
                 </div>
               </div>
             </form>
