@@ -13,7 +13,7 @@ export default function CreateRoom() {
     roomNumber: "",
     roomType: "",
     roomSize: "",
-    bedType: "Double bed",
+    bedType: "",
     guests: 2,
     pricePerNight: "",
     promotionPrice: "",
@@ -183,14 +183,18 @@ export default function CreateRoom() {
 
               <div className="space-y-2">
                 <Label htmlFor="roomDescription">Room Description</Label>
-                {/* <Textarea
+                <textarea
                   id="roomDescription"
                   value={formData.roomDescription}
                   onChange={(e) =>
-                    setFormData({ ...formData, roomDescription: e.target.value })
+                    setFormData({
+                      ...formData,
+                      roomDescription: e.target.value,
+                    })
                   }
                   rows={4}
-                /> */}
+                  className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2"
+                />
               </div>
 
               <div className="space-y-4">
