@@ -2,66 +2,18 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Navbar from "@/component/navbar";
 import { Button } from "@/component/button";
-import { loadStripe } from "@stripe/stripe-js";
-import { useBooking } from "@/lib/BookingContext"; // Import Booking Context
-import {
-  Elements,
-  useStripe,
-  useElements,
-  CardNumberElement,
-} from "@stripe/react-stripe-js";
-
-import React, { useEffect } from "react";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
 
 export function PaymentFailed() {
   const router = useRouter();
-  const { bookingData } = useBooking(); // ใช้ Booking Context
-  const stripe = useStripe();
-  const elements = useElements();
 
-  console.log("ข้อมูลเก่า : ",bookingData);
-
-  const handleBack = () => {
+  const handleBackToPaymentDetail = () => {
     console.log("Back button clicked");
     router.push("http://localhost:3000/payment");
   };
 
   const handleRetryPayment = async () => {
-    if (!stripe || !elements) {
-      alert("Stripe.js ยังไม่พร้อมใช้งาน โปรดรอสักครู่...");
-      return;
-    }
-
-    const cardElement = elements.getElement(CardNumberElement);
-    if (!cardElement) {
-      alert("ไม่พบข้อมูลบัตร");
-      return;
-    }
-
-    try {
-      // Retry การชำระเงินโดยใช้ข้อมูลเดิมจาก bookingData
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: "card",
-        card: cardElement,
-        billing_details: {
-          name: bookingData.paymentMethod.cardOwner,
-        },
-      });
-
-      if (error) {
-        console.error("Retry payment failed:", error);
-        alert("ชำระเงินไม่สำเร็จ โปรดลองอีกครั้ง");
-      } else {
-        console.log("Retry payment success:", paymentMethod);
-        alert("ชำระเงินสำเร็จ");
-        router.push("http://localhost:3000/payment/success");
-      }
-    } catch (err) {
-      console.error("Error during retry:", err);
-      alert("เกิดข้อผิดพลาด โปรดลองอีกครั้ง");
-    }
+    console.log("Back button clicked");
+    router.push("http://localhost:3000/payment/step3");
   };
 
   return (
@@ -94,8 +46,9 @@ export function PaymentFailed() {
             type="1"
             name="Back to Payment details"
             style="w-[372px]"
-            onClick={handleBack}
+            onClick={handleBackToPaymentDetail}
           />
+
           <Button
             type="3"
             name="Retry payment"
@@ -111,22 +64,15 @@ export function PaymentFailed() {
             style="w-[150px]"
             onClick={handleRetryPayment} // เพิ่มการทำงาน Retry
           />
+
           <Button
             type="1"
             name="Back to Payment details"
             style="w-[372px]"
-            onClick={handleBack}
+            onClick={handleBackToPaymentDetail}
           />
         </div>
       </div>
     </>
-  );
-}
-
-export default function CreditCard() {
-  return (
-    <Elements stripe={stripePromise}>
-      <PaymentFailed />
-    </Elements>
   );
 }
