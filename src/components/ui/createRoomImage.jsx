@@ -1,0 +1,138 @@
+import React, { useState } from "react";
+import Image from "next/image";
+import {X, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+
+const RoomImage = () => {
+  const [mainImage, setMainImage] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
+ 
+  const handleMainImageUpload = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageFile = Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      });
+      setMainImage(imageFile);
+    }
+  };
+
+  const handleGalleryUpload = (e) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files).map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        }),
+      );
+      setGalleryImages((prev) => [...prev, ...newFiles]);
+    }
+  };
+
+  const removeGalleryImage = (index) => {
+    setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  
+  return (
+    <div className="space-y-8 p-1 py-5">
+      <div className="space-y-4">
+        <Label className="block text-base">Main Image *</Label>
+        <div className="grid gap-4 sm:grid-cols-4 ">
+          {/* แสดงภาพหลักถ้ามีการอัพโหลดภาพ */}
+          {mainImage && (
+            <div className="relative w-full pt-[70%]">
+              <Image
+                src={mainImage.preview}
+                alt="Main Image"
+                fill
+                className="rounded-lg object-cover"
+              />
+              {/* ปุ่มลบ (X) */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-2 text-orange-500 hover:bg-orange-50"
+                onClick={() => setMainImage(null)} // ลบภาพหลัก
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+          {/* ปุ่มอัพโหลดภาพใหม่เมื่อไม่มีการเลือกภาพ */}
+          {!mainImage && (
+            <label className="relative flex cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-[#F8F8F8] pt-[100%] transition-colors hover:bg-gray-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <Plus className="h-6 w-6 text-orange-500" /> {/* ไอคอน '+' */}
+                <span className="mt-2 text-sm text-orange-500">
+                  Upload photo
+                </span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleMainImageUpload} // ฟังก์ชันอัพโหลดรูป
+                />
+              </div>
+            </label>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <Label className="block text-base">
+          Image Gallery (At least 4 pictures) *
+        </Label>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-6">
+          {galleryImages.map((image, index) => (
+            <div key={index} className="relative w-full pt-[100%]">
+              <Image
+                src={image.preview}
+                alt={`Gallery image ${index + 1}`}
+                fill
+                className="rounded-lg object-cover"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-2 text-orange-500 hover:bg-orange-50"
+                onClick={() => removeGalleryImage(index)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          {galleryImages.length < 8 && (
+            <label
+              className={`relative flex cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-[#F8F8F8] pt-[100%] transition-colors hover:bg-gray-50`}
+            >
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <Plus className="h-6 w-6 text-orange-500" />{" "}
+                {/* Changed to '+' icon */}
+                <span className="mt-2 text-sm text-orange-500">
+                  Upload photo
+                </span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  multiple
+                  onChange={handleGalleryUpload}
+                />
+              </div>
+            </label>
+          )}
+        </div>
+        {galleryImages.length < 4 && (
+          <p className="text-sm text-red-500">
+            Please upload at least {4 - galleryImages.length} more images
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default RoomImage;

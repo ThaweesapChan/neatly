@@ -1,12 +1,11 @@
-"use client";
-
 import { useState } from "react";
 import Sidebar from "@/component/sidebar";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Upload } from "lucide-react";
+import { Plus} from "lucide-react";
+import RoomUploadForm from "@/components/ui/createRoomImage";
+
 
 export default function CreateRoom() {
   const [formData, setFormData] = useState({
@@ -62,19 +61,35 @@ export default function CreateRoom() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
-        <div className="mx-auto max-w-4xl">
+      <div className="flex-1 px-12 py-7">
+        <div className="max-w-full">
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-semibold">Create New Room</h1>
             <div className="space-x-2">
-              <Button variant="outline">Cancel</Button>
-              <Button onClick={handleSubmit}>Create</Button>
+              <Button
+                variant="outline"
+                className="border-[#E76B39] px-6 text-[#E76B39] hover:bg-orange-600 hover:text-white active:bg-[#C14817] active:text-white"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-[#C14817] px-6 hover:bg-orange-600 hover:text-white active:bg-[#E76B39] active:text-[#C14817]"
+                onClick={handleSubmit}
+              >
+                Create
+              </Button>
             </div>
           </div>
 
           <div className="rounded-lg bg-white p-6 shadow">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+            <form
+              onSubmit={handleSubmit}
+              className="mx-auto max-w-5xl space-y-8 p-6"
+            >
+              <p className="font-inter text-lg font-semibold text-[#9AA1B9]">
+                Basic information
+              </p>
+              <div className="grid grid-cols-2 gap-10">
                 <div className="space-y-2">
                   <Label htmlFor="roomNumber">Room Number</Label>
                   <Input
@@ -196,32 +211,19 @@ export default function CreateRoom() {
                   className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2"
                 />
               </div>
+              <hr />
 
-              <div className="space-y-4">
-                <div>
-                  <Label>Main Image</Label>
-                  <div className="mt-2 rounded-lg border-2 border-dashed border-gray-300 p-8">
-                    <div className="flex flex-col items-center">
-                      <Upload className="h-8 w-8 text-gray-400" />
-                      <p className="mt-2 text-sm text-gray-500">Upload Photo</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Image Gallery</Label>
-                  <div className="mt-2 rounded-lg border-2 border-dashed border-gray-300 p-8">
-                    <div className="flex flex-col items-center">
-                      <Upload className="h-8 w-8 text-gray-400" />
-                      <p className="mt-2 text-sm text-gray-500">
-                        Upload Photos
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              <div className="space-y-2">
+                <p className="font-inter text-lg font-semibold text-[#9AA1B9]">
+                  Room Image
+                </p>
+                <RoomUploadForm />
               </div>
 
               <div>
+                <p className="font-inter text-lg font-semibold text-[#9AA1B9]">
+                  Room Amenities
+                </p>
                 <Label>Room Amenities</Label>
                 <div className="mt-2">
                   <Button
