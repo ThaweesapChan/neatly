@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import {X, Plus } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 const RoomImage = () => {
   const [mainImage, setMainImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
- 
+  const [draggedItem, setDraggedItem] = useState(null);
+
   const handleMainImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -33,13 +34,41 @@ const RoomImage = () => {
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  
+  const handleDragStart = (e, index) => {
+    setDraggedItem(index);
+    e.dataTransfer.effectAllowed = "move";
+    // Make the drag image transparent
+    const dragImage = new window.Image();
+    dragImage.src =
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+    e.dataTransfer.setDragImage(dragImage, 0, 0);
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedItem === null) return;
+
+    const items = [...galleryImages];
+    const draggedItemContent = items[draggedItem];
+
+    // Remove draggedItem
+    items.splice(draggedItem, 1);
+    // Insert at new position
+    items.splice(index, 0, draggedItemContent);
+
+    setGalleryImages(items);
+    setDraggedItem(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+  };
+
   return (
     <div className="space-y-8 p-1 py-5">
       <div className="space-y-4">
         <Label className="block text-base">Main Image *</Label>
-        <div className="grid gap-4 sm:grid-cols-4 ">
-          {/* แสดงภาพหลักถ้ามีการอัพโหลดภาพ */}
+        <div className="grid gap-4 sm:grid-cols-4">
           {mainImage && (
             <div className="relative w-full pt-[70%]">
               <Image
@@ -48,23 +77,21 @@ const RoomImage = () => {
                 fill
                 className="rounded-lg object-cover"
               />
-              {/* ปุ่มลบ (X) */}
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 className="absolute right-2 top-2 text-orange-500 hover:bg-orange-50"
-                onClick={() => setMainImage(null)} // ลบภาพหลัก
+                onClick={() => setMainImage(null)}
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
           )}
-          {/* ปุ่มอัพโหลดภาพใหม่เมื่อไม่มีการเลือกภาพ */}
           {!mainImage && (
             <label className="relative flex cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-[#F8F8F8] pt-[100%] transition-colors hover:bg-gray-50">
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Plus className="h-6 w-6 text-orange-500" /> {/* ไอคอน '+' */}
+                <Plus className="h-6 w-6 text-orange-500" />
                 <span className="mt-2 text-sm text-orange-500">
                   Upload photo
                 </span>
@@ -72,7 +99,7 @@ const RoomImage = () => {
                   type="file"
                   className="hidden"
                   accept="image/*"
-                  onChange={handleMainImageUpload} // ฟังก์ชันอัพโหลดรูป
+                  onChange={handleMainImageUpload}
                 />
               </div>
             </label>
@@ -86,12 +113,22 @@ const RoomImage = () => {
         </Label>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-6">
           {galleryImages.map((image, index) => (
-            <div key={index} className="relative w-full pt-[100%]">
+            <div
+              key={index}
+              className="relative w-full pt-[100%]"
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragEnd={handleDragEnd}
+              style={{ cursor: "move" }}
+            >
               <Image
                 src={image.preview}
                 alt={`Gallery image ${index + 1}`}
                 fill
-                className="rounded-lg object-cover"
+                className={`rounded-lg object-cover transition-opacity ${
+                  draggedItem === index ? "opacity-50" : "opacity-100"
+                }`}
               />
               <Button
                 type="button"
@@ -105,12 +142,9 @@ const RoomImage = () => {
             </div>
           ))}
           {galleryImages.length < 8 && (
-            <label
-              className={`relative flex cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-[#F8F8F8] pt-[100%] transition-colors hover:bg-gray-50`}
-            >
+            <label className="relative flex cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-[#F8F8F8] pt-[100%] transition-colors hover:bg-gray-50">
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Plus className="h-6 w-6 text-orange-500" />{" "}
-                {/* Changed to '+' icon */}
+                <Plus className="h-6 w-6 text-orange-500" />
                 <span className="mt-2 text-sm text-orange-500">
                   Upload photo
                 </span>

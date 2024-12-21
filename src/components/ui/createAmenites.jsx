@@ -34,7 +34,7 @@ const CreateAmenities = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl  space-y-4 mt-10">
+    <div className="mt-10 w-full max-w-2xl space-y-4">
       {amenities.map((amenity) => (
         <div key={amenity.id} className="space-y-2">
           <Label className="text-sm text-gray-600">{amenity.label}</Label>
@@ -65,7 +65,7 @@ const CreateAmenities = () => {
         type="button"
         variant="outline"
         size="sm"
-        className="border-orange-500 text-orange-500 hover:bg-orange-50 "
+        className="border-orange-500 text-orange-500 hover:bg-orange-50 hover:text-orange-600"
         onClick={handleAddAmenity}
       >
         <Plus className="mr-2 h-4 w-4" />
