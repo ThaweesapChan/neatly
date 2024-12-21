@@ -3,8 +3,7 @@ import Sidebar from "@/component/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus} from "lucide-react";
-import RoomUploadForm from "@/components/ui/createRoomImage";
+import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
 
 
@@ -217,7 +216,7 @@ export default function CreateRoom() {
               <p className="mt-4 font-inter text-lg font-semibold text-[#9AA1B9]">
                 Room Image
               </p>
-              <RoomUploadForm />
+              <RoomImage formData={formData} setFormData={setFormData} />
             </div>
 
             <div>
@@ -227,7 +226,7 @@ export default function CreateRoom() {
               </p>
 
               <div className="mt-2">
-                <CreateAmenities />
+                <CreateAmenities formData setFormData />
               </div>
             </div>
           </form>

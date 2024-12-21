@@ -85,6 +85,7 @@ export default async function handler(req, res) {
         room_image_url: mainImage || null,
         image_gallery: sanitizedImageGallery,
         amenities: sanitizedAmenities,
+        
       })
       .select(); // Return inserted data
 

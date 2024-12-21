@@ -4,9 +4,7 @@ import { X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-const RoomImage = () => {
-  const [mainImage, setMainImage] = useState(null);
-  const [galleryImages, setGalleryImages] = useState([]);
+const RoomImage = ({ formData, setFormData }) => {
   const [draggedItem, setDraggedItem] = useState(null);
 
   const handleMainImageUpload = (e) => {
@@ -15,7 +13,10 @@ const RoomImage = () => {
       const imageFile = Object.assign(file, {
         preview: URL.createObjectURL(file),
       });
-      setMainImage(imageFile);
+      setFormData((prev) => ({
+        ...prev,
+        mainImage: imageFile,
+      }));
     }
   };
 
@@ -26,12 +27,18 @@ const RoomImage = () => {
           preview: URL.createObjectURL(file),
         }),
       );
-      setGalleryImages((prev) => [...prev, ...newFiles]);
+      setFormData((prev) => ({
+        ...prev,
+        imageGallery: [...prev.imageGallery, ...newFiles],
+      }));
     }
   };
 
   const removeGalleryImage = (index) => {
-    setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      imageGallery: prev.imageGallery.filter((_, i) => i !== index),
+    }));
   };
 
   const handleDragStart = (e, index) => {
@@ -48,7 +55,7 @@ const RoomImage = () => {
     e.preventDefault();
     if (draggedItem === null) return;
 
-    const items = [...galleryImages];
+    const items = [...formData.imageGallery];
     const draggedItemContent = items[draggedItem];
 
     // Remove draggedItem
@@ -56,7 +63,11 @@ const RoomImage = () => {
     // Insert at new position
     items.splice(index, 0, draggedItemContent);
 
-    setGalleryImages(items);
+    setFormData((prev) => ({
+      ...prev,
+      imageGallery: items,
+    }));
+
     setDraggedItem(index);
   };
 
@@ -69,10 +80,10 @@ const RoomImage = () => {
       <div className="space-y-4">
         <Label className="block text-base">Main Image *</Label>
         <div className="grid gap-4 sm:grid-cols-4">
-          {mainImage && (
+          {formData.mainImage && (
             <div className="relative w-full pt-[70%]">
               <Image
-                src={mainImage.preview}
+                src={formData.mainImage.preview}
                 alt="Main Image"
                 fill
                 className="rounded-lg object-cover"
@@ -82,13 +93,13 @@ const RoomImage = () => {
                 variant="ghost"
                 size="icon"
                 className="absolute right-2 top-2 text-orange-500 hover:bg-orange-50"
-                onClick={() => setMainImage(null)}
+                onClick={() => setFormData({ ...formData, mainImage: null })}
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
           )}
-          {!mainImage && (
+          {!formData.mainImage && (
             <label className="relative flex cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-[#F8F8F8] pt-[100%] transition-colors hover:bg-gray-50">
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <Plus className="h-6 w-6 text-orange-500" />
@@ -112,7 +123,7 @@ const RoomImage = () => {
           Image Gallery (At least 4 pictures) *
         </Label>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-6">
-          {galleryImages.map((image, index) => (
+          {formData.imageGallery.map((image, index) => (
             <div
               key={index}
               className="relative w-full pt-[100%]"
@@ -141,7 +152,7 @@ const RoomImage = () => {
               </Button>
             </div>
           ))}
-          {galleryImages.length < 8 && (
+          {formData.imageGallery.length < 8 && (
             <label className="relative flex cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-[#F8F8F8] pt-[100%] transition-colors hover:bg-gray-50">
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <Plus className="h-6 w-6 text-orange-500" />
@@ -159,9 +170,10 @@ const RoomImage = () => {
             </label>
           )}
         </div>
-        {galleryImages.length < 4 && (
+        {formData.imageGallery.length < 4 && (
           <p className="text-sm text-red-500">
-            Please upload at least {4 - galleryImages.length} more images
+            Please upload at least {4 - formData.imageGallery.length} more
+            images
           </p>
         )}
       </div>
