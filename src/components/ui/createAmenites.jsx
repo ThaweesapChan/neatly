@@ -4,38 +4,42 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
-const CreateAmenities = () => {
-  const [amenities, setAmenities] = useState([
-    { id: 1, label: "Amenitiy *", value: "" },
-  ]);
-
+const CreateAmenities = ({formData, setFormData}) => {
   const handleAddAmenity = () => {
-    const newId = Math.max(...amenities.map((a) => a.id), 0) + 1;
-    setAmenities([
-      ...amenities,
-      {
-        id: newId,
-        label: "Amenitiy",
-        value: "",
-      },
-    ]);
+    const newId = Math.max(...formData.amenities.map((a) => a.id), 0) + 1;
+    setFormData({
+      ...formData,
+      amenities: [
+        ...formData.amenities,
+        {
+          id: newId,
+          label: "Amenity",
+          value: "",
+        },
+      ],
+    });
   };
 
   const handleChange = (id, value) => {
-    setAmenities(
-      amenities.map((amenity) =>
+    setFormData({
+      ...formData,
+      amenities: formData.amenities.map((amenity) =>
         amenity.id === id ? { ...amenity, value } : amenity,
       ),
-    );
+    });
   };
 
+
   const removeAmenity = (id) => {
-    setAmenities(amenities.filter((amenity) => amenity.id !== id));
+    setFormData({
+      ...formData,
+      amenities: formData.amenities.filter((amenity) => amenity.id !== id),
+    });
   };
 
   return (
     <div className="mt-10 w-full max-w-2xl space-y-4">
-      {amenities.map((amenity) => (
+      {formData.amenities.map((amenity) => (
         <div key={amenity.id} className="space-y-2">
           <Label className="text-sm text-gray-600">{amenity.label}</Label>
           <div className="flex gap-2">

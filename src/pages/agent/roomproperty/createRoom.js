@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
 
-
 export default function CreateRoom() {
   const [formData, setFormData] = useState({
     roomNumber: "",
@@ -36,7 +35,7 @@ export default function CreateRoom() {
       roomDescription: formData.roomDescription || "",
       mainImage: formData.mainImage || null,
       imageGallery: formData.imageGallery || [],
-      amenities: formData.amenities.join(",") || "",
+      amenities: formData.amenities.map((x) => x.value) || [],
     };
 
     try {
@@ -226,7 +225,10 @@ export default function CreateRoom() {
               </p>
 
               <div className="mt-2">
-                <CreateAmenities formData setFormData />
+                <CreateAmenities
+                  formData={formData}
+                  setFormData={setFormData}
+                />
               </div>
             </div>
           </form>

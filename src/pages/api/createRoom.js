@@ -66,9 +66,9 @@ export default async function handler(req, res) {
       ? imageGallery.filter((img) => img && typeof img === "string")
       : [];
 
-    const sanitizedAmenities = Array.isArray(amenities)
-      ? amenities.filter((amenity) => amenity && typeof amenity === "string")
-      : [];
+    // const sanitizedAmenities = Array.isArray(amenities)
+    //   ? amenities.filter((amenity) => amenity && typeof amenity === "string")
+    //   : [];
 
     // Insert room data
     const { data, error } = await supabase
@@ -83,9 +83,8 @@ export default async function handler(req, res) {
         promotion_price: promotionPrice || null,
         room_description: roomDescription || null,
         room_image_url: mainImage || null,
-        image_gallery: sanitizedImageGallery,
-        amenities: sanitizedAmenities,
-        
+        image_gallery: imageGalleryURLs || [],
+        amenities: amenities || [] //JSON.stringify(sanitizedAmenities),
       })
       .select(); // Return inserted data
 
