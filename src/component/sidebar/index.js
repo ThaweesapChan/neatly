@@ -72,7 +72,7 @@ function Sidebar() {
             </li>
             <li className="w-full">
               <Link
-                href="/agent/room-property"
+                href="/agent/roomproperty"
                 className="flex w-full items-center justify-center gap-7 px-4 py-7 hover:bg-green-600 active:bg-green-700"
               >
                 <Box />

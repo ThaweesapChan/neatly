@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       // Handle different event types
       switch (event.type) {
         case "payment_intent.succeeded":
-          await updateBookingStatus(paymentIntent.id, "paid");
+          await updateBookingStatus(paymentIntent.id, "confirmed");
           console.log("✅ Payment succeeded:", event.data.object);
           break;
         case "payment_intent.payment_failed":
