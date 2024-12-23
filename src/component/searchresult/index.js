@@ -2,41 +2,63 @@ import React, { useState, useEffect } from "react";
 import Roomcard from "@/component/roomcard";
 import axios from "axios";
 import { Button } from "@/component/button";
+import RoomModal from "../roomdetailpopup";
+import { useRouter } from "next/router";
 
 const Searchresult = () => {
+  const router = useRouter();
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
+  const [guest, setGuest] = useState("");
   const [roomDetails, setRoomDetails] = useState([]);
   const [error, setError] = useState(null);
-  console.log("check roominfo", roomDetails);
-  // ฟังก์ชันเรียกข้อมูลจาก API
+  const [isModalOpen, setIsModalOpen] = useState(false); // ใช้เปิดปิด modal
+  const [selectedRoom, setSelectedRoom] = useState(null); // เก็บห้องที่ถูกเลือก
+  
+  // ฟังก์ชันเปิด Modal และตั้งค่า room ที่เลือก
+  const openModal = (room) => {
+    setSelectedRoom(room); // เก็บข้อมูลห้องที่ถูกเลือก
+    setIsModalOpen(true); // เปิด Modal
+  };
+
+  // ฟังก์ชันปิด Modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedRoom(null); // ล้างข้อมูลห้องที่เลือก
+  };
 
   const fetchRooms = async () => {
+    if (!checkIn || !checkOut || !guest) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      setError("Check-out date must be after check-in date.");
+      return;
+    }
+
     try {
       const response = await axios.get("http://localhost:3000/api/searchroom", {
-        params: { check_in: checkIn, check_out: checkOut },
+        params: { check_in: checkIn, check_out: checkOut, guest },
       });
-      console.log("API Response:", response.data);
-      setRoomDetails(response.data.data || []); // ป้องกันกรณี response ไม่มี rooms
+      setRoomDetails(response.data.data || []);
+      setError(null);
     } catch (err) {
-      console.error("Error fetching rooms:", err.message);
       setError("Failed to fetch rooms. Please try again.");
     }
   };
 
-  // ดำเนินการเมื่อ Check In หรือ Check Out เปลี่ยนแปลง
   useEffect(() => {
-    if (checkIn && checkOut) {
+    if (checkIn && checkOut && guest) {
       fetchRooms();
     }
-  }, [checkIn, checkOut]);
+  }, [checkIn, checkOut, guest]);
 
   return (
-    <>
-      {/* กล่องแบบฟอร์ม */}
+    <div className="flex flex-col items-center">
       <div className="top-0 flex w-full flex-row bg-white md:sticky md:mt-10 md:flex md:w-full md:items-center">
         <div className="md:py my-12 mt-12 w-full rounded bg-white p-6 shadow-lg md:flex md:w-full md:justify-end md:py-10">
-          {/* Check In */}
           <div className="mb-6 flex-1 md:mb-0 md:mr-4">
             <label
               htmlFor="checkin"
@@ -52,7 +74,6 @@ const Searchresult = () => {
               className="w-full rounded border border-gray-300 p-3 text-gray-400"
             />
           </div>
-          {/* Check Out */}
           <div className="mb-6 flex-1 md:mb-0 md:mr-4">
             <label
               htmlFor="checkout"
@@ -68,7 +89,6 @@ const Searchresult = () => {
               className="w-full rounded border border-gray-300 p-3 text-gray-400"
             />
           </div>
-          {/* Rooms & Guests */}
           <div className="mb-6 flex-1 md:mb-0 md:mr-4">
             <label
               htmlFor="rooms-guests"
@@ -77,20 +97,19 @@ const Searchresult = () => {
               Rooms & Guests
             </label>
             <select
+              onChange={(e) => setGuest(parseInt(e.target.value, 10))}
               id="rooms-guests"
               name="rooms-guests"
               className="w-full rounded border border-gray-300 p-4 text-gray-400"
             >
-              <option value="" disabled>
-                1 room, 2 guests
+              <option value="" >
+                Select rooms and guests
               </option>
-              <option value="1">1 room, 2 guests</option>
-              <option value="2">2 rooms, 4 guests</option>
-              <option value="3">3 rooms, 6 guests</option>
+              <option value="2">1 room, 2 guests</option>
+              <option value="4">2 rooms, 4 guests</option>
+              <option value="6">3 rooms, 6 guests</option>
             </select>
           </div>
-
-          {/* ปุ่ม Search */}
           <Button
             onClick={fetchRooms}
             variant="primary"
@@ -100,16 +119,30 @@ const Searchresult = () => {
         </div>
       </div>
 
-      {/* แสดงข้อมูลห้องพัก */}
-      <div className="flex flex-col items-center justify-center gap-5 px-3 py-3">
+      <div className="flex w-full flex-col items-center justify-center gap-5 px-3 py-3">
         {error && <p className="text-red-500">{error}</p>}
         {roomDetails.length > 0 ? (
-          roomDetails.map((room) => <Roomcard key={room.room_id} room={room} />)
+          roomDetails.map((room,check_in,chec) => (
+            <Roomcard
+              key={room.room_id}
+              room={room}
+              onClick={() => openModal(room)}
+            />
+          ))
         ) : (
-          <div>Room Detail Not found</div>
+          <div>No rooms available for the selected dates.</div>
         )}
       </div>
-    </>
+
+      {/* เมื่อ isModalOpen เป็น true, จะแสดง RoomModal */}
+      {isModalOpen && (
+        <RoomModal
+          room={selectedRoom}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+    </div>
   );
 };
 

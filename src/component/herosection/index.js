@@ -1,7 +1,9 @@
 import React from "react";
 import { Button } from "../button";
+import { useRouter } from "next/router";
 
 function Herosection() {
+conts
   return (
     <main
       className="relative flex h-screen w-full flex-col items-center justify-center bg-cover bg-center md:h-[56.25rem] md:w-full md:px-16 md:opacity-100"
