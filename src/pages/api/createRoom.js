@@ -61,14 +61,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // Sanitize input arrays
-    const sanitizedImageGallery = Array.isArray(imageGallery)
-      ? imageGallery.filter((img) => img && typeof img === "string")
-      : [];
+    // Save imamge to supabase storage and get URL to save in DB
 
-    // const sanitizedAmenities = Array.isArray(amenities)
-    //   ? amenities.filter((amenity) => amenity && typeof amenity === "string")
-    //   : [];
 
     // Insert room data
     const { data, error } = await supabase
@@ -83,8 +77,8 @@ export default async function handler(req, res) {
         promotion_price: promotionPrice || null,
         room_description: roomDescription || null,
         room_image_url: mainImage || null,
-        image_gallery: imageGalleryURLs || [],
-        amenities: amenities || [] //JSON.stringify(sanitizedAmenities),
+        image_gallery: imageGallery || [],
+        amenities: amenities || [],
       })
       .select(); // Return inserted data
 
