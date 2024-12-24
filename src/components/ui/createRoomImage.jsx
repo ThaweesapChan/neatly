@@ -6,12 +6,32 @@ import { Label } from "@/components/ui/label";
 
 const RoomImage = ({ formData, setFormData }) => {
   const [draggedItem, setDraggedItem] = useState(null);
+  //fn to validate max file size
+  const validateFileSize = (file) => {
+    if (file.size > 1024 * 1024 * 3) {
+      alert("File size should be less than 3MB");
+      return false;
+    }
+    return true;
+  };
 
-  const handleMainImageUpload = (e) => {
+  // fn to convert image to base64
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const handleMainImageUpload = async (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      if (!validateFileSize(file)) return;
+
       const imageFile = Object.assign(file, {
         preview: URL.createObjectURL(file),
+        image: await toBase64(file),
       });
       setFormData((prev) => ({
         ...prev,
@@ -20,13 +40,20 @@ const RoomImage = ({ formData, setFormData }) => {
     }
   };
 
-  const handleGalleryUpload = (e) => {
+  const handleGalleryUpload = async (e) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files).map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        }),
-      );
+      let newFiles = [];
+      for (let i = 0; i < e.target.files.length; i++) {
+        const file = e.target.files[i];
+        if (!validateFileSize(file)) return;
+        newFiles.push(
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+            image: await toBase64(file),
+          }),
+        );
+      }
+
       setFormData((prev) => ({
         ...prev,
         imageGallery: [...prev.imageGallery, ...newFiles],
@@ -122,7 +149,7 @@ const RoomImage = ({ formData, setFormData }) => {
         <Label className="block text-base">
           Image Gallery (At least 4 pictures) *
         </Label>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-6">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-5">
           {formData.imageGallery.map((image, index) => (
             <div
               key={index}

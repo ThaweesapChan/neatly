@@ -33,7 +33,7 @@ export default function CreateRoom() {
       pricePerNight: formData.pricePerNight || null,
       promotionPrice: formData.promotionPrice || null,
       roomDescription: formData.roomDescription || "",
-      mainImage: formData.mainImage || null,
+      mainImage: formData.mainImage.image || null,
       imageGallery: formData.imageGallery || [],
       amenities: formData.amenities.map((x) => x.value) || [],
     };

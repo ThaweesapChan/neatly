@@ -1,10 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
-
-// Create Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
+import supabase from "@/utils/supabaseClient";
+import fromBase64 from "@/utils/from-base-64"
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -61,8 +56,20 @@ export default async function handler(req, res) {
       });
     }
 
-    // Save imamge to supabase storage and get URL to save in DB
+    // Save images to supabase storage and get URL to save in DB
+    // mainImage
+    const mainImageFile = fromBase64(mainImage, "main-image")
+    const mainImagePath = `${roomNumber}/${mainImageFile.name}`;
+    const { mainImageRespone, mainImageError } = await supabase.storage
+      .from("rooms")
+      .upload(mainImagePath, mainImageFile);
+    const mainImageURL = await supabase.storage
+      .from("rooms")
+      .getPublicUrl(mainImagePath)
+      .data.publicUrl
 
+    // TODO: const imageGalleryURLs = await Promise.all(); (data arrive in imageGallery var)
+    const imageGalleryURLs = [];
 
     // Insert room data
     const { data, error } = await supabase
@@ -76,9 +83,9 @@ export default async function handler(req, res) {
         price: pricePerNight,
         promotion_price: promotionPrice || null,
         room_description: roomDescription || null,
-        room_image_url: mainImage || null,
-        image_gallery: imageGallery || [],
-        amenities: amenities || [],
+        room_image_url: mainImageURL || null,
+        image_gallery: imageGalleryURLs || [],
+        amenities: amenities || [], //JSON.stringify(sanitizedAmenities),
       })
       .select(); // Return inserted data
 
@@ -89,6 +96,7 @@ export default async function handler(req, res) {
         details: error.message,
       });
     }
+    console.log(data);
 
     // Successful insertion
     res.status(201).json({
