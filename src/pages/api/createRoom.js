@@ -63,13 +63,29 @@ export default async function handler(req, res) {
     const { mainImageRespone, mainImageError } = await supabase.storage
       .from("rooms")
       .upload(mainImagePath, mainImageFile);
-    const mainImageURL = await supabase.storage
+
+    const mainImageURL = await supabase.storage // Get public URL
       .from("rooms")
       .getPublicUrl(mainImagePath)
       .data.publicUrl
 
     // TODO: const imageGalleryURLs = await Promise.all(); (data arrive in imageGallery var)
     const imageGalleryURLs = [];
+    for (let i = 0; i < imageGallery.length; i++) {
+      const imageFile = fromBase64(imageGallery[i], `image-${i}`)
+      const imagePath = `${roomNumber}/${imageFile.name}`;
+      const { response, error } = await supabase.storage
+        .from("rooms")
+        .upload(imagePath, imageFile);
+        
+      const imageURL = await supabase.storage   // Get public URL
+        .from("rooms")
+        .getPublicUrl(imagePath)
+        .data.publicUrl
+      imageGalleryURLs.push(imageURL);
+    }
+
+
 
     // Insert room data
     const { data, error } = await supabase
