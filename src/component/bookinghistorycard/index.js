@@ -6,10 +6,10 @@ import { useRouter } from "next/router";
 import CancelModal from "../modal";
 
 function BookingHistoryCard() {
+  const router = useRouter();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const router = useRouter();
   const [openDetails, setOpenDetails] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -24,10 +24,18 @@ function BookingHistoryCard() {
     setSelectedBooking(null);
   };
 
-  const handleConfirmCancel = () => {
-    console.log("Cancel confirmed for booking:", selectedBooking);
-    // ไว้ใส่ Logic การยกเลิก Booking
+  const handleConfirmCancel = (booking) => {
+    // ตรวจสอบว่าเป็นการ Refund หรือ Cancel ธรรมดา
+    if (booking.canRefund) {
+      router.push(`/request-refund?booking_id=${booking.booking_id}`);
+    } else if (booking.canCancelBooking) {
+      router.push(`/cancel-booking?booking_id=${booking.booking_id}`);
+    }
     handleCloseModal();
+  };
+
+  const handleChangeDate = (uuid) => {
+    router.push(`/changedate/${uuid}`);
   };
 
   const handleRoomDetail = () => {
@@ -105,7 +113,7 @@ function BookingHistoryCard() {
               className="booking-card overflow-hidden rounded-lg shadow-md md:shadow-none"
             >
               <div className="md:flex md:gap-6">
-                {/* รูปภาพ */}
+                {/* Room Image */}
                 <div className="md:w-1/3">
                   <Image
                     src={matchedImage}
@@ -116,7 +124,7 @@ function BookingHistoryCard() {
                   />
                 </div>
 
-                {/* ข้อมูลห้องพัก */}
+                {/* Room Details Section */}
                 <div className="p-4 md:w-2/3">
                   <div className="flex flex-col items-start justify-between font-inter md:flex-row">
                     <h2 className="text-3xl font-semibold text-black">
@@ -218,7 +226,7 @@ function BookingHistoryCard() {
                     )}
                   </div>
 
-                  {/* ปุ่ม */}
+                  {/* Button */}
                   <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
                     <button
                       onClick={handleRoomDetail}
@@ -228,7 +236,10 @@ function BookingHistoryCard() {
                     </button>
 
                     {booking.canChangeDate && (
-                      <button className="z-10 flex-grow rounded-md bg-orange-500 px-4 py-2 font-semibold text-white md:flex-none">
+                      <button
+                        className="z-10 flex-grow rounded-md bg-orange-500 px-4 py-2 font-semibold text-white md:flex-none"
+                        onClick={() => handleChangeDate(booking.booking_id)}
+                      >
                         Change Date
                       </button>
                     )}
@@ -249,8 +260,8 @@ function BookingHistoryCard() {
                   {isModalOpen && (
                     <CancelModal
                       booking={selectedBooking} // ส่ง Booking ที่เลือก
-                      onClose={handleCloseModal} // ฟังก์ชันปิด Modal
-                      onConfirm={handleConfirmCancel} // ฟังก์ชันยืนยันการยกเลิก
+                      onClose={handleCloseModal}
+                      onConfirm={handleConfirmCancel}
                     />
                   )}
                 </div>
