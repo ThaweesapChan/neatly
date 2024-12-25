@@ -1,10 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  api: {
-    bodyParser: {
-      sizeLimit: "10mb",
-    },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https", // โปรโตคอลของ URL
+        hostname: "example.com", // โฮสต์ของ URL
+        port: "", // กำหนดพอร์ต (ถ้ามี) หรือปล่อยว่างไว้
+        pathname: "/images/**", // กำหนดเส้นทางที่อนุญาต (ใช้ ** เป็น wildcard)
+      },
+    ],
   },
 };
 

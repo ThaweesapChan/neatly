@@ -42,7 +42,7 @@ function Sidebar() {
         </div>
         {/* Sidebar Menu */}
         <div className="mt-14 flex grow items-start justify-center">
-          <ul className="flex w-1/6 flex-col gap-2 font-inter font-medium leading-6 text-green-200">
+          <ul className="flex w-full flex-col gap-2 font-inter font-medium leading-6 text-green-200">
             <li className="w-full">
               <Link
                 href="/agent/customer-booking"
