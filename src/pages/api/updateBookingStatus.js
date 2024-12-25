@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   const { booking_id, status } = req.body;
 
   try {
-    // อัปเดตสถานะในฐานข้อมูล
     const { error } = await supabase
       .from("bookings")
       .update({ status })

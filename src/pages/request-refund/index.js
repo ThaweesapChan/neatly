@@ -21,7 +21,6 @@ const RequestRefundPage = () => {
 
   const handleCancelAndRefundBooking = async () => {
     try {
-      // เรียก API เพื่ออัปเดตสถานะการจอง
       await axios.put(`/api/updateBookingStatus`, {
         booking_id: bookingDetails.booking_id,
         status: "cancelled",
