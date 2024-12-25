@@ -9,7 +9,7 @@ export default function Home() {
   console.log(Step3);
   return (
     <div>
-      <Booking />
+      <Bookingdetail />
     </div>
   );
 }
