@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Navbar from "@/component/navbar";
 import { Button } from "@/component/button";
 
-export function PaymentFailed() {
+export default function PaymentFailed() {
   const router = useRouter();
 
   const handleBackToPaymentDetail = () => {
