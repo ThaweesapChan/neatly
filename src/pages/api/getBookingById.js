@@ -1,7 +1,7 @@
 import supabase from "@/utils/supabaseClient";
 
 export default async function getBookingById(req, res) {
-  const { id } = req.query;
+  const { uuid } = req.query;
   try {
     const response = await supabase
       .from("bookings")
@@ -18,7 +18,8 @@ export default async function getBookingById(req, res) {
         payment:payments ( payment_method )
       `,
       )
-      .eq("booking_id", id);
+      .eq("booking_id", uuid);
+      console.log(response);
 
     if (response.error) throw response.error;
 

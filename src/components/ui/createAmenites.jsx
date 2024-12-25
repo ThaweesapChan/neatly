@@ -4,13 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
-const CreateAmenities = ({formData, setFormData}) => {
+const CreateAmenities = ({ formData, setFormData }) => {
+  // Ensure amenities is always an array
+  const amenities = formData.amenities || [];
+
   const handleAddAmenity = () => {
-    const newId = Math.max(...formData.amenities.map((a) => a.id), 0) + 1;
+    const newId = Math.max(...amenities.map((a) => a.id), 0) + 1;
     setFormData({
       ...formData,
       amenities: [
-        ...formData.amenities,
+        ...amenities,
         {
           id: newId,
           label: "Amenity",
@@ -23,47 +26,50 @@ const CreateAmenities = ({formData, setFormData}) => {
   const handleChange = (id, value) => {
     setFormData({
       ...formData,
-      amenities: formData.amenities.map((amenity) =>
+      amenities: amenities.map((amenity) =>
         amenity.id === id ? { ...amenity, value } : amenity,
       ),
     });
   };
 
-
   const removeAmenity = (id) => {
     setFormData({
       ...formData,
-      amenities: formData.amenities.filter((amenity) => amenity.id !== id),
+      amenities: amenities.filter((amenity) => amenity.id !== id),
     });
   };
 
   return (
     <div className="mt-10 w-full max-w-2xl space-y-4">
-      {formData.amenities.map((amenity) => (
-        <div key={amenity.id} className="space-y-2">
-          <Label className="text-sm text-gray-600">{amenity.label}</Label>
-          <div className="flex gap-2">
-            <Input
-              value={amenity.value}
-              onChange={(e) => handleChange(amenity.id, e.target.value)}
-              className="w-full"
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className={`px-2 hover:bg-transparent ${
-                amenity.value.trim() === ""
-                  ? "text-gray-400 hover:text-gray-600"
-                  : "text-orange-500 hover:text-orange-600"
-              }`}
-              onClick={() => removeAmenity(amenity.id)}
-            >
-              Delete
-            </Button>
+      {amenities.length === 0 ? (
+        <div>No amenities available</div>
+      ) : (
+        amenities.map((amenity) => (
+          <div key={amenity.id} className="space-y-2">
+            <Label className="text-sm text-gray-600">{amenity.label}</Label>
+            <div className="flex gap-2">
+              <Input
+                value={amenity.value}
+                onChange={(e) => handleChange(amenity.id, e.target.value)}
+                className="w-full"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className={`px-2 hover:bg-transparent ${
+                  amenity.value.trim() === ""
+                    ? "text-gray-400 hover:text-gray-600"
+                    : "text-orange-500 hover:text-orange-600"
+                }`}
+                onClick={() => removeAmenity(amenity.id)}
+              >
+                Delete
+              </Button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
 
       <Button
         type="button"
