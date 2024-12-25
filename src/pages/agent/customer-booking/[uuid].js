@@ -6,14 +6,15 @@ import { ArrowLeft } from "lucide-react";
 
 function BookingDetailPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { uuid } = router.query;
   const [bookingDetails, setBookingDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
 
   const getBookingById = async (bookingId) => {
     try {
-      const response = await axios.get(`/api/getbookingbyid?id=${bookingId}`);
+      const response = await axios.get(`/api/getBookingById?uuid=${bookingId}`);
+      console.log(response);
       setBookingDetail(response.data);
 
       // Calculate Total price
@@ -31,10 +32,10 @@ function BookingDetailPage() {
   };
 
   useEffect(() => {
-    if (id) {
-      getBookingById(id);
+    if (uuid) {
+      getBookingById(uuid);
     }
-  }, [id]);
+  }, [uuid]);
 
   if (loading) {
     return (
