@@ -31,7 +31,7 @@ export function FormCreditCard() {
 
   const handleBack = () => {
     console.log("Back button clicked");
-    router.push("http://localhost:3000/payment/step2");
+    router.push("http://localhost:3000/homepage");
   };
 
   const handlePaymentFailed = () => {
