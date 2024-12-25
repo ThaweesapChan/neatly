@@ -7,6 +7,14 @@ import { SectionsStep2 } from "@/component/payment/sectionstep";
 export default function Standardrequest() {
   const router = useRouter();
   const { bookingData, setBookingData } = useBooking(); // ใช้ Context
+  const specialRequestOptions = [
+    { name: "Baby cot", price: 400 },
+    { name: "Airport transfer", price: 200 },
+    { name: "Extra bed", price: 500 },
+    { name: "Extra pillows", price: 100 },
+    { name: "Phone chargers and adapters", price: 100 },
+    { name: "Breakfast", price: 150 },
+  ];
 
   // State เก็บค่าที่ checkbox ถูกเลือกและข้อความจาก textarea
   const [standardRequests, setStandardRequests] = useState(
@@ -20,7 +28,7 @@ export default function Standardrequest() {
   );
 
   // ฟังก์ชันจัดการ checkbox
-  const handleCheckboxChange = (e, type) => {
+  const handleCheckboxChange = (e, type, option) => {
     const { checked, value } = e.target;
 
     if (type === "standard") {
@@ -28,15 +36,20 @@ export default function Standardrequest() {
         checked ? [...prev, value] : prev.filter((item) => item !== value),
       );
     } else if (type === "special") {
-      setSpecialRequests((prev) =>
-        checked ? [...prev, value] : prev.filter((item) => item !== value),
-      );
+      if (checked) {
+        // เพิ่ม option ที่เลือกใน specialRequests
+        setSpecialRequests((prev) => [
+          ...prev,
+          { name: option.name, price: option.price },
+        ]);
+      } else {
+        // ลบ option ที่ยกเลิกการเลือกออกจาก specialRequests
+        setSpecialRequests((prev) =>
+          prev.filter((req) => req.name !== option.name),
+        );
+      }
     }
   };
-
-  console.log(`standardRequests : ${standardRequests}`);
-  console.log(`specialRequests : ${specialRequests}`);
-  console.log(`additionalRequest : ${additionalRequest}`);
 
   // ฟังก์ชันเมื่อกด Back
   const handleBack = () => {
@@ -100,23 +113,23 @@ export default function Standardrequest() {
               Special Request
             </h2>
             <div className="space-y-3">
-              {[
-                "Baby cot (+THB 400)",
-                "Airport transfer (+THB 200)",
-                "Extra bed (+THB 500)",
-                "Extra pillows (+THB 100)",
-                "Phone chargers and adapters (+THB 100)",
-                "Breakfast (+150)",
-              ].map((item) => (
-                <label key={item} className="flex items-center space-x-3">
+              {specialRequestOptions.map((option) => (
+                <label
+                  key={option.name}
+                  className="flex items-center space-x-3"
+                >
                   <input
                     type="checkbox"
-                    value={item}
-                    checked={specialRequests.includes(item)}
-                    onChange={(e) => handleCheckboxChange(e, "special")}
+                    value={option.name}
+                    checked={specialRequests.some(
+                      (req) => req.name === option.name,
+                    )}
+                    onChange={(e) => handleCheckboxChange(e, "special", option)}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600"
                   />
-                  <span className="font-inter text-gray-600">{item}</span>
+                  <span className="font-inter text-gray-600">
+                    {option.name} (+THB {option.price})
+                  </span>
                 </label>
               ))}
             </div>
