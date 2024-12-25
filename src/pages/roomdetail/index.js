@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/component/navbar";
 import Footer from "@/component/footer";
 import axios from "axios";
+import { useRouter } from "next/router";
 import {
   Carousel,
   CarouselContent,
@@ -13,12 +14,11 @@ import {
 import RoomsSuitsPost from "@/component/roomssuitspost";
 
 export default function RoomDetail() {
-  const [roomData, setRoomData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  /* const [roomData, setRoomData] = useState(null); */
+  /* const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); */
   // Fetch room data from API
-  async function fetchRoomData() {
+  /*   async function fetchRoomData() {
     try {
       const response = await axios.get("/api/getRoomdetail");
       const data = await response.data;
@@ -28,20 +28,39 @@ export default function RoomDetail() {
     } finally {
       setLoading(false);
     }
-  }
-
-  useEffect(() => {
+  } */
+  /*  useEffect(() => {
     fetchRoomData();
   }, []);
-
-  if (loading) {
+ */
+  /*   if (loading) {
     return <div>Loading...</div>;
   }
 
   if (error) {
     return <div>Error: {error}</div>;
   }
+ */
+  const [roomDetail, setRoomDetails] = useState(null);
+  const router = useRouter();
+  const { roomData } = router.query;
+  console.log(roomData);
 
+  useEffect(() => {
+    if (roomData) {
+      try {
+        setRoomDetails(roomData);
+      } catch (e) {
+        console.error("Error parsing room data:", e);
+      }
+    }
+  }, [roomData]); // ทำงานเมื่อ roomData เปลี่ยนแปลง
+
+  // ถ้ายังไม่ได้รับข้อมูล, ให้แสดงข้อความ Loading...
+  if (!roomDetail) {
+    return <div>Loading...</div>;
+  }
+  console.log(roomDetail);
   const images = [
     "/asset/premier.jpeg",
     "/asset/superior.jpeg",
@@ -109,7 +128,7 @@ export default function RoomDetail() {
                   {`Rooms (${roomData[0]?.size || "N/A"} sqm) with full garden views, ${roomData[0]?.bed_type || "N/A"} bed, bathroom with bathtub & shower.`}
                 </p>
                 <p className="mb-4 mt-10 font-inter text-base text-gray-700">
-                  {`${roomData[0]?.guests || "N/A"} Person | ${roomData[0]?.bed_type || "N/A"} | ${roomData[0]?.size || "N/A"} sqm`}
+                  {`${roomData[0]?.guests || "N/A"} Person | ${roomData[0]?.bed_type || "N/A"} | ${roomData.size || "N/A"} sqm`}
                 </p>
               </div>
 
