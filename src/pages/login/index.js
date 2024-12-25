@@ -17,7 +17,6 @@ export default function LoginPage() {
   function validateUsernameOrEmail(input) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // ตรวจสอบว่าเป็น Email
     const usernamePattern = /^[a-zA-Z0-9_]+$/; // ตรวจสอบว่าเป็น Username
-
     if (emailPattern.test(input)) {
       return "email"; // Input เป็น Email
     } else if (usernamePattern.test(input)) {
