@@ -56,7 +56,7 @@ const ChangeDateModal = ({ booking, checkInDate, checkOutDate, onClose }) => {
             onClick={onClose}
             className="rounded-md border border-orange-500 bg-white px-4 py-3 text-orange-500"
           >
-            No, I don't
+            No, I don&apos;t
           </button>
         </div>
       </div>

@@ -43,7 +43,7 @@ const CancelModal = ({ booking, onClose, onConfirm }) => {
             onClick={onClose}
             className="w-full rounded-md bg-orange-500 px-4 py-2 font-openSans font-semibold text-white hover:bg-orange-600 md:w-auto md:bg-orange-500 md:text-white md:hover:bg-orange-600"
           >
-            No, Don't Cancel
+            No, Don&apos;t Cancel
           </button>
           <button
             onClick={() => onConfirm(booking)}
