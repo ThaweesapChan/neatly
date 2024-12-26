@@ -10,7 +10,7 @@ function Roomcard({ room, onClick, check_in, check_out }) {
     router.push({
       pathname: "/roomdetail",
       query: {
-        roomData: room,
+        roomId: room.id,
       },
     });
   };
@@ -18,7 +18,7 @@ function Roomcard({ room, onClick, check_in, check_out }) {
   const handleBookNowClick = () => {
     // ส่งข้อมูลของห้องไปยังหน้า booking ผ่าน query parameters
     router.push({
-      pathname: "/booking",
+      pathname: "/payment",
       query: {
         room_type: room.room_type,
         price: room.price,

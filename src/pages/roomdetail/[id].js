@@ -4,6 +4,7 @@ import Navbar from "@/component/navbar";
 import Footer from "@/component/footer";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
 import {
   Carousel,
   CarouselContent,

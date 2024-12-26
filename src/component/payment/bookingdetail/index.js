@@ -88,25 +88,14 @@ export default function Bookingdetail() {
             <span>{room ? room.price : "0.00"}</span>
           </div>
         </div>
-
+        <div>{roomreq.map()}</div>
         <div className="border-t border-gray-600 pt-2">
           <div className="flex items-center justify-between">
             <span>Total</span>
-            <span className="text-lg font-semibold">THB 2,500.00</span>
+            <span className="text-lg font-semibold">total</span>
           </div>
         </div>
       </div>
-      <div className="space-y-2 rounded bg-gray-100 p-3 text-xs text-gray-600">
-        <p>
-          • Cancel booking will get full refund if the cancellation occurs
-          before 24 hours of the check-in date.
-        </p>
-        <p>
-          • Able to change check-in or check-out date booking within 24 hours of
-          the booking date
-        </p>
-      </div>
-    </>
     </div>
   );
 }
