@@ -3,6 +3,12 @@ import { Button } from "../button";
 import { useRouter } from "next/router";
 
 function Herosection() {
+  const router = useRouter();
+
+  function handleSearch() {
+    router.push("/searchresultpage"); // ใช้ path แทน URL เต็ม
+  }
+
   return (
     <main
       className="relative flex h-screen w-full flex-col items-center justify-center bg-cover bg-center md:h-[56.25rem] md:w-full md:px-16 md:opacity-100"
@@ -98,9 +104,10 @@ function Herosection() {
           </div>
 
           <Button
-            type="1"
-            name="Search"
-            style="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
+            variant="primary"
+            label="Search"
+            other="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
+            onClick={handleSearch}
           />
         </div>
       </div>

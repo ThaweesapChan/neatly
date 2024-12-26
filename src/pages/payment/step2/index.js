@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import Navbar from "@/component/navbar";
 import { useRouter } from "next/router";
 import { useBooking } from "@/lib/BookingContext";
-import { SectionsStep2 } from "@/component/payment/sectionstep";
+import {
+  SectionsStep2,
+  ConditionRefund,
+} from "@/component/payment/sectionstep";
+import Bookingdetail from "@/component/payment/bookingdetail";
 
 export default function Standardrequest() {
   const router = useRouter();
@@ -147,7 +151,14 @@ export default function Standardrequest() {
               placeholder="Enter any additional requests here..."
             />
           </div>
-
+          <div className="ml-4 flex flex-col gap-4 md:hidden">
+            <div className="w-[385px] md:block">
+              <Bookingdetail />
+            </div>
+            <div className="w-[385px] md:block">
+              <ConditionRefund />
+            </div>
+          </div>
           {/* Navigation Buttons */}
           <div className="flex justify-between pt-4">
             <button
@@ -164,6 +175,15 @@ export default function Standardrequest() {
             >
               Next
             </button>
+          </div>
+        </div>
+        {/* ด้านขวา */}
+        <div className="ml-4 flex flex-col gap-4">
+          <div className="hidden md:block md:w-[385px]">
+            <Bookingdetail />
+          </div>
+          <div className="hidden md:block md:w-[385px]">
+            <ConditionRefund />
           </div>
         </div>
       </div>

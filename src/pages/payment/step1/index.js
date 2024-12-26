@@ -1,9 +1,12 @@
 import React from "react";
-import Navbar from "@/component/navbar";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useBooking } from "@/lib/BookingContext";
-import { SectionsStep1 } from "@/component/payment/sectionstep";
+import {
+  ConditionRefund,
+  SectionsStep1,
+} from "@/component/payment/sectionstep";
+import Bookingdetail from "@/component/payment/bookingdetail";
 
 export default function Basicinformation() {
   const router = useRouter();
@@ -41,7 +44,6 @@ export default function Basicinformation() {
 
   return (
     <div>
-      <Navbar />
       <SectionsStep1 />
       <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
         <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm">
@@ -173,7 +175,14 @@ export default function Basicinformation() {
                 <option value="Singapore">Singapore</option>
               </select>
             </div>
-
+            <div className="ml-4 flex flex-col gap-4 md:hidden">
+              <div className="w-[385px] md:block">
+                <Bookingdetail />
+              </div>
+              <div className="w-[385px] md:block">
+                <ConditionRefund />
+              </div>
+            </div>
             <div className="flex justify-between pt-4">
               <button
                 type="button"
@@ -190,6 +199,15 @@ export default function Basicinformation() {
               </button>
             </div>
           </form>
+        </div>
+        {/* ด้านขวา */}
+        <div className="ml-4 flex flex-col gap-4">
+          <div className="hidden md:block md:w-[385px]">
+            <Bookingdetail />
+          </div>
+          <div className="hidden md:block md:w-[385px]">
+            <ConditionRefund />
+          </div>
         </div>
       </div>
     </div>
