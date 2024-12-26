@@ -1,19 +1,21 @@
+import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search } from "lucide-react";
-import { useRouter } from "next/router";
 
-export default function RoomHeader() {
-  const router = useRouter(); // ใช้ useRouter เพื่อจัดการการนำทาง
-  
+export default function RoomHeader({ onSearch }) {
+  const router = useRouter();
 
-  // ฟังก์ชันที่จะทำงานเมื่อคลิกปุ่ม
   const handleCreateRoom = () => {
-    router.push("/createRoom"); // ลิงค์ไปยังหน้า createRoom
+    router.push("/agent/roomproperty/createRoom");
+  };
+
+  const handleSearchChange = (e) => {
+    onSearch(e.target.value);
   };
 
   return (
-    <div className="h-20 h-justify-between flex w-full items-center border-b p-4">
+    <div className="h-justify-between flex h-20 w-full items-center border-b p-4">
       <h1 className="flex-grow px-6 text-xl font-semibold">Room & Property</h1>
       <div className="ml-auto flex items-center gap-6">
         <div className="relative">
@@ -22,10 +24,9 @@ export default function RoomHeader() {
             type="search"
             placeholder="Search..."
             className="w-[300px] pl-10"
+            onChange={handleSearchChange}
           />
         </div>
-
-        {/* // เรียกฟังก์ชัน handleCreateRoom เมื่อคลิกปุ่ม */}
         <Button
           className="bg-[#C14817] hover:bg-[#A13807]"
           onClick={handleCreateRoom}

@@ -2,11 +2,17 @@ import { useState, useEffect } from "react";
 import InputField from "@/component/form";
 import { Button } from "@/component/button";
 import Navbar from "@/component/navbar";
+import { uploadFile } from "../api/upload";
+import { useRouter } from "next/router";
+
 
 const country = [{ name: "Thailand" }, { name: "USA" }, { name: "Japan" }];
 
 const RegisterForm = () => {
+  const router = useRouter();
+
   const [selectedImage, setSelectedImage] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -18,6 +24,7 @@ const RegisterForm = () => {
     date_of_birth: "",
     country: "",
     confirmPassword: "",
+    profile_picture_url: "",
   });
 
   const handleChange = (e) => {
@@ -29,6 +36,7 @@ const RegisterForm = () => {
   };
 
   const handleFileChange = (event) => {
+    setProfile(event.target.files[0]);
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -58,8 +66,25 @@ const RegisterForm = () => {
       return;
     }
 
+    // ★ เพิ่มการตรวจสอบว่า phone_number ต้องเป็นตัวเลขเท่านั้น ★
+    const phoneRegex = /^[0-9]+$/;
+    if (!phoneRegex.test(formData.phone_number)) {
+      alert("Phone number must contain digits only");
+      return;
+    }
+
     // ส่งข้อมูลไปยัง API โดยไม่ส่ง confirmPassword
     try {
+      if (profile) {
+        const url = await uploadFile(profile); // อัพโหลดไฟล์และรับ URL
+        if (url) {
+          console.log(url);
+          formData.profile_picture_url = url;
+        } else {
+          console.error("Failed to upload file.");
+        }
+      }
+
       const { confirmPassword, ...dataToSubmit } = formData; // ตัด confirmPassword ออก
       const response = await fetch("/api/register", {
         method: "POST",
@@ -72,7 +97,7 @@ const RegisterForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Registration successful!");
+        router.push("http://localhost:3000/homepage");
       } else {
         alert(result.message || "Something went wrong!");
       }
