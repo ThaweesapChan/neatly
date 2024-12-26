@@ -8,8 +8,8 @@ const RoomImage = ({ formData, setFormData }) => {
   const [draggedItem, setDraggedItem] = useState(null);
   //fn to validate max file size
   const validateFileSize = (file) => {
-    if (file.size > 1024 * 1024 * 3) {
-      alert("File size should be less than 3MB");
+    if (file.size > 1024 * 1024 * 1) {
+      alert("File size should be less than 1MB");
       return false;
     }
     return true;

@@ -1,5 +1,13 @@
 import supabase from "@/utils/supabaseClient";
-import fromBase64 from "@/utils/from-base-64"
+import fromBase64 from "@/utils/from-base-64";
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -58,34 +66,30 @@ export default async function handler(req, res) {
 
     // Save images to supabase storage and get URL to save in DB
     // mainImage
-    const mainImageFile = fromBase64(mainImage, "main-image")
+    const mainImageFile = fromBase64(mainImage, "main-image");
     const mainImagePath = `${roomNumber}/${mainImageFile.name}`;
     const { mainImageRespone, mainImageError } = await supabase.storage
-      .from("rooms")
+      .from("room_images")
       .upload(mainImagePath, mainImageFile);
 
     const mainImageURL = await supabase.storage // Get public URL
-      .from("rooms")
-      .getPublicUrl(mainImagePath)
-      .data.publicUrl
+      .from("room_images")
+      .getPublicUrl(mainImagePath).data.publicUrl;
 
     // TODO: const imageGalleryURLs = await Promise.all(); (data arrive in imageGallery var)
     const imageGalleryURLs = [];
     for (let i = 0; i < imageGallery.length; i++) {
-      const imageFile = fromBase64(imageGallery[i], `image-${i}`)
+      const imageFile = fromBase64(imageGallery[i], `image-${i}`);
       const imagePath = `${roomNumber}/${imageFile.name}`;
       const { response, error } = await supabase.storage
-        .from("rooms")
+        .from("room_images")
         .upload(imagePath, imageFile);
-        
-      const imageURL = await supabase.storage   // Get public URL
-        .from("rooms")
-        .getPublicUrl(imagePath)
-        .data.publicUrl
+
+      const imageURL = await supabase.storage // Get public URL
+        .from("room_images")
+        .getPublicUrl(imagePath).data.publicUrl;
       imageGalleryURLs.push(imageURL);
     }
-
-
 
     // Insert room data
     const { data, error } = await supabase
