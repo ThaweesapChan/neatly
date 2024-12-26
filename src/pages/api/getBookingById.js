@@ -19,7 +19,6 @@ export default async function getBookingById(req, res) {
       `,
       )
       .eq("booking_id", uuid);
-      console.log(response);
 
     if (response.error) throw response.error;
 
