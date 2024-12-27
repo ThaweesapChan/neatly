@@ -2,8 +2,15 @@ import { useState, useEffect } from "react";
 import InputField from "@/component/form";
 import { Button } from "@/component/button";
 import Navbar from "@/component/navbar";
+import { uploadFile } from "../api/upload";
+import { useRouter } from "next/router";
 
 const RegisterForm = () => {
+  const router = useRouter();
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [profile, setProfile] = useState(null);
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -14,6 +21,7 @@ const RegisterForm = () => {
     date_of_birth: "",
     country: "",
     confirmPassword: "",
+    profile_picture_url: "",
   });
 
   const [country, setCountry] = useState([]);
@@ -33,13 +41,27 @@ const RegisterForm = () => {
     fetchCountries();
   }, []);
 
-  /* test for deployment */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFileChange = (event) => {
+    setProfile(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result); // เก็บ URL ของไฟล์ภาพที่เลือก
+      };
+      reader.readAsDataURL(file); // อ่านไฟล์ภาพ
+    }
+  };
+  const handleCancel = () => {
+    setSelectedImage(null); // รีเซ็ตค่า selectedImage เป็น null
   };
 
   const handleSubmit = async (e) => {
@@ -58,8 +80,25 @@ const RegisterForm = () => {
       return;
     }
 
+    // ★ เพิ่มการตรวจสอบว่า phone_number ต้องเป็นตัวเลขเท่านั้น ★
+    const phoneRegex = /^[0-9]+$/;
+    if (!phoneRegex.test(formData.phone_number)) {
+      alert("Phone number must contain digits only");
+      return;
+    }
+
     // ส่งข้อมูลไปยัง API โดยไม่ส่ง confirmPassword
     try {
+      if (profile) {
+        const url = await uploadFile(profile); // อัพโหลดไฟล์และรับ URL
+        if (url) {
+          console.log(url);
+          formData.profile_picture_url = url;
+        } else {
+          console.error("Failed to upload file.");
+        }
+      }
+
       const { confirmPassword, ...dataToSubmit } = formData; // ตัด confirmPassword ออก
       const response = await fetch("/api/agentregister", {
         method: "POST",
@@ -72,7 +111,7 @@ const RegisterForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Registration successful!");
+        router.push("http://localhost:3000/homepage");
       } else {
         alert(result.message || "Something went wrong!");
       }
@@ -211,19 +250,51 @@ const RegisterForm = () => {
                 ))}
               </select>
             </div>
+
             {/*input picture*/}
             <div className="my-10 border-t-2 border-gray-400"></div>
+
             <div className="flex flex-col items-start gap-6">
               <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">
                 Profile Picture
               </h1>
-              <button className="w-[50%] bg-gray-600 bg-opacity-15">
-                <div className="flex aspect-[3/2] h-full w-full flex-col items-center justify-center">
-                  <div className="text-5xl text-orange-600">+</div>
-                  <h1 className="text-orange-600">Upload photo</h1>
-                </div>
-              </button>
+
+              <label
+                className={`w-[50%] cursor-pointer ${selectedImage ? "" : "bg-gray-600 bg-opacity-15"}`}
+              >
+                {/* ถ้ามีการเลือกภาพแล้ว ให้แสดงรูปภาพแทนข้อความ */}
+                {selectedImage ? (
+                  <div className="relative flex h-full w-full items-center justify-center">
+                    <img
+                      src={selectedImage}
+                      alt="Selected Profile"
+                      className="h-auto w-full rounded-md"
+                    />
+                    {/* ปุ่มยกเลิกที่มุมขวาบน */}
+                    <button
+                      onClick={handleCancel}
+                      className="absolute right-2 top-2 rounded-full bg-white p-2 text-black"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex aspect-[3/2] h-full w-full flex-col items-center justify-center">
+                    <div className="text-5xl text-orange-600">+</div>
+                    <h1 className="text-orange-600">Upload photo</h1>
+                  </div>
+                )}
+
+                {/* ปุ่ม input ที่ซ่อนและจะเปิดเมื่อคลิก */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
             </div>
+
             {/*button*/}
             <div className="mt-6">
               <Button
@@ -247,12 +318,11 @@ const RegisterForm = () => {
             backgroundPosition: "center",
           }}
         >
-          <div className="flex h-full w-full flex-col gap-20 bg-white p-[7%] pb-11">
+          <div className="flex h-full w-full flex-col gap-20 bg-gray-100 p-[7%] pb-11">
             {/* เนื้อหาหรือองค์ประกอบเพิ่มเติมในส่วนนี้ */}
             <h1 className="font-notoSerif text-5xl font-medium text-green-800">
               Register
             </h1>
-
             <div>
               <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">
                 Basic information
@@ -260,8 +330,8 @@ const RegisterForm = () => {
               <div>
                 {/* ส่วนของ form*/}
                 {/* ส่วนของ form ซ้าย*/}
-                <div className="flex w-full justify-between gap-[5%] bg-white">
-                  <div className="w-[50%] bg-white">
+                <div className="flex w-full justify-between gap-[5%] bg-gray-100">
+                  <div className="w-[50%] bg-gray-100">
                     <InputField
                       label="First Name"
                       type="text"
@@ -319,7 +389,7 @@ const RegisterForm = () => {
                           borderWidth: "1px",
                         }}
                       >
-                        <option value="" disabled>
+                        <option className="text-gray-300" value="" disabled>
                           Select your country
                         </option>
                         {country.map((country, index) => (
@@ -331,7 +401,7 @@ const RegisterForm = () => {
                     </div>
                   </div>
                   {/* ส่วนของ form ขวา*/}
-                  <div className="w-[50%] bg-white">
+                  <div className="w-[50%] bg-gray-100">
                     <InputField
                       label="Last Name"
                       type="text"
@@ -382,19 +452,47 @@ const RegisterForm = () => {
                     </div>
                   </div>
                 </div>
-
                 {/* ส่วนของ profile picture*/}
                 <div className="my-10 border-t-2 border-gray-400"></div>
                 <div className="flex flex-col items-start gap-6">
                   <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">
                     Profile Picture
                   </h1>
-                  <button className="w-[50%] bg-gray-600 bg-opacity-15">
-                    <div className="flex aspect-[3/2] h-full w-full flex-col items-center justify-center">
-                      <div className="text-5xl text-orange-600">+</div>
-                      <h1 className="text-orange-600">Upload photo</h1>
-                    </div>
-                  </button>
+
+                  <label
+                    className={`w-[50%] cursor-pointer ${selectedImage ? "" : "bg-gray-600 bg-opacity-15"}`}
+                  >
+                    {/* ถ้ามีการเลือกภาพแล้ว ให้แสดงรูปภาพแทนข้อความ */}
+                    {selectedImage ? (
+                      <div className="relative flex h-full w-full items-center justify-center">
+                        <img
+                          src={selectedImage}
+                          alt="Selected Profile"
+                          className="h-auto w-full rounded-md"
+                        />
+                        {/* ปุ่มยกเลิกที่มุมขวาบน */}
+                        <button
+                          onClick={handleCancel}
+                          className="absolute right-2 top-2 rounded-full bg-white p-2 text-black"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex aspect-[3/2] h-full w-full flex-col items-center justify-center">
+                        <div className="text-5xl text-orange-600">+</div>
+                        <h1 className="text-orange-600">Upload photo</h1>
+                      </div>
+                    )}
+
+                    {/* ปุ่ม input ที่ซ่อนและจะเปิดเมื่อคลิก */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
               </div>
             </div>

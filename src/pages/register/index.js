@@ -5,9 +5,6 @@ import Navbar from "@/component/navbar";
 import { uploadFile } from "../api/upload";
 import { useRouter } from "next/router";
 
-
-const country = [{ name: "Thailand" }, { name: "USA" }, { name: "Japan" }];
-
 const RegisterForm = () => {
   const router = useRouter();
 
@@ -26,6 +23,23 @@ const RegisterForm = () => {
     confirmPassword: "",
     profile_picture_url: "",
   });
+
+  const [country, setCountry] = useState([]);
+
+  useEffect(() => {
+    // โหลดรายชื่อประเทศจาก API
+    const fetchCountries = async () => {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      const data = await response.json();
+      const sortedCountries = data
+        .map((country) => ({
+          name: country.name.common,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      setCountry(sortedCountries);
+    };
+    fetchCountries();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
