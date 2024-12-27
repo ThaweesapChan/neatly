@@ -6,11 +6,40 @@ import {
   ConditionRefund,
   SectionsStep3,
 } from "@/component/payment/sectionstep";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Bookingdetail from "../../../component/payment/bookingdetail";
 
 export default function Step3() {
   const [selectedPayment, setSelectedPayment] = useState("credit");
+  const router = useRouter();
+  const { standardRequests, specialRequests, additionalRequest } = router.query;
+  console.log(
+    standardRequests,
+    specialRequests,
+    additionalRequest,
+    "router.query Check",
+  );
+  const [parsedStandardRequests, setParsedStandardRequests] = useState([]);
+  const [parsedSpecialRequests, setParsedSpecialRequests] = useState([]);
+  const [parsedAdditionalRequest, setParsedAdditionalRequest] = useState("");
+  console.log(
+    parsedStandardRequests,
+    parsedSpecialRequests,
+    parsedAdditionalRequest,
+    "parsedStandardRequests, parsedSpecialRequests, parsedAdditionalRequest     Check",
+  );
+  useEffect(() => {
+    if (standardRequests) {
+      setParsedStandardRequests(JSON.parse(standardRequests));
+    }
+    if (specialRequests) {
+      setParsedSpecialRequests(JSON.parse(specialRequests));
+    }
+    if (additionalRequest) {
+      setParsedAdditionalRequest(additionalRequest);
+    }
+  }, [standardRequests, specialRequests, additionalRequest]);
 
   return (
     <>
@@ -57,7 +86,11 @@ export default function Step3() {
           {/* ด้านขวา */}
           <div className="flex flex-col gap-4">
             <div className="hidden md:block md:w-[385px]">
-              <Bookingdetail />
+              <Bookingdetail
+                standardRequests={parsedStandardRequests}
+                specialRequests={parsedSpecialRequests}
+                additionalRequest={parsedAdditionalRequest}
+              />
             </div>
             <div className="hidden md:block">
               <ConditionRefund />

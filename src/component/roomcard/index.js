@@ -20,11 +20,7 @@ function Roomcard({ room, onClick, check_in, check_out }) {
     router.push({
       pathname: "/payment",
       query: {
-        room_type: room.room_type,
-        price: room.price,
-        size: room.size,
-        guests: room.guests,
-        room_description: room.room_description,
+        room,
         check_in,
         check_out,
       },
@@ -34,7 +30,7 @@ function Roomcard({ room, onClick, check_in, check_out }) {
     <div className="flex h-[400px] w-[90%] flex-col items-center justify-center gap-2 bg-white md:flex-row">
       <div className="relative w-[60%]">
         <Image
-          src="/asset/deluxe.jpeg"
+          src={room.room_images_url || "/images/room.jpg"}
           alt="Mountain view from hotel room"
           className="h-[265px] rounded-md md:w-[453px]"
           width={453}
