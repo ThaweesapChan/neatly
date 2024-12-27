@@ -38,13 +38,16 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: bookingsError.message });
     }
 
-    const bookedRoomIds = bookedRooms?.map((booking) => booking.room_id) || [];
+    const bookedRoomIds =
+      bookedRooms
+        ?.filter((booking) => booking.room_id !== null) // กรอง room_id ที่ไม่ใช่ null
+        .map((booking) => booking.room_id) || [];
+
     console.log("Booked Room IDs:", bookedRoomIds);
 
     let { data: availableRooms, error: roomsError } = await supabase
       .from("rooms")
       .select("*")
-      .eq("status", "available")
       .gte("guests", parsedGuest);
 
     if (roomsError) {

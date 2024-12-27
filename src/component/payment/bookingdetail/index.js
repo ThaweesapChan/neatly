@@ -8,10 +8,6 @@ export default function Bookingdetail({
 }) {
   const { room } = useBookingDetail();
   const [timeLeft, setTimeLeft] = useState(300);
-  const [spacialreq, setSpecialRequests] = useState(specialRequests);
-  const [additionalreq, setAdditionalRequest] = useState(additionalRequest);
-  const [standardreq, setStandardRequests] = useState(standardRequests);
-  
 
   useEffect(() => {
     const timer = setInterval(() => {

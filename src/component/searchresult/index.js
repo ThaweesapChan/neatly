@@ -110,9 +110,9 @@ const Searchresult = () => {
           </div>
           <Button
             onClick={fetchRooms}
-            variant="primary"
-            label="Search"
-            other="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
+            type="1"
+            name="Search"
+            style="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
           />
         </div>
       </div>
@@ -126,7 +126,7 @@ const Searchresult = () => {
               room={room}
               onClick={() => {
                 openModal(room);
-                setBookingDetail({ checkIn, checkOut, roominfo: room });
+                setRoomDetails({ checkIn, checkOut, roominfo: room });
               }}
             />
           ))

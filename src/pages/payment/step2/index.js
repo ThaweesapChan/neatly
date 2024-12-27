@@ -64,7 +64,14 @@ export default function Standardrequest() {
   // Navigate next
   const handleNext = (e) => {
     e.preventDefault();
-    router.push("http://localhost:3000/payment/step3");
+    router.push({
+      pathname: "/payment/step3",
+      query: {
+        standardRequests: JSON.stringify(standardRequests),
+        specialRequests: JSON.stringify(specialRequests),
+        additionalRequest: additionalRequest,
+      },
+    });
   };
 
   return (
