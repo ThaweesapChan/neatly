@@ -1,4 +1,4 @@
-export function Button({ type = "primary", name = "", style = "", onClick }) {
+export function Button({ type = "", name = "", style = "", onClick }) {
   // Base styles for all buttons
   const same =
     "text-center rounded leading-4 font-semibold text-base font-openSans";
