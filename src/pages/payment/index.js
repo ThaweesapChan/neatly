@@ -1,12 +1,10 @@
 import Navbar from "@/component/navbar";
-import Step3 from "@/component/payment/step3/step3";
-import { FormCash } from "@/component/payment/step3/cash";
-
+import Step1 from "@/pages/payment/step1";
 export default function Booking() {
   return (
     <>
       <Navbar />
-      <Step3 />
+      <Step1 />
     </>
   );
 }
