@@ -90,22 +90,12 @@ function BookingHistoryCard() {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  const roompicture = [
-    { label: "Superior Garden View", src: "/asset/superior.jpeg" },
-    { label: "Deluxe", src: "/asset/deluxe.jpeg" },
-    { label: "Superior", src: "/asset/room.jpeg" },
-    { label: "Premier Sea View", src: "/asset/premier.jpeg" },
-    { label: "Supreme", src: "/asset/supreme.jpeg" },
-    { label: "Suite", src: "/asset/room2.jpeg" },
-  ];
-
   return (
     <>
       <div className="card-container w-full md:space-y-6 md:px-20">
         {bookings.map((booking) => {
-          const matchedImage =
-            roompicture.find((room) => room.label === booking.rooms.room_type)
-              ?.src || "/asset/default.jpeg";
+          const roomImageUrl =
+            booking.rooms.room_image_url || "/asset/default.jpeg";
 
           return (
             <div
@@ -116,7 +106,7 @@ function BookingHistoryCard() {
                 {/* Room Image */}
                 <div className="md:w-1/3">
                   <Image
-                    src={matchedImage}
+                    src={roomImageUrl}
                     width={500}
                     height={250}
                     alt={booking.rooms.room_type}
@@ -138,11 +128,11 @@ function BookingHistoryCard() {
                   {/* วันที่ Check-in และ Check-out */}
                   <div className="my-6 font-inter text-gray-800 md:flex md:gap-8">
                     <p className="md:flex md:flex-col">
-                      <p className="font-semibold">Check-in:</p>{" "}
+                      <span className="font-semibold">Check-in:</span>{" "}
                       {formatDate(booking.check_in_date)} | After 2:00 PM
                     </p>
                     <p className="md:flex md:flex-col">
-                      <p className="font-semibold">Check-out:</p>{" "}
+                      <span className="font-semibold">Check-out:</span>{" "}
                       {formatDate(booking.check_out_date)} | Before 12:00 PM
                     </p>
                   </div>

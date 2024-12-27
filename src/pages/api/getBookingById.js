@@ -9,7 +9,7 @@ export default async function getBookingById(req, res) {
         `
         booking_id,
         user:users ( first_name, last_name ),
-        room:rooms ( room_type, bed_type, price ),
+        room:rooms ( room_type, bed_type, price, room_image_url ),
         guests,
         amount,
         check_in_date,
