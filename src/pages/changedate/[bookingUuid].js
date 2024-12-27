@@ -89,18 +89,8 @@ const ChangeDatePage = () => {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  const roompicture = [
-    { label: "Superior Garden View", src: "/asset/superior.jpeg" },
-    { label: "Deluxe", src: "/asset/deluxe.jpeg" },
-    { label: "Superior", src: "/asset/room.jpeg" },
-    { label: "Premier Sea View", src: "/asset/premier.jpeg" },
-    { label: "Supreme", src: "/asset/supreme.jpeg" },
-    { label: "Suite", src: "/asset/room2.jpeg" },
-  ];
-
-  const matchedImage =
-    roompicture.find((room) => room.label === bookingDetails.room.room_type)
-      ?.src || "/asset/default.jpeg";
+  const roomImageUrl =
+    bookingDetails.room.room_image_url || "/asset/default.jpeg";
 
   return (
     <>
@@ -124,7 +114,7 @@ const ChangeDatePage = () => {
           {/* Room Image Section */}
           <div className="w-full md:mx-20 md:w-1/2">
             <Image
-              src={matchedImage}
+              src={roomImageUrl}
               width={600}
               height={350}
               objectFit="cover"
