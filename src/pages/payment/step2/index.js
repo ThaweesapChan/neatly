@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "@/component/navbar";
 import { useRouter } from "next/router";
-import { useBooking } from "@/lib/BookingContext";
 import {
   SectionsStep2,
   ConditionRefund,
@@ -10,7 +9,7 @@ import Bookingdetail from "@/component/payment/bookingdetail";
 
 export default function Standardrequest() {
   const router = useRouter();
-  const { bookingData, setBookingData } = useBooking(); // ใช้ Context
+
   const specialRequestOptions = [
     { name: "Baby cot", price: 400 },
     { name: "Airport transfer", price: 200 },
@@ -19,61 +18,52 @@ export default function Standardrequest() {
     { name: "Phone chargers and adapters", price: 100 },
     { name: "Breakfast", price: 150 },
   ];
+  const standardRequestOptions = [
+    "Early check-in",
+    "Late check-out",
+    "Non-smoking room",
+    "A room on the high floor",
+    "A quiet room",
+  ];
 
-  // State เก็บค่าที่ checkbox ถูกเลือกและข้อความจาก textarea
-  const [standardRequests, setStandardRequests] = useState(
-    bookingData.specialRequest.standardRequests || [],
-  );
-  const [specialRequests, setSpecialRequests] = useState(
-    bookingData.specialRequest.specialRequests || [],
-  );
-  const [additionalRequest, setAdditionalRequest] = useState(
-    bookingData.specialRequest.additionalRequest || "",
-  );
+  // State
+  const [standardRequests, setStandardRequests] = useState([]);
+  const [specialRequests, setSpecialRequests] = useState([]);
+  const [additionalRequest, setAdditionalRequest] = useState("");
 
-  // ฟังก์ชันจัดการ checkbox
+  // Handle checkbox changes
   const handleCheckboxChange = (e, type, option) => {
-    const { checked, value } = e.target;
+    const { checked } = e.target;
 
     if (type === "standard") {
-      setStandardRequests((prev) =>
-        checked ? [...prev, value] : prev.filter((item) => item !== value),
-      );
+      // For standard requests, just add/remove the string values
+      setStandardRequests((prev) => {
+        if (checked) {
+          return [...prev, option];
+        } else {
+          return prev.filter((item) => item !== option);
+        }
+      });
     } else if (type === "special") {
-      if (checked) {
-        // เพิ่ม option ที่เลือกใน specialRequests
-        setSpecialRequests((prev) => [
-          ...prev,
-          { name: option.name, price: option.price },
-        ]);
-      } else {
-        // ลบ option ที่ยกเลิกการเลือกออกจาก specialRequests
-        setSpecialRequests((prev) =>
-          prev.filter((req) => req.name !== option.name),
-        );
-      }
+      // For special requests, add/remove objects with name and price
+      setSpecialRequests((prev) => {
+        if (checked) {
+          return [...prev, option];
+        } else {
+          return prev.filter((req) => req.name !== option.name);
+        }
+      });
     }
   };
 
-  // ฟังก์ชันเมื่อกด Back
+  // Navigate back
   const handleBack = () => {
     router.push("http://localhost:3000/payment/step1");
   };
 
-  // ฟังก์ชันเมื่อกด Next
+  // Navigate next
   const handleNext = (e) => {
     e.preventDefault();
-
-    // อัปเดต Context
-    setBookingData((prev) => ({
-      ...prev,
-      specialRequest: {
-        standardRequests,
-        specialRequests,
-        additionalRequest,
-      },
-    }));
-
     router.push("http://localhost:3000/payment/step3");
   };
 
@@ -90,19 +80,13 @@ export default function Standardrequest() {
               Standard Request
             </h2>
             <div className="space-y-3">
-              {[
-                "Early check-in",
-                "Late check-out",
-                "Non-smoking room",
-                "A room on the high floor",
-                "A quiet room",
-              ].map((item) => (
+              {standardRequestOptions.map((item) => (
                 <label key={item} className="flex items-center space-x-3">
                   <input
                     type="checkbox"
                     value={item}
                     checked={standardRequests.includes(item)}
-                    onChange={(e) => handleCheckboxChange(e, "standard")}
+                    onChange={(e) => handleCheckboxChange(e, "standard", item)}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600"
                   />
                   <span className="font-inter text-gray-600">{item}</span>
@@ -151,14 +135,20 @@ export default function Standardrequest() {
               placeholder="Enter any additional requests here..."
             />
           </div>
+
           <div className="ml-4 flex flex-col gap-4 md:hidden">
             <div className="w-[385px] md:block">
-              <Bookingdetail />
+              <Bookingdetail
+                standardRequests={standardRequests}
+                specialRequests={specialRequests}
+                additionalRequest={additionalRequest}
+              />
             </div>
             <div className="w-[385px] md:block">
               <ConditionRefund />
             </div>
           </div>
+
           {/* Navigation Buttons */}
           <div className="flex justify-between pt-4">
             <button
@@ -177,10 +167,15 @@ export default function Standardrequest() {
             </button>
           </div>
         </div>
-        {/* ด้านขวา */}
+
+        {/* Right Side */}
         <div className="ml-4 flex flex-col gap-4">
           <div className="hidden md:block md:w-[385px]">
-            <Bookingdetail />
+            <Bookingdetail
+              standardRequests={standardRequests}
+              specialRequests={specialRequests}
+              additionalRequest={additionalRequest}
+            />
           </div>
           <div className="hidden md:block md:w-[385px]">
             <ConditionRefund />
