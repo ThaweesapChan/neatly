@@ -8,6 +8,16 @@ import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
 import axios from "axios";
 
+// fn to convert image to base64
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+
 export default function PropertyViewEdit() {
   const router = useRouter();
   const { id } = router.query;
@@ -32,8 +42,28 @@ export default function PropertyViewEdit() {
       if (!id) return;
 
       try {
-        const response = await axios.get(`/api/getRoomProperty/${id}`);
+        const response = await axios.get(`/api/getRoomPropertyById?id=${id}`);
         const roomData = response.data.data;
+
+        // get and hydrate mainImage
+        const mainImage = await fetch(roomData.room_image_url);
+        const mainImageBlob = await mainImage.blob();
+        const imageFile = Object.assign(mainImageBlob, {
+          preview: URL.createObjectURL(mainImageBlob),
+          image: await toBase64(mainImageBlob),
+        });
+
+        // get and hydrate imageGallery
+        const imageGallery = await Promise.all(
+          roomData.image_gallery.map(async (url) => {
+            const image = await fetch(url);
+            const imageBlob = await image.blob();
+            return Object.assign(imageBlob, {
+              preview: URL.createObjectURL(imageBlob),
+              image: await toBase64(imageBlob),
+            });
+          }),
+        );
 
         setFormData({
           roomNumber: roomData.room_number || "",
@@ -41,11 +71,13 @@ export default function PropertyViewEdit() {
           roomSize: roomData.room_size || "",
           bedType: roomData.bed_type || "",
           guests: roomData.guests || 2,
-          pricePerNight: roomData.price || "",
-          promotionPrice: roomData.promotion_price || "",
+          pricePerNight: roomData.price ? roomData.price.toFixed(2) : "",
+          promotionPrice: roomData.promotion_price
+            ? roomData.promotion_price.toFixed(2)
+            : "",
           roomDescription: roomData.room_description || "",
-          mainImage: roomData.main_image || null,
-          imageGallery: roomData.image_gallery || [],
+          mainImage: imageFile || null,
+          imageGallery: imageGallery || [],
           amenities:
             roomData.amenities?.map((amenity) => ({
               value: amenity,
@@ -197,13 +229,12 @@ export default function PropertyViewEdit() {
                   onChange={(e) =>
                     setFormData({ ...formData, bedType: e.target.value })
                   }
-                  className="w-full"
                 />
                 <datalist id="bedOptions">
-                  <option value="Single bed" />
-                  <option value="Double bed" />
-                  <option value="Queen bed" />
-                  <option value="King bed" />
+                  <option value="Single" />
+                  <option value="Double" />
+                  <option value="Queen" />
+                  <option value="King" />
                 </datalist>
               </div>
 
@@ -226,10 +257,7 @@ export default function PropertyViewEdit() {
                   type="number"
                   value={formData.pricePerNight}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      pricePerNight: e.target.value,
-                    })
+                    setFormData({ ...formData, pricePerNight: e.target.value })
                   }
                 />
               </div>
@@ -241,10 +269,7 @@ export default function PropertyViewEdit() {
                   type="number"
                   value={formData.promotionPrice}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      promotionPrice: e.target.value,
-                    })
+                    setFormData({ ...formData, promotionPrice: e.target.value })
                   }
                 />
               </div>
@@ -255,14 +280,11 @@ export default function PropertyViewEdit() {
               <textarea
                 id="roomDescription"
                 value={formData.roomDescription}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    roomDescription: e.target.value,
-                  })
-                }
                 rows={4}
                 className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2"
+                onChange={(e) =>
+                  setFormData({ ...formData, roomDescription: e.target.value })
+                }
               />
             </div>
 
