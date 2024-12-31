@@ -9,14 +9,13 @@ import CreateAmenities from "@/components/ui/createAmenites";
 import axios from "axios";
 
 // fn to convert image to base64
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 export default function PropertyViewEdit() {
   const router = useRouter();
@@ -79,9 +78,9 @@ export default function PropertyViewEdit() {
           mainImage: imageFile || null,
           imageGallery: imageGallery || [],
           amenities:
-            roomData.amenities?.map((amenity) => ({
+            roomData.amenities?.map((amenity, index) => ({
               value: amenity,
-              label: amenity,
+              id: index,
             })) || [],
         });
       } catch (error) {
