@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
+import axios from "axios";
 
 export default function CreateRoom() {
   const [formData, setFormData] = useState({
@@ -21,70 +22,82 @@ export default function CreateRoom() {
     amenities: [],
   });
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
+  // ฟังก์ชันรีเซ็ต formData ให้เป็นค่าเริ่มต้น
+  const resetFormData = () => {
+    setFormData({
+      roomNumber: "",
+      roomType: "",
+      roomSize: "",
+      bedType: "",
+      guests: 2,
+      pricePerNight: "",
+      promotionPrice: "",
+      roomDescription: "",
+      mainImage: null,
+      imageGallery: [],
+      amenities: [],
+    });
+  };
 
-   // ฟังก์ชันแปลงไฟล์เป็น base64
-   const toBase64 = (file) =>
-     new Promise((resolve, reject) => {
-       const reader = new FileReader();
-       reader.readAsDataURL(file);
-       reader.onload = () => resolve(reader.result);
-       reader.onerror = (error) => reject(error);
-     });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-   // ฟังก์ชันแปลง imageGallery เป็น base64 strings เท่านั้น
-   const convertToBase64 = async (files) => {
-     return Promise.all(
-       files.map(async (file) => {
-         const base64 = await toBase64(file);
-         return base64; // ส่งกลับแค่ base64 string
-       }),
-     );
-   };
+    // ฟังก์ชันแปลงไฟล์เป็น base64
+    const toBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
 
-   // แปลง mainImage เป็น base64 ถ้ามี
-   const mainImageData = formData.mainImage
-     ? await toBase64(formData.mainImage)
-     : null;
+    // ฟังก์ชันแปลง imageGallery เป็น base64 strings เท่านั้น
+    const convertToBase64 = async (files) => {
+      return Promise.all(
+        files.map(async (file) => {
+          const base64 = await toBase64(file);
+          return base64; // ส่งกลับแค่ base64 string
+        }),
+      );
+    };
 
-   // แปลง imageGallery เป็น base64 ถ้ามี
-   const imageGalleryData =
-     formData.imageGallery.length > 0
-       ? await convertToBase64(formData.imageGallery)
-       : [];
+    // แปลง mainImage เป็น base64 ถ้ามี
+    const mainImageData = formData.mainImage
+      ? await toBase64(formData.mainImage)
+      : null;
 
-   const data = {
-     roomNumber: formData.roomNumber || null,
-     roomType: formData.roomType || "",
-     roomSize: formData.roomSize || null,
-     bedType: formData.bedType || "",
-     guests: formData.guests || 0,
-     pricePerNight: formData.pricePerNight || null,
-     promotionPrice: formData.promotionPrice || null,
-     roomDescription: formData.roomDescription || "",
-     mainImage: mainImageData || null, 
-     imageGallery: imageGalleryData || [], 
-     amenities: formData.amenities.map((x) => x.value) || [],
-   };
+    // แปลง imageGallery เป็น base64 ถ้ามี
+    const imageGalleryData =
+      formData.imageGallery.length > 0
+        ? await convertToBase64(formData.imageGallery)
+        : [];
 
-   console.log(data); // ล็อกข้อมูลที่จะแสดงใน console
+    const data = {
+      roomNumber: formData.roomNumber || null,
+      roomType: formData.roomType || "",
+      roomSize: formData.roomSize || null,
+      bedType: formData.bedType || "",
+      guests: formData.guests || 0,
+      pricePerNight: formData.pricePerNight || null,
+      promotionPrice: formData.promotionPrice || null,
+      roomDescription: formData.roomDescription || "",
+      mainImage: mainImageData || null,
+      imageGallery: imageGalleryData || [],
+      amenities: formData.amenities.map((x) => x.value) || [],
+    };
 
-   try {
-     const response = await fetch("/api/createRoom", {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify(data),
-     });
+    console.log(data); // ล็อกข้อมูลที่จะแสดงใน console
 
-     const result = await response.json();
-     console.log(result); // ผลลัพธ์จากการตอบกลับของ API
-   } catch (error) {
-     console.error("Error creating room:", error);
-   }
- };
+    try {
+      const response = await axios.post("/api/createRoom", data);
+      console.log(response.data);
+      resetFormData(); // รีเซ็ต formData หลังจากสร้างห้องพักเสร็จสิ้น
+      alert("Room created successfully");
+    } catch (error) {
+      console.error("Error creating room:", error);
+      alert("Failed to create room");
+    }
+  };
 
   return (
     <div className="flex min-h-screen">
