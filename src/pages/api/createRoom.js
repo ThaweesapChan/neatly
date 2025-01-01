@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       .from("room_images")
       .getPublicUrl(mainImagePath).data.publicUrl;
 
-    // TODO: const imageGalleryURLs = await Promise.all(); (data arrive in imageGallery var)
+    // imageGallery save to supabase storage and get URL to save in DB
     const imageGalleryURLs = [];
     for (let i = 0; i < imageGallery.length; i++) {
       const imageFile = fromBase64(imageGallery[i], `image-${i}`);

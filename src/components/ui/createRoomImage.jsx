@@ -36,6 +36,7 @@ const RoomImage = ({ formData, setFormData }) => {
       setFormData((prev) => ({
         ...prev,
         mainImage: imageFile,
+        mainImageChanged: true,
       }));
     }
   };
@@ -57,6 +58,7 @@ const RoomImage = ({ formData, setFormData }) => {
       setFormData((prev) => ({
         ...prev,
         imageGallery: [...prev.imageGallery, ...newFiles],
+        imageGalleryChanged: true,
       }));
     }
   };
@@ -65,6 +67,7 @@ const RoomImage = ({ formData, setFormData }) => {
     setFormData((prev) => ({
       ...prev,
       imageGallery: prev.imageGallery.filter((_, i) => i !== index),
+      imageGalleryChanged: true,
     }));
   };
 

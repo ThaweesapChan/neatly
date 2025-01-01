@@ -33,6 +33,8 @@ export default function PropertyViewEdit() {
     mainImage: null,
     imageGallery: [],
     amenities: [],
+    mainImageChanged: false,
+    imageGalleryChanged: false,
   });
 
   // Fetch room data when component mounts
@@ -115,18 +117,24 @@ export default function PropertyViewEdit() {
       );
     };
 
-    // แปลง mainImage เป็น base64 ถ้าเป็นไฟล์ใหม่
-    const mainImageData = formData.mainImage
-      ? typeof formData.mainImage === "string"
-        ? formData.mainImage
-        : await toBase64(formData.mainImage)
-      : null;
+    let mainImageData = null;
+    if (formData.mainImageChanged) {
+      // แปลง mainImage เป็น base64 ถ้าเป็นไฟล์ใหม่
+      mainImageData = formData.mainImage
+        ? typeof formData.mainImage === "string"
+          ? formData.mainImage
+          : await toBase64(formData.mainImage)
+        : null;
+    }
 
-    // แปลง imageGallery เป็น base64
-    const imageGalleryData =
-      formData.imageGallery.length > 0
-        ? await convertToBase64(formData.imageGallery)
-        : [];
+    let imageGalleryData = [];
+    if (formData.imageGalleryChanged) {
+      // แปลง imageGallery เป็น base64
+      imageGalleryData =
+        formData.imageGallery.length > 0
+          ? await convertToBase64(formData.imageGallery)
+          : [];
+    }
 
     const data = {
       roomNumber: formData.roomNumber || null,
