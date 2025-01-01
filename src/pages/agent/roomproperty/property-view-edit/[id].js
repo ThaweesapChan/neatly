@@ -70,9 +70,9 @@ export default function PropertyViewEdit() {
           roomSize: roomData.room_size || "",
           bedType: roomData.bed_type || "",
           guests: roomData.guests || 2,
-          pricePerNight: roomData.price ? roomData.price.toFixed(2) : "",
+          pricePerNight: roomData.price ? roomData.price : "",
           promotionPrice: roomData.promotion_price
-            ? roomData.promotion_price.toFixed(2)
+            ? roomData.promotion_price
             : "",
           roomDescription: roomData.room_description || "",
           mainImage: imageFile || null,
@@ -143,9 +143,12 @@ export default function PropertyViewEdit() {
     };
 
     try {
-      const response = await axios.put(`/api/updateRoom/${id}`, data);
+      const response = await axios.put(
+        `/api/updateRoomPropertyById/${id}`,
+        data,
+      );
       console.log(response.data);
-      router.push("/agent/roomproperty"); // Redirect after successful update
+      router.push("/agent/roomproperty/roomproperty"); // Redirect after successful update
     } catch (error) {
       console.error("Error updating room:", error);
     }
