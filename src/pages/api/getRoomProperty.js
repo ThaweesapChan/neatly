@@ -3,9 +3,14 @@ import supabase from "@/utils/supabaseClient";
 export default async function getRoomProperty(req, res) {
   try {
     // ดึงข้อมูลห้องพักจากฐานข้อมูล
-    const { data, error } = await supabase.from("rooms").select(`
+    const { data, error } = await supabase
+      .from("rooms")
+      .select(
+        `
       *
-      `);
+      `,
+      )
+      .order("room_id", { ascending: true });
 
     // ตรวจสอบข้อผิดพลาด
     if (error) {

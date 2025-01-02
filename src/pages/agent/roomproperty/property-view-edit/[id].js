@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
 import axios from "axios";
+import { ArrowLeft } from "lucide-react";
 
 // fn to convert image to base64
 const toBase64 = (file) =>
@@ -162,6 +163,36 @@ export default function PropertyViewEdit() {
     }
   };
 
+  const handleDelete = async () => {
+    const isConfirmed = window.confirm("คุณแน่ใจว่าต้องการลบห้องนี้?");
+
+    if (isConfirmed) {
+      try {
+        console.log("Attempting to delete room with ID:", id);
+
+        const response = await axios.delete(
+          `/api/deleteRoomPropertyById/${id}`,
+        );
+        console.log("Delete response:", response.data);
+
+        if (response.data) {
+          alert("ลบห้องสำเร็จ");
+          router.push("/agent/roomproperty/roomproperty");
+        }
+      } catch (error) {
+        console.error("Full error object:", error);
+        console.error("Error response:", error.response?.data);
+
+        const errorMessage =
+          error.response?.data?.details ||
+          error.response?.data?.error ||
+          "เกิดข้อผิดพลาดในการลบห้อง กรุณาลองใหม่อีกครั้ง";
+
+        alert(errorMessage);
+      }
+    }
+  };
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
@@ -170,7 +201,16 @@ export default function PropertyViewEdit() {
       {/* Main Content */}
       <div className="flex-1">
         <div className="mb-8 flex items-center justify-between p-6">
-          <h1 className="text-xl font-semibold">Edit Room Details</h1>
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.back()} // ใช้ router.back() เพื่อย้อนกลับไปยังหน้าก่อนหน้านี้
+            >
+              <ArrowLeft className="h-6 w-6" />
+            </Button>
+            <h1 className="text-xl font-semibold">{formData.roomType}</h1>
+          </div>
           <Button
             variant="default"
             onClick={handleSubmit}
@@ -320,6 +360,15 @@ export default function PropertyViewEdit() {
               </div>
             </div>
           </form>
+          <div className="mx-auto mt-4 flex max-w-5xl justify-end space-y-8 rounded-lg">
+            <button
+              variant="destructive"
+              onClick={handleDelete}
+              className="px-2 py-4 font-openSans text-base font-semibold text-[#646D89]"
+            >
+              Delete Room
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ export default function CreateRoom() {
     roomType: "",
     roomSize: "",
     bedType: "",
-    guests: 2,
+    guests: "",
     pricePerNight: "",
     promotionPrice: "",
     roomDescription: "",
@@ -29,7 +29,7 @@ export default function CreateRoom() {
       roomType: "",
       roomSize: "",
       bedType: "",
-      guests: 2,
+      guests: "",
       pricePerNight: "",
       promotionPrice: "",
       roomDescription: "",
@@ -137,11 +137,15 @@ export default function CreateRoom() {
                 <Label htmlFor="roomNumber">Room Number</Label>
                 <Input
                   id="roomNumber"
-                  type="number"
+                  type="text"
                   value={formData.roomNumber}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomNumber: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      // ตรวจสอบว่าเป็นตัวเลข
+                      setFormData({ ...formData, roomNumber: value });
+                    }
+                  }}
                 />
               </div>
 
@@ -169,11 +173,15 @@ export default function CreateRoom() {
                 <Label htmlFor="roomSize">Room Size (sqm)</Label>
                 <Input
                   id="roomSize"
-                  type="number"
+                  type="text"
                   value={formData.roomSize}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomSize: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({ ...formData, roomSize: value });
+                    }
+                  }}
                 />
               </div>
 
@@ -191,8 +199,8 @@ export default function CreateRoom() {
                 <datalist id="bedOptions">
                   <option value="Single bed" />
                   <option value="Double bed" />
-                  <option value="Queen bed" />
-                  <option value="King bed" />
+                  <option value="Double bed (king size)" />
+                  <option value="Twin bed" />
                 </datalist>
               </div>
 
@@ -200,26 +208,36 @@ export default function CreateRoom() {
                 <Label htmlFor="guests">Guests</Label>
                 <Input
                   id="guests"
-                  type="number"
+                  list="guestOptions"
                   value={formData.guests}
                   onChange={(e) =>
                     setFormData({ ...formData, guests: e.target.value })
                   }
                 />
+                <datalist id="guestOptions">
+                  <option value="2" />
+                  <option value="3" />
+                  <option value="4" />
+                  <option value="5" />
+                  <option value="6" />
+                </datalist>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="pricePerNight">Price per Night (THB)</Label>
                 <Input
                   id="pricePerNight"
-                  type="number"
+                  type="text"
                   value={formData.pricePerNight}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      pricePerNight: e.target.value,
-                    })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      setFormData({
+                        ...formData,
+                        pricePerNight: value,
+                      });
+                    }
+                  }}
                 />
               </div>
 
@@ -227,14 +245,18 @@ export default function CreateRoom() {
                 <Label htmlFor="promotionPrice">Promotion Price</Label>
                 <Input
                   id="promotionPrice"
-                  type="number"
+                  type="text" // ใช้ text และตรวจสอบเอง
                   value={formData.promotionPrice}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      promotionPrice: e.target.value,
-                    })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      // ตรวจสอบให้เป็นตัวเลขเท่านั้น
+                      setFormData({
+                        ...formData,
+                        promotionPrice: value,
+                      });
+                    }
+                  }}
                 />
               </div>
             </div>
