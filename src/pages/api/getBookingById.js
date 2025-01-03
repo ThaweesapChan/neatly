@@ -12,9 +12,11 @@ export default async function getBookingById(req, res) {
         room:rooms ( room_type, bed_type, price, room_image_url ),
         guests,
         amount,
+        total_price,
         check_in_date,
         check_out_date,
         booking_date,
+        special_requests,
         payment:payments ( payment_method )
       `,
       )

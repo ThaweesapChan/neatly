@@ -85,7 +85,7 @@ function CustomerBookingpage() {
                 name="search"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="relative w-96 rounded border border-gray-300 p-2 pl-12 text-gray-400"
+                className="relative w-96 rounded border border-gray-300 p-2 pl-12 text-gray-400 hover:border-orange-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-orange-600"
                 placeholder="Search..."
               />
               <Search className="absolute -translate-y-8 translate-x-3 text-gray-400" />

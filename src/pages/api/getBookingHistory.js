@@ -41,6 +41,8 @@ export default async function handler(req, res) {
         additional_request,
         promotion_code,
         booking_date,
+        cancellation_date,
+        status,
         rooms:room_id (
           room_type,
           room_image_url,

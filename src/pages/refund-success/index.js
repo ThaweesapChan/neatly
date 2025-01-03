@@ -80,7 +80,10 @@ const RefundSuccessPage = () => {
             <hr className="my-8 border-gray-400 md:my-12" />
             <p className="flex justify-between text-lg font-bold text-white">
               <span className="text-[#D5DFDA]">Total Refund</span>THB{" "}
-              {bookingDetails.room.price.toFixed(2)}
+              {parseFloat(bookingDetails.total_price).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </p>
           </div>
 

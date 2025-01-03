@@ -12,11 +12,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "react-toastify";
 
 function Navbar() {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState({});
+  const [toastShown, setToastShown] = useState(false);
   const router = useRouter();
 
   const toggleMenu = () => {
@@ -62,7 +64,11 @@ function Navbar() {
   async function getData() {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token) {
+        setIsLoggedIn(false);
+        setName({});
+        return;
+      }
 
       const response = await axios.get("/api/getUser", {
         headers: {
@@ -70,16 +76,31 @@ function Navbar() {
         },
       });
       setName(response.data);
+      setIsLoggedIn(true);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      setIsLoggedIn(false);
+      setName({});
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem("token"); // เคลียร์ token ออกจาก localStorage
+        if (!toastShown) {
+          toast.warn("Session expired or invalid. Please log in again.");
+          setToastShown(true);
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again later.");
+      }
     }
   }
 
   useEffect(() => {
-    if (isLoggedIn) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
       getData();
+    } else {
+      setIsLoggedIn(false);
     }
-  }, [isLoggedIn]);
+  }, []);
 
   return (
     <>
@@ -126,7 +147,7 @@ function Navbar() {
           {isLoggedIn ? (
             <div className="hidden items-center gap-8 pr-14 md:flex">
               <button aria-label="Notifications">
-                <span className="text-xl text-gray-700">
+                <span className="cursor-pointer text-xl text-gray-700">
                   <HiBell />
                 </span>
               </button>
@@ -137,7 +158,10 @@ function Navbar() {
                   <div className="flex cursor-pointer items-center gap-2">
                     <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
                       <Image
-                        src="/asset/profile-pic.png"
+                        src={
+                          name?.data?.profile_picture_url ||
+                          "/asset/profile-avatar-user-icon.png"
+                        }
                         alt="Profile picture"
                         width={40}
                         height={40}
@@ -251,7 +275,10 @@ function Navbar() {
                   <div className="flex items-center gap-5">
                     <div className="mb-8 ml-2 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
                       <Image
-                        src="/asset/profile-pic.png"
+                        src={
+                          name?.data?.profile_picture_url ||
+                          "/asset/profile-avatar-user-icon.png"
+                        }
                         alt="Profile picture"
                         width={40}
                         height={40}

@@ -17,11 +17,19 @@ function BookingDetailPage() {
       setBookingDetail(response.data);
 
       // Calculate Total price
-      const roomPrice = Number(response.data.room.price);
-      const airportTransfer = Number(response.data.airport_transfer || 0);
-      const promotionCodeDiscount = Number(response.data.promotion_code || 0);
+      const roomPrice = Number(response.data?.room?.price || 0); // ราคา Room
+      const promotionCodeDiscount = Number(response.data?.promotion_code || 0); // ส่วนลดจาก Promotion Code
+      const specialRequestsTotal = (
+        response.data?.special_requests || []
+      ).reduce((sum, request) => {
+        const parsedRequest = JSON.parse(request || "{}");
+        return sum + Number(parsedRequest.price || 0);
+      }, 0); // รวมราคาจาก special_requests
+
+      // Calculate Total price
       const calculatedTotal =
-        roomPrice + airportTransfer - promotionCodeDiscount;
+        roomPrice + specialRequestsTotal - promotionCodeDiscount;
+
       setTotal(calculatedTotal);
     } catch (error) {
       console.error("Error fetching booking details:", error);
@@ -157,7 +165,7 @@ function BookingDetailPage() {
               <div className="flex items-center justify-end gap-4 font-inter text-gray-600">
                 <h2 className="font-normal">Payment success via </h2>
                 <span className="font-semibold">
-                  {bookingDetails.payment[0].payment_method} - ***888
+                  {bookingDetails.payment[0].payment_method}
                 </span>
               </div>
               <div className="mt-4">
@@ -173,18 +181,39 @@ function BookingDetailPage() {
                   </span>
                 </div>
 
-                {/* Airport transter price */}
+                {/* Special_requests price */}
 
-                <div className="mb-6 flex justify-between font-inter text-gray-900">
-                  <span>Airport transfer</span>
-                  <span className="font-semibold leading-6">
-                    {Number(
-                      bookingDetails.airport_transfer || 0,
-                    ).toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
+                <div className="mb-6 font-inter">
+                  {/* ตรวจสอบว่า special_requests ไม่เป็น null */}
+                  {bookingDetails.special_requests &&
+                  bookingDetails.special_requests.length > 0 ? (
+                    bookingDetails.special_requests.map((request, index) => {
+                      // Parse JSON string ก่อนใช้งาน
+                      const parsedRequest = JSON.parse(request);
+                      return (
+                        <div
+                          key={index}
+                          className="mb-2 flex justify-between text-gray-900"
+                        >
+                          <div className="flex-1">
+                            <p>{parsedRequest.request}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold text-gray-900">
+                              {parseFloat(parsedRequest.price).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 2,
+                                },
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-gray-500">No special requests</p>
+                  )}
                 </div>
 
                 {/* Promotion Code Discount */}
