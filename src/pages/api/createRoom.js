@@ -85,8 +85,6 @@ export default async function handler(req, res) {
       imageGalleryURLs.push(imageURL);
     }
 
-
-
     // Insert room data
     const { data, error } = await supabase
       .from("rooms")
