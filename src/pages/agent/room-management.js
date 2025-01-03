@@ -118,7 +118,7 @@ function Room_management_page() {
 
   return (
     <>
-      <div className="flex flex-row bg-slate-300">
+      <div className="flex flex-row bg-gray-100">
         <Sidebar />
 
         <div className="w-full">

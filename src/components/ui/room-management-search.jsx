@@ -15,7 +15,7 @@ export default function RoomManageSearch({ onSearch }) {
   };
 
   return (
-    <div className="h-justify-between flex h-20 w-full items-center border-b p-4 bg-emerald-700">
+    <div className="h-justify-between flex h-20 w-full items-center border-b p-4">
       <h1 className="flex-grow px-6 text-xl font-semibold">Room Management</h1>
       <div className="ml-auto flex items-center gap-6">
         <div className="relative">
