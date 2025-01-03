@@ -40,6 +40,7 @@
     "react-multi-carousel": "^2.8.5",
     "react-remove-scroll": "^2.6.1",
     "react-responsive-carousel": "^3.2.23",
+    "react-toastify": "^11.0.2",
     "stripe": "^17.4.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",

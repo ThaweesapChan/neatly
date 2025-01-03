@@ -53,7 +53,6 @@ function BookingHistoryCard() {
       const response = await axios.get("/api/getBookingHistory", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      /*  console.log(response.data.bookings); */
       setBookings(response.data.bookings);
     } catch (error) {
       setError(error.message);
@@ -79,6 +78,24 @@ function BookingHistoryCard() {
       </h1>
     );
 
+  // Total Price Calculation
+  const calculateTotalPrice = (booking) => {
+    const roomPrice = Number(booking.rooms.price || 0);
+
+    //  special requests total price
+    const specialRequestsTotal = booking.special_requests
+      ? booking.special_requests.reduce((total, request) => {
+          const parsedRequest = JSON.parse(request);
+          return total + Number(parsedRequest.price || 0);
+        }, 0)
+      : 0;
+
+    /* // ดึงส่วนลดจาก promotion_code (หากมี)
+    const promotionCodeDiscount = Number(booking.promotion_code_discount || 0); */
+
+    return roomPrice + specialRequestsTotal /* - promotionCodeDiscount */;
+  };
+
   // Format date function
   const formatDate = (dateString) => {
     const options = {
@@ -100,7 +117,7 @@ function BookingHistoryCard() {
           return (
             <div
               key={booking.booking_id}
-              className="booking-card overflow-hidden rounded-lg shadow-md md:shadow-none"
+              className="booking-card overflow-hidden rounded-lg md:shadow-none"
             >
               <div className="md:flex md:gap-6">
                 {/* Room Image */}
@@ -116,23 +133,35 @@ function BookingHistoryCard() {
 
                 {/* Room Details Section */}
                 <div className="p-4 md:w-2/3">
-                  <div className="flex flex-col items-start justify-between font-inter md:flex-row">
+                  <div className="flex flex-col justify-between font-inter md:flex-row md:items-center">
+                    {/* Room Name */}
                     <h2 className="text-3xl font-semibold text-black">
                       {booking.rooms.room_type}
                     </h2>
-                    <p className="mt-2 text-base text-gray-600">
-                      Booking date: {formatDate(booking.booking_date)}
-                    </p>
+
+                    {/* Booking Date and Cancellation Date */}
+                    <div className="mt-2 text-gray-600 md:mt-0 md:flex md:flex-col md:items-end">
+                      <p className="text-base">
+                        Booking date: {formatDate(booking.booking_date)}
+                      </p>
+                      {booking.status === "cancelled" &&
+                        booking.cancellation_date && (
+                          <p className="text-base">
+                            Cancellation date:{" "}
+                            {formatDate(booking.cancellation_date)}
+                          </p>
+                        )}
+                    </div>
                   </div>
 
                   {/* วันที่ Check-in และ Check-out */}
                   <div className="my-6 font-inter text-gray-800 md:flex md:gap-8">
-                    <p className="md:flex md:flex-col">
-                      <span className="font-semibold">Check-in:</span>{" "}
+                    <p className="flex flex-col">
+                      <span className="font-semibold">Check-in</span>{" "}
                       {formatDate(booking.check_in_date)} | After 2:00 PM
                     </p>
-                    <p className="md:flex md:flex-col">
-                      <span className="font-semibold">Check-out:</span>{" "}
+                    <p className="flex flex-col">
+                      <span className="font-semibold">Check-out</span>{" "}
                       {formatDate(booking.check_out_date)} | Before 12:00 PM
                     </p>
                   </div>
@@ -167,8 +196,7 @@ function BookingHistoryCard() {
                             Payment success via{" "}
                             <span className="font-semibold">
                               {booking.payment[0]?.payment_method || "N/A"}
-                            </span>{" "}
-                            - ***888
+                            </span>
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -177,18 +205,40 @@ function BookingHistoryCard() {
                             {booking.rooms.price.toFixed(2)}
                           </span>
                         </div>
-                        <div className="flex justify-between text-gray-700">
-                          <span>{booking.special_requests}</span>
-                          <span className="mb-2 font-semibold text-gray-900">
-                            {parseFloat(200).toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                            })}
-                          </span>
+                        <div>
+                          {booking.special_requests &&
+                          booking.special_requests.length > 0 ? (
+                            booking.special_requests.map((request, index) => {
+                              // Parse JSON string ก่อนใช้งาน
+                              const parsedRequest = JSON.parse(request);
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex justify-between text-gray-700"
+                                >
+                                  <span className="mb-2">
+                                    {parsedRequest.request}
+                                  </span>
+                                  <span className="font-semibold text-gray-900">
+                                    {parseFloat(
+                                      parsedRequest.price,
+                                    ).toLocaleString("en-US", {
+                                      minimumFractionDigits: 2,
+                                    })}
+                                  </span>
+                                </div>
+                              );
+                            })
+                          ) : (
+                            <p>No special requests</p>
+                          )}
                         </div>
                         <div className="flex justify-between text-gray-700">
                           <span className="mb-3">Promotion Code</span>
                           <span className="mb-2 font-semibold text-gray-900">
-                            {parseFloat(200).toLocaleString("en-US", {
+                            {parseFloat(
+                              booking.promotion_code_discount || 0,
+                            ).toLocaleString("en-US", {
                               minimumFractionDigits: 2,
                             })}
                           </span>
@@ -198,9 +248,11 @@ function BookingHistoryCard() {
                           <span>Total</span>
                           <span className="text-xl font-semibold text-gray-900">
                             THB{" "}
-                            {parseFloat(booking.total_price).toLocaleString(
+                            {calculateTotalPrice(booking).toLocaleString(
                               "en-US",
-                              { minimumFractionDigits: 2 },
+                              {
+                                minimumFractionDigits: 2,
+                              },
                             )}
                           </span>
                         </div>
@@ -209,7 +261,8 @@ function BookingHistoryCard() {
                             Additional Request
                           </p>
                           <div className="text-gray-500">
-                            {booking.additional_request}
+                            {booking.additional_request ||
+                              "No additional request"}
                           </div>
                         </div>
                       </div>
@@ -217,35 +270,39 @@ function BookingHistoryCard() {
                   </div>
 
                   {/* Button */}
-                  <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
-                    <button
-                      onClick={handleRoomDetail}
-                      className="z-10 flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none md:cursor-pointer md:hover:text-orange-400"
-                    >
-                      Room Detail
-                    </button>
-
-                    {booking.canChangeDate && (
+                  {booking.status !== "cancelled" && (
+                    <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
                       <button
-                        className="z-10 flex-grow rounded-md bg-orange-500 px-4 py-2 font-semibold text-white md:flex-none"
-                        onClick={() => handleChangeDate(booking.booking_id)}
+                        onClick={handleRoomDetail}
+                        className="z-10 flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none md:cursor-pointer md:hover:text-orange-400"
                       >
-                        Change Date
+                        Room Detail
                       </button>
-                    )}
-                  </div>
+
+                      {booking.canChangeDate && (
+                        <button
+                          className="z-10 flex-grow rounded-md bg-orange-500 px-4 py-2 font-semibold text-white md:flex-none"
+                          onClick={() => handleChangeDate(booking.booking_id)}
+                        >
+                          Change Date
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   {/* Cancel Button */}
-                  <div className="mt-2 text-right md:flex md:-translate-y-12">
-                    {booking.canCancelBooking && (
-                      <button
-                        className="px-4 py-2 font-semibold text-orange-500 hover:text-red-600"
-                        onClick={() => handleCancelClick(booking)}
-                      >
-                        Cancel Booking
-                      </button>
-                    )}
-                  </div>
+                  {booking.status !== "cancelled" && (
+                    <div className="mt-2 text-right md:flex md:-translate-y-12">
+                      {booking.canCancelBooking && (
+                        <button
+                          className="px-4 py-2 font-semibold text-orange-500 hover:text-red-600"
+                          onClick={() => handleCancelClick(booking)}
+                        >
+                          Cancel Booking
+                        </button>
+                      )}
+                    </div>
+                  )}
                   {/* Cancel Modal */}
                   {isModalOpen && (
                     <CancelModal

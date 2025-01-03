@@ -59,18 +59,8 @@ const RequestRefundPage = () => {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  const roompicture = [
-    { label: "Superior Garden View", src: "/asset/superior.jpeg" },
-    { label: "Deluxe", src: "/asset/deluxe.jpeg" },
-    { label: "Superior", src: "/asset/room.jpeg" },
-    { label: "Premier Sea View", src: "/asset/premier.jpeg" },
-    { label: "Supreme", src: "/asset/supreme.jpeg" },
-    { label: "Suite", src: "/asset/room2.jpeg" },
-  ];
-
-  const matchedImage =
-    roompicture.find((room) => room.label === bookingDetails.room.room_type)
-      ?.src || "/asset/default.jpeg";
+  // ใช้ URL ของรูปภาพจาก database
+  const roomImageUrl = bookingDetails.room?.room_image_url;
 
   return (
     <>
@@ -88,7 +78,7 @@ const RequestRefundPage = () => {
           {/* Room Image Section */}
           <div className="w-full md:mx-20 md:w-1/2">
             <Image
-              src={matchedImage}
+              src={roomImageUrl}
               width={600}
               height={350}
               objectFit="cover"
@@ -109,28 +99,39 @@ const RequestRefundPage = () => {
               </p>
             </div>
 
-            {/* Original Booking Date */}
+            {/* Original Booking Date, Guests, and Total Refund */}
             <div className="px-6 text-gray-600">
-              <p>
-                {formatDate(bookingDetails.check_in_date)} -{" "}
-                {formatDate(bookingDetails.check_out_date)}
-              </p>
-            </div>
+              <div className="md:grid md:grid-cols-2 md:gap-4">
+                {/* Left Column */}
+                <div>
+                  {/* Original Booking Date */}
+                  <p>
+                    {formatDate(bookingDetails.check_in_date)} -{" "}
+                    {formatDate(bookingDetails.check_out_date)}
+                  </p>
 
-            {/* Guest */}
-            <div>
-              <div className="px-6 text-gray-700">
-                <span>{bookingDetails.guests}</span>{" "}
-                <span className="text-gray-700">Guests</span>{" "}
+                  {/* Guests */}
+                  <p className="mt-2 text-gray-700">
+                    {bookingDetails.guests} Guests
+                  </p>
+                </div>
+
+                {/* Right Column */}
+                <div className="mt-4 text-gray-900 md:mt-0 md:text-right">
+                  {/* Total Refund */}
+                  <p>Total Refund</p>
+                  <p className="text-2xl font-semibold">
+                    THB{" "}
+                    {parseFloat(bookingDetails.total_price).toLocaleString(
+                      "en-US",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      },
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>
-
-            {/* Refund Details */}
-            <div className="px-6 text-gray-900">
-              <p>Total Refund</p>{" "}
-              <p className="text-2xl font-semibold">
-                THB {bookingDetails.room.price.toFixed(2)}
-              </p>
             </div>
           </div>
         </div>
