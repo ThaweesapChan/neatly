@@ -306,7 +306,7 @@ function BookingHistoryCard() {
                   {/* Cancel Modal */}
                   {isModalOpen && (
                     <CancelModal
-                      booking={selectedBooking} // ส่ง Booking ที่เลือก
+                      booking={selectedBooking}
                       onClose={handleCloseModal}
                       onConfirm={handleConfirmCancel}
                     />
