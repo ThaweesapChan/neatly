@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Sidebar from "@/component/sidebar";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
+import axios from "axios";
+import CancelButtonWithModal from "@/component/cancelbutton-modal";
+import CreateRoomWithModal from "@/component/createroombutton-modal";
 
 export default function CreateRoom() {
   const [formData, setFormData] = useState({
@@ -12,7 +14,7 @@ export default function CreateRoom() {
     roomType: "",
     roomSize: "",
     bedType: "",
-    guests: 2,
+    guests: "",
     pricePerNight: "",
     promotionPrice: "",
     roomDescription: "",
@@ -21,70 +23,79 @@ export default function CreateRoom() {
     amenities: [],
   });
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
+  // ฟังก์ชันรีเซ็ต formData ให้เป็นค่าเริ่มต้น
+  const resetFormData = () => {
+    setFormData({
+      roomNumber: "",
+      roomType: "",
+      roomSize: "",
+      bedType: "",
+      guests: "",
+      pricePerNight: "",
+      promotionPrice: "",
+      roomDescription: "",
+      mainImage: null,
+      imageGallery: [],
+      amenities: [],
+    });
+  };
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-   // ฟังก์ชันแปลงไฟล์เป็น base64
-   const toBase64 = (file) =>
-     new Promise((resolve, reject) => {
-       const reader = new FileReader();
-       reader.readAsDataURL(file);
-       reader.onload = () => resolve(reader.result);
-       reader.onerror = (error) => reject(error);
-     });
+    // ฟังก์ชันแปลงไฟล์เป็น base64
+    const toBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
 
-   // ฟังก์ชันแปลง imageGallery เป็น base64 strings เท่านั้น
-   const convertToBase64 = async (files) => {
-     return Promise.all(
-       files.map(async (file) => {
-         const base64 = await toBase64(file);
-         return base64; // ส่งกลับแค่ base64 string
-       }),
-     );
-   };
+    // ฟังก์ชันแปลง imageGallery เป็น base64 strings เท่านั้น
+    const convertToBase64 = async (files) => {
+      return Promise.all(
+        files.map(async (file) => {
+          const base64 = await toBase64(file);
+          return base64; // ส่งกลับแค่ base64 string
+        }),
+      );
+    };
 
-   // แปลง mainImage เป็น base64 ถ้ามี
-   const mainImageData = formData.mainImage
-     ? await toBase64(formData.mainImage)
-     : null;
+    // แปลง mainImage เป็น base64 ถ้ามี
+    const mainImageData = formData.mainImage
+      ? await toBase64(formData.mainImage)
+      : null;
 
-   // แปลง imageGallery เป็น base64 ถ้ามี
-   const imageGalleryData =
-     formData.imageGallery.length > 0
-       ? await convertToBase64(formData.imageGallery)
-       : [];
+    // แปลง imageGallery เป็น base64 ถ้ามี
+    const imageGalleryData =
+      formData.imageGallery.length > 0
+        ? await convertToBase64(formData.imageGallery)
+        : [];
 
-   const data = {
-     roomNumber: formData.roomNumber || null,
-     roomType: formData.roomType || "",
-     roomSize: formData.roomSize || null,
-     bedType: formData.bedType || "",
-     guests: formData.guests || 0,
-     pricePerNight: formData.pricePerNight || null,
-     promotionPrice: formData.promotionPrice || null,
-     roomDescription: formData.roomDescription || "",
-     mainImage: mainImageData || null, 
-     imageGallery: imageGalleryData || [], 
-     amenities: formData.amenities.map((x) => x.value) || [],
-   };
+    const data = {
+      roomNumber: formData.roomNumber || null,
+      roomType: formData.roomType || "",
+      roomSize: formData.roomSize || null,
+      bedType: formData.bedType || "",
+      guests: formData.guests || 0,
+      pricePerNight: formData.pricePerNight || null,
+      promotionPrice: formData.promotionPrice || null,
+      roomDescription: formData.roomDescription || "",
+      mainImage: mainImageData || null,
+      imageGallery: imageGalleryData || [],
+      amenities: formData.amenities.map((x) => x.value) || [],
+    };
 
-   console.log(data); // ล็อกข้อมูลที่จะแสดงใน console
-
-   try {
-     const response = await fetch("/api/createRoom", {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify(data),
-     });
-
-     const result = await response.json();
-     console.log(result); // ผลลัพธ์จากการตอบกลับของ API
-   } catch (error) {
-     console.error("Error creating room:", error);
-   }
- };
+    try {
+      const response = await axios.post("/api/createRoom", data);
+      console.log(response.data);
+      resetFormData(); // รีเซ็ต formData หลังจากสร้างห้องพักเสร็จสิ้น
+      alert("Room created successfully");
+    } catch (error) {
+      alert("Failed to create room");
+    }
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -96,18 +107,11 @@ export default function CreateRoom() {
         <div className="flex h-20 w-full items-center justify-between bg-white px-6 shadow">
           <h1 className="text-2xl font-semibold">Create New Room</h1>
           <div className="space-x-2">
-            <Button
-              variant="outline"
-              className="border-[#E76B39] px-6 text-[#E76B39] hover:bg-orange-600 hover:text-white active:bg-[#C14817] active:text-white"
-            >
-              Cancel
-            </Button>
-            <Button
-              className="bg-[#C14817] px-6 hover:bg-orange-600 hover:text-white active:bg-[#E76B39] active:text-[#C14817]"
-              onClick={handleSubmit}
-            >
-              Create
-            </Button>
+            <CancelButtonWithModal />
+            <CreateRoomWithModal
+              formData={formData}
+              resetFormData={resetFormData}
+            />
           </div>
         </div>
 
@@ -124,11 +128,15 @@ export default function CreateRoom() {
                 <Label htmlFor="roomNumber">Room Number</Label>
                 <Input
                   id="roomNumber"
-                  type="number"
+                  type="text"
                   value={formData.roomNumber}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomNumber: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      // ตรวจสอบว่าเป็นตัวเลข
+                      setFormData({ ...formData, roomNumber: value });
+                    }
+                  }}
                 />
               </div>
 
@@ -156,11 +164,15 @@ export default function CreateRoom() {
                 <Label htmlFor="roomSize">Room Size (sqm)</Label>
                 <Input
                   id="roomSize"
-                  type="number"
+                  type="text"
                   value={formData.roomSize}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomSize: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({ ...formData, roomSize: value });
+                    }
+                  }}
                 />
               </div>
 
@@ -178,8 +190,8 @@ export default function CreateRoom() {
                 <datalist id="bedOptions">
                   <option value="Single bed" />
                   <option value="Double bed" />
-                  <option value="Queen bed" />
-                  <option value="King bed" />
+                  <option value="Double bed (king size)" />
+                  <option value="Twin bed" />
                 </datalist>
               </div>
 
@@ -187,26 +199,36 @@ export default function CreateRoom() {
                 <Label htmlFor="guests">Guests</Label>
                 <Input
                   id="guests"
-                  type="number"
+                  list="guestOptions"
                   value={formData.guests}
                   onChange={(e) =>
                     setFormData({ ...formData, guests: e.target.value })
                   }
                 />
+                <datalist id="guestOptions">
+                  <option value="2" />
+                  <option value="3" />
+                  <option value="4" />
+                  <option value="5" />
+                  <option value="6" />
+                </datalist>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="pricePerNight">Price per Night (THB)</Label>
                 <Input
                   id="pricePerNight"
-                  type="number"
+                  type="text"
                   value={formData.pricePerNight}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      pricePerNight: e.target.value,
-                    })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      setFormData({
+                        ...formData,
+                        pricePerNight: value,
+                      });
+                    }
+                  }}
                 />
               </div>
 
@@ -214,14 +236,17 @@ export default function CreateRoom() {
                 <Label htmlFor="promotionPrice">Promotion Price</Label>
                 <Input
                   id="promotionPrice"
-                  type="number"
+                  type="text"
                   value={formData.promotionPrice}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      promotionPrice: e.target.value,
-                    })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      setFormData({
+                        ...formData,
+                        promotionPrice: value,
+                      });
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -238,7 +263,7 @@ export default function CreateRoom() {
                   })
                 }
                 rows={4}
-                className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2"
+                className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2 hover:border-gray-400"
               />
             </div>
 

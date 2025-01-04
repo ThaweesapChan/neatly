@@ -7,6 +7,18 @@ import { Label } from "@/components/ui/label";
 import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
 import axios from "axios";
+import { ArrowLeft } from "lucide-react";
+import DeleteRoomWithModal from "@/component/deleteroombutton-modal";
+
+
+// fn to convert image to base64
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 export default function PropertyViewEdit() {
   const router = useRouter();
@@ -17,13 +29,15 @@ export default function PropertyViewEdit() {
     roomType: "",
     roomSize: "",
     bedType: "",
-    guests: 2,
+    guests: "",
     pricePerNight: "",
     promotionPrice: "",
     roomDescription: "",
     mainImage: null,
     imageGallery: [],
     amenities: [],
+    mainImageChanged: false,
+    imageGalleryChanged: false,
   });
 
   // Fetch room data when component mounts
@@ -32,24 +46,46 @@ export default function PropertyViewEdit() {
       if (!id) return;
 
       try {
-        const response = await axios.get(`/api/getRoomProperty/${id}`);
+        const response = await axios.get(`/api/getRoomPropertyById?id=${id}`);
         const roomData = response.data.data;
+
+        // get and hydrate mainImage
+        const mainImage = await fetch(roomData.room_image_url);
+        const mainImageBlob = await mainImage.blob();
+        const imageFile = Object.assign(mainImageBlob, {
+          preview: URL.createObjectURL(mainImageBlob),
+          image: await toBase64(mainImageBlob),
+        });
+
+        // get and hydrate imageGallery
+        const imageGallery = await Promise.all(
+          roomData.image_gallery.map(async (url) => {
+            const image = await fetch(url);
+            const imageBlob = await image.blob();
+            return Object.assign(imageBlob, {
+              preview: URL.createObjectURL(imageBlob),
+              image: await toBase64(imageBlob),
+            });
+          }),
+        );
 
         setFormData({
           roomNumber: roomData.room_number || "",
           roomType: roomData.room_type || "",
           roomSize: roomData.room_size || "",
           bedType: roomData.bed_type || "",
-          guests: roomData.guests || 2,
-          pricePerNight: roomData.price || "",
-          promotionPrice: roomData.promotion_price || "",
+          guests: roomData.guests || "",
+          pricePerNight: roomData.price ? roomData.price : "",
+          promotionPrice: roomData.promotion_price
+            ? roomData.promotion_price
+            : "",
           roomDescription: roomData.room_description || "",
-          mainImage: roomData.main_image || null,
-          imageGallery: roomData.image_gallery || [],
+          mainImage: imageFile || null,
+          imageGallery: imageGallery || [],
           amenities:
-            roomData.amenities?.map((amenity) => ({
+            roomData.amenities?.map((amenity, index) => ({
               value: amenity,
-              label: amenity,
+              id: index,
             })) || [],
         });
       } catch (error) {
@@ -84,18 +120,24 @@ export default function PropertyViewEdit() {
       );
     };
 
-    // แปลง mainImage เป็น base64 ถ้าเป็นไฟล์ใหม่
-    const mainImageData = formData.mainImage
-      ? typeof formData.mainImage === "string"
-        ? formData.mainImage
-        : await toBase64(formData.mainImage)
-      : null;
+    let mainImageData = null;
+    if (formData.mainImageChanged) {
+      // แปลง mainImage เป็น base64 ถ้าเป็นไฟล์ใหม่
+      mainImageData = formData.mainImage
+        ? typeof formData.mainImage === "string"
+          ? formData.mainImage
+          : await toBase64(formData.mainImage)
+        : null;
+    }
 
-    // แปลง imageGallery เป็น base64
-    const imageGalleryData =
-      formData.imageGallery.length > 0
-        ? await convertToBase64(formData.imageGallery)
-        : [];
+    let imageGalleryData = [];
+    if (formData.imageGalleryChanged) {
+      // แปลง imageGallery เป็น base64
+      imageGalleryData =
+        formData.imageGallery.length > 0
+          ? await convertToBase64(formData.imageGallery)
+          : [];
+    }
 
     const data = {
       roomNumber: formData.roomNumber || null,
@@ -112,11 +154,44 @@ export default function PropertyViewEdit() {
     };
 
     try {
-      const response = await axios.put(`/api/updateRoom/${id}`, data);
+      const response = await axios.put(
+        `/api/updateRoomPropertyById/${id}`,
+        data,
+      );
       console.log(response.data);
-      router.push("/agent/roomproperty"); // Redirect after successful update
+      router.push("/agent/roomproperty/roomproperty"); // Redirect after successful update
     } catch (error) {
       console.error("Error updating room:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    const isConfirmed = window.confirm("คุณแน่ใจว่าต้องการลบห้องนี้?");
+
+    if (isConfirmed) {
+      try {
+        console.log("Attempting to delete room with ID:", id);
+
+        const response = await axios.delete(
+          `/api/deleteRoomPropertyById/${id}`,
+        );
+        console.log("Delete response:", response.data);
+
+        if (response.data) {
+          alert("ลบห้องสำเร็จ");
+          router.push("/agent/roomproperty/roomproperty");
+        }
+      } catch (error) {
+        console.error("Full error object:", error);
+        console.error("Error response:", error.response?.data);
+
+        const errorMessage =
+          error.response?.data?.details ||
+          error.response?.data?.error ||
+          "เกิดข้อผิดพลาดในการลบห้อง กรุณาลองใหม่อีกครั้ง";
+
+        alert(errorMessage);
+      }
     }
   };
 
@@ -128,7 +203,16 @@ export default function PropertyViewEdit() {
       {/* Main Content */}
       <div className="flex-1">
         <div className="mb-8 flex items-center justify-between p-6">
-          <h1 className="text-xl font-semibold">Edit Room Details</h1>
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.back()} // ใช้ router.back() เพื่อย้อนกลับไปยังหน้าก่อนหน้านี้
+            >
+              <ArrowLeft className="h-6 w-6" />
+            </Button>
+            <h1 className="text-xl font-semibold">{formData.roomType}</h1>
+          </div>
           <Button
             variant="default"
             onClick={handleSubmit}
@@ -148,11 +232,14 @@ export default function PropertyViewEdit() {
                 <Label htmlFor="roomNumber">Room Number</Label>
                 <Input
                   id="roomNumber"
-                  type="number"
+                  type="text"
                   value={formData.roomNumber}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomNumber: e.target.value })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // ตรวจสอบว่าเป็นตัวเลข
+                      setFormData({ ...formData, roomNumber: e.target.value });
+                    }
+                  }}
                 />
               </div>
 
@@ -180,11 +267,14 @@ export default function PropertyViewEdit() {
                 <Label htmlFor="roomSize">Room Size (sqm)</Label>
                 <Input
                   id="roomSize"
-                  type="number"
+                  type="text"
                   value={formData.roomSize}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomSize: e.target.value })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({ ...formData, roomSize: e.target.value });
+                    }
+                  }}
                 />
               </div>
 
@@ -197,13 +287,12 @@ export default function PropertyViewEdit() {
                   onChange={(e) =>
                     setFormData({ ...formData, bedType: e.target.value })
                   }
-                  className="w-full"
                 />
                 <datalist id="bedOptions">
-                  <option value="Single bed" />
-                  <option value="Double bed" />
-                  <option value="Queen bed" />
-                  <option value="King bed" />
+                  <option value="Single" />
+                  <option value="Double" />
+                  <option value="Queen" />
+                  <option value="King" />
                 </datalist>
               </div>
 
@@ -211,41 +300,54 @@ export default function PropertyViewEdit() {
                 <Label htmlFor="guests">Guests</Label>
                 <Input
                   id="guests"
-                  type="number"
+                  list="guestOptions"
                   value={formData.guests}
                   onChange={(e) =>
                     setFormData({ ...formData, guests: e.target.value })
                   }
                 />
+                <datalist id="guestOptions">
+                  <option value="2" />
+                  <option value="3" />
+                  <option value="4" />
+                  <option value="5" />
+                  <option value="6" />
+                </datalist>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="pricePerNight">Price per Night (THB)</Label>
                 <Input
                   id="pricePerNight"
-                  type="number"
+                  type="text"
                   value={formData.pricePerNight}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      pricePerNight: e.target.value,
-                    })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({
+                        ...formData,
+                        pricePerNight: e.target.value,
+                      });
+                    }
+                  }}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="promotionPrice">Promotion Price</Label>
+                <Label htmlFor="promotionPrice">Promotion Price (THB)</Label>
                 <Input
                   id="promotionPrice"
-                  type="number"
+                  type="text"
                   value={formData.promotionPrice}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      promotionPrice: e.target.value,
-                    })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({
+                        ...formData,
+                        promotionPrice: e.target.value,
+                      });
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -255,14 +357,11 @@ export default function PropertyViewEdit() {
               <textarea
                 id="roomDescription"
                 value={formData.roomDescription}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    roomDescription: e.target.value,
-                  })
-                }
                 rows={4}
                 className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2"
+                onChange={(e) =>
+                  setFormData({ ...formData, roomDescription: e.target.value })
+                }
               />
             </div>
 
@@ -288,6 +387,9 @@ export default function PropertyViewEdit() {
               </div>
             </div>
           </form>
+          <div className="mx-auto mt-4 flex max-w-5xl justify-end space-y-8 rounded-lg">
+            <DeleteRoomWithModal roomId={id} />
+          </div>
         </div>
       </div>
     </div>
