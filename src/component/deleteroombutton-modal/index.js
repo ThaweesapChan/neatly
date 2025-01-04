@@ -73,7 +73,7 @@ const DeleteRoomWithModal = ({ roomId }) => {
             onClick={() => setShowDeleteModal(false)}
             disabled={isDeleting}
           >
-            No, I don't
+            cancel
           </button>
         </div>
       </div>
