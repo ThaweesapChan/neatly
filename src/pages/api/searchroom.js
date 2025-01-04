@@ -7,8 +7,6 @@ export default async function handler(req, res) {
 
   const { check_in, check_out, guest } = req.query;
 
-  console.log(check_in, check_out, guest, "check date");
-
   if (!check_in || !check_out) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
@@ -43,8 +41,6 @@ export default async function handler(req, res) {
         ?.filter((booking) => booking.room_id !== null) // กรอง room_id ที่ไม่ใช่ null
         .map((booking) => booking.room_id) || [];
 
-    console.log("Booked Room IDs:", bookedRoomIds);
-
     let { data: availableRooms, error: roomsError } = await supabase
       .from("rooms")
       .select("*")
@@ -61,8 +57,6 @@ export default async function handler(req, res) {
         (room) => !bookedRoomIdsSet.has(String(room.room_id)),
       );
     }
-
-    console.log("Available Rooms:", availableRooms);
 
     return res.status(200).json({ data: availableRooms });
   } catch (error) {

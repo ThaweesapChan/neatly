@@ -6,10 +6,12 @@ import {
   ConditionRefund,
 } from "@/component/payment/sectionstep";
 import Bookingdetail from "@/component/payment/bookingdetail";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
 
 export default function Standardrequest() {
   const router = useRouter();
-
+  const { bookingdetail, setBookingDetail } = useBookingDetail();
+  console.log(bookingdetail, "bookingdetail step2");
   const specialRequestOptions = [
     { name: "Baby cot", price: 400 },
     { name: "Airport transfer", price: 200 },
@@ -66,18 +68,17 @@ export default function Standardrequest() {
     e.preventDefault();
     router.push({
       pathname: "/payment/step3",
-      query: {
-        standardRequests: JSON.stringify(standardRequests),
-        specialRequests: JSON.stringify(specialRequests),
-        additionalRequest: additionalRequest,
-      },
+    });
+    setBookingDetail({
+      specialRequest: specialRequests,
+      standardRequest: standardRequests,
+      additionalRequest: additionalRequest,
     });
   };
 
   return (
     <div>
       <Navbar />
-      <h1>asdqwasdasd</h1>
       <SectionsStep2 />
       <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
         <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm">

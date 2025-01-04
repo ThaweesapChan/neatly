@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 
-export default function Bookingdetail({
-  standardRequests = [],
-  specialRequests = [],
-  additionalRequest = "",
-}) {
-  const { room } = useBookingDetail();
+export default function Bookingdetail() {
+  const { bookingDetail } = useBookingDetail();
   const [timeLeft, setTimeLeft] = useState(300);
-
-  useEffect(() => {
+  console.log(bookingDetail, "bookingDetail from Bookingdetail");
+  
+  /* useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
     }, 1000);
@@ -21,13 +18,17 @@ export default function Bookingdetail({
     const seconds = time % 60;
     return `${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
-
+ */
   const calculateTotal = () => {
-    const specialRequestTotal = specialRequests.reduce(
-      (acc, req) => acc + req.price,
-      0,
-    );
-    const roomPrice = room ? room.price : 0;
+    const specialRequestTotal = Array.isArray(bookingDetail?.specialRequest)
+      ? bookingDetail.specialRequest.reduce(
+          (acc, req) => acc + (req.price || 0),
+          0,
+        )
+      : 0;
+
+    const roomPrice = bookingDetail?.roominfo?.price || 0;
+
     return specialRequestTotal + roomPrice;
   };
 
@@ -37,47 +38,38 @@ export default function Bookingdetail({
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2">Booking Detail</h2>
           <span className="rounded bg-red-100 px-2 py-0.5 text-sm text-red-600">
-            {formatTime(timeLeft)}
+            {/* {formatTime(timeLeft)} */}
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
             <div className="text-gray-300">Check-in</div>
-            <div>After 2:00 PM</div>
+            <div>{bookingDetail?.checkIn || "Loading..."}</div>
           </div>
           <div>
             <div className="text-gray-300">Check-out</div>
-            <div>Before 12:00 PM</div>
+            <div>{bookingDetail?.checkOut || "Loading..."}</div>
           </div>
         </div>
 
         <div className="text-sm">
           <div>
-            {room
-              ? `${room.checkin_date} - ${room.checkout_date}`
+            {bookingDetail?.roominfo
+              ? `${bookingDetail.checkIn} - ${bookingDetail.checkOut}`
               : "Loading dates..."}
           </div>
-          <div>{room ? `${room.guest} Guests` : "Loading room details..."}</div>
+          <div>
+            {bookingDetail?.roominfo?.guests
+              ? `${bookingDetail.roominfo.guests} Guests`
+              : "Loading room details..."}
+          </div>
         </div>
 
         <div className="border-t border-gray-600 pt-2">
-          <h4 className="text-lg font-semibold text-gray-300">
-            Standard Requests
-          </h4>
-          <ul>
-            {standardRequests.length > 0 ? (
-              standardRequests.map((req, index) => (
-                <li key={index} className="text-sm text-gray-200">
-                  {req}
-                </li>
-              ))
-            ) : (
-              <li className="text-sm text-gray-400">
-                No standard requests selected
-              </li>
-            )}
-          </ul>
+          <div className="flex items-center justify-between">
+            {bookingDetail?.roominfo?.room_type || "Loading room details..."}
+          </div>
         </div>
 
         <div className="border-t border-gray-600 pt-2">
@@ -85,8 +77,9 @@ export default function Bookingdetail({
             Special Requests
           </h4>
           <ul>
-            {specialRequests.length > 0 ? (
-              specialRequests.map((req, index) => (
+            {Array.isArray(bookingDetail?.specialRequest) &&
+            bookingDetail.specialRequest.length > 0 ? (
+              bookingDetail.specialRequest.map((req, index) => (
                 <li key={index} className="text-sm text-gray-200">
                   {req.name} (+THB {req.price})
                 </li>
@@ -97,15 +90,6 @@ export default function Bookingdetail({
               </li>
             )}
           </ul>
-        </div>
-
-        <div className="border-t border-gray-600 pt-2">
-          <h4 className="text-lg font-semibold text-gray-300">
-            Additional Request
-          </h4>
-          <p className="text-sm text-gray-200">
-            {additionalRequest || "No additional requests provided"}
-          </p>
         </div>
 
         <div className="border-t border-gray-600 pt-2">

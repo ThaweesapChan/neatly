@@ -1,31 +1,67 @@
 import React from "react";
 import Image from "next/image";
 import { Images } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
 
-function Roomcard({ room, onClick, check_in, check_out }) {
+function Roomcard({ room, onClick, checkIn, checkOut }) {
+  const [roomData, setRoomData] = useState(null);
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const { bookingDetail, setBookingDetail } = useBookingDetail();
   const router = useRouter();
+
+  useEffect(() => {
+    if (room) {
+      setRoomData(room);
+      setCheckInDate(checkIn);
+      setCheckOutDate(checkOut);
+    } else {
+      setRoomId(room.room.id);
+    }
+  }, [room, checkIn, checkOut, roomId]);
+
   // ฟังก์ชันจัดการการคลิกปุ่ม "Rom detail"
   const handleRoomDetailClick = () => {
     router.push({
       pathname: "/roomdetail",
       query: {
-        roomId: room.id,
+        roomId: room.room_id,
       },
     });
   };
   // ฟังก์ชันจัดการการคลิกปุ่ม "Book Now"
+
   const handleBookNowClick = () => {
-    // ส่งข้อมูลของห้องไปยังหน้า booking ผ่าน query parameters
-    router.push({
-      pathname: "/payment",
-      query: {
-        room,
-        check_in,
-        check_out,
+    // ตรวจสอบว่าข้อมูลที่ต้องการส่งเข้ามามีครบ
+    if (!roomData || !checkInDate || !checkOutDate) {
+      console.error("Missing required booking details");
+      return;
+    }
+
+    // อัปเดต bookingDetail ใน Context
+    setBookingDetail({
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
+      roominfo: {
+        room_id: roomData.room_id,
+        room_type: roomData.room_type,
+        price: roomData.price,
+        guests: roomData.guests,
+        size: roomData.size,
+        description: roomData.room_description,
+        images: roomData.room_images_url,
       },
     });
+
+    // ส่งไปที่หน้าชำระเงิน
+    router.push({
+      pathname: "/payment/step1",
+    });
   };
+
   return (
     <div className="flex h-[400px] w-[90%] flex-col items-center justify-center gap-2 bg-white md:flex-row">
       <div className="relative w-[60%]">
