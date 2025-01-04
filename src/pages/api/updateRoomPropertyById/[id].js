@@ -10,10 +10,10 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+  const { id } = req.query;
+  if (req.method !== "PUT") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
-
   const {
     roomNumber,
     roomType,
@@ -27,6 +27,8 @@ export default async function handler(req, res) {
     imageGallery,
     amenities,
   } = req.body;
+  let mainImageURL = null;
+  let imageGalleryURLs = [];
 
   // Enhanced Validation
   const validationErrors = [];
@@ -42,28 +44,20 @@ export default async function handler(req, res) {
     });
   }
 
-  try {
-    // Check for existing room number
-    const { data: existingRoom, error: fetchError } = await supabase
-      .from("rooms")
-      .select("room_number")
-      .eq("room_number", roomNumber)
-      .limit(1);
+  let data = {
+    room_number: roomNumber,
+    room_type: roomType,
+    room_size: roomSize,
+    bed_type: bedType || null,
+    guests: guests || null,
+    price: pricePerNight,
+    promotion_price: promotionPrice || null,
+    room_description: roomDescription || null,
+    amenities: amenities || [], //JSON.stringify(sanitizedAmenities),
+  };
 
-    if (fetchError) {
-      console.error("Room lookup error:", fetchError);
-      return res.status(500).json({
-        error: "Database lookup failed",
-        details: fetchError.message,
-      });
-    }
-
-    if (existingRoom && existingRoom.length > 0) {
-      return res.status(400).json({
-        error: "Room number already exists",
-      });
-    }
-
+  // check for images updates, upload if necessary
+  if (mainImage) {
     // Save images to supabase storage and get URL to save in DB
     // mainImage
     const mainImageFile = fromBase64(mainImage, "main-image");
@@ -72,12 +66,15 @@ export default async function handler(req, res) {
       .from("room_images")
       .upload(mainImagePath, mainImageFile);
 
-    const mainImageURL = await supabase.storage // Get public URL
+    mainImageURL = await supabase.storage // Get public URL
       .from("room_images")
       .getPublicUrl(mainImagePath).data.publicUrl;
 
+    data = { ...data, room_image_url: mainImageURL || null };
+  }
+
+  if (imageGallery.length > 0) {
     // imageGallery save to supabase storage and get URL to save in DB
-    const imageGalleryURLs = [];
     for (let i = 0; i < imageGallery.length; i++) {
       const imageFile = fromBase64(imageGallery[i], `image-${i}`);
       const imagePath = `${roomNumber}/${imageFile.name}`;
@@ -90,44 +87,28 @@ export default async function handler(req, res) {
         .getPublicUrl(imagePath).data.publicUrl;
       imageGalleryURLs.push(imageURL);
     }
+    data = { ...data, image_gallery: imageGalleryURLs || [] };
+  }
 
-    // Insert room data
-    const { data, error } = await supabase
+  if (!id || !data) {
+    return res
+      .status(400)
+      .json({ error: "Missing required parameters or data" });
+  }
+
+  try {
+    const { error } = await supabase
       .from("rooms")
-      .insert({
-        room_number: roomNumber,
-        room_type: roomType,
-        room_size: roomSize,
-        bed_type: bedType || null,
-        guests: guests || null,
-        price: pricePerNight,
-        promotion_price: promotionPrice || null,
-        room_description: roomDescription || null,
-        room_image_url: mainImageURL || null,
-        image_gallery: imageGalleryURLs || [],
-        amenities: amenities || [], //JSON.stringify(sanitizedAmenities),
-      })
-      .select(); // Return inserted data
+      .update(data)
+      .eq("room_id", id);
 
     if (error) {
-      console.error("Insertion error:", error);
-      return res.status(500).json({
-        error: "Failed to create room",
-        details: error.message,
-      });
+      throw error;
     }
-    console.log(data);
 
-    // Successful insertion
-    res.status(201).json({
-      message: "Room created successfully",
-      room: data[0],
-    });
+    return res.status(200).json({ message: "Room updated successfully" });
   } catch (error) {
-    console.error("Unexpected error:", error);
-    res.status(500).json({
-      error: "Unexpected server error",
-      details: error.message || "Unknown error",
-    });
+    console.error("Error updating room:", error.message);
+    return res.status(500).json({ error: "Failed to update room property" });
   }
 }
