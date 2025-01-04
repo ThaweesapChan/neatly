@@ -5,6 +5,9 @@ const BookingDetailContext = createContext({
     checkIn: "",
     checkOut: "",
     roominfo: {},
+    specialRequest: [],
+    standardRequest: [],
+    additionalRequest: "",
   },
   setBookingDetail: () => {},
 });

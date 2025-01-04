@@ -1,7 +1,10 @@
-import React from "react";
+import React, { use } from "react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useEffect } from "react";
 import { useBooking } from "@/lib/BookingContext";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
+import Navbar from "@/component/navbar";
 import {
   ConditionRefund,
   SectionsStep1,
@@ -19,7 +22,6 @@ export default function Basicinformation() {
     dateOfBirth: bookingData.basicInfo.dateOfBirth || "",
     country: bookingData.basicInfo.country || "",
   });
-  console.log(formData);
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -35,6 +37,7 @@ export default function Basicinformation() {
   // ฟังก์ชันเมื่อกดปุ่ม Next
   const handleNext = (e) => {
     e.preventDefault();
+
     setBookingData((prev) => ({
       ...prev,
       basicInfo: { ...formData },
@@ -44,6 +47,7 @@ export default function Basicinformation() {
 
   return (
     <div>
+      <Navbar />
       <SectionsStep1 />
       <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
         <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm">

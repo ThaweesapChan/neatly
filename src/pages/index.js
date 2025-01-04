@@ -5,7 +5,7 @@ import Bookingdetail from "@/component/payment/bookingdetail";
 export default function Home() {
   return (
     <div>
-      <Booking />
+      <Searchresultpage />
     </div>
   );
 }

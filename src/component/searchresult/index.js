@@ -124,9 +124,10 @@ const Searchresult = () => {
             <Roomcard
               key={room.room_id}
               room={room}
+              checkIn={checkIn} 
+              checkOut={checkOut} 
               onClick={() => {
                 openModal(room);
-                setRoomDetails({ checkIn, checkOut, roominfo: room });
               }}
             />
           ))
