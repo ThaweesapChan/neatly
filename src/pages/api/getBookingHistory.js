@@ -26,8 +26,16 @@ export default async function handler(req, res) {
 
     const userId = userData.user.id; // ดึง user_id จาก token
 
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 5;
+    const offset = (page - 1) * limit;
+
     // Query ข้อมูลจาก bookings table
-    const { data: bookings, error } = await supabase
+    const {
+      data: bookings,
+      error,
+      count,
+    } = await supabase
       .from("bookings")
       .select(
         `
@@ -50,9 +58,12 @@ export default async function handler(req, res) {
         ),
         payment:payments ( payment_method )
       `,
+
+        { count: "exact" }, // Supabase will return the total count
       )
       .eq("user_id", userId) // Filter เฉพาะ user นี้
-      .order("booking_date", { ascending: false }); // เรียงตาม booking_date ใหม่ -> เก่า
+      .order("booking_date", { ascending: false }) // เรียงตาม booking_date ใหม่ -> เก่า
+      .range(offset, offset + limit - 1); // Fetch only rows within the range
 
     if (error) {
       // console.error("Supabase Error:", error.message);
@@ -93,7 +104,7 @@ export default async function handler(req, res) {
     });
 
     // ส่งข้อมูลกลับไปให้ frontend
-    res.status(200).json({ bookings: updatedBookings });
+    res.status(200).json({ bookings: updatedBookings, total: count });
   } catch (err) {
     console.error("API Error:", err.message);
     res.status(500).json({ message: "Internal Server Error" });

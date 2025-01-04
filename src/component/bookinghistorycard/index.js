@@ -5,11 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import CancelModal from "../modal";
 
-function BookingHistoryCard() {
+function BookingHistoryCard({ bookings }) {
   const router = useRouter();
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [openDetails, setOpenDetails] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -45,38 +42,6 @@ function BookingHistoryCard() {
   const toggleDetails = (id) => {
     setOpenDetails((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-
-  // get Data Form API
-  const fetchBooking = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get("/api/getBookingHistory", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBookings(response.data.bookings);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBooking();
-  }, []);
-
-  if (loading)
-    return (
-      <h1 className="flex justify-center text-2xl text-green-700">
-        Loading...
-      </h1>
-    );
-  if (error)
-    return (
-      <h1 className="flex justify-center text-2xl text-black">
-        Error: {error}
-      </h1>
-    );
 
   // Total Price Calculation
   const calculateTotalPrice = (booking) => {
