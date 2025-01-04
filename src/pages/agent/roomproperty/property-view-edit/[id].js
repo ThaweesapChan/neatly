@@ -8,6 +8,8 @@ import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
+import DeleteRoomWithModal from "@/component/deleteroombutton-modal";
+
 
 // fn to convert image to base64
 const toBase64 = (file) =>
@@ -27,7 +29,7 @@ export default function PropertyViewEdit() {
     roomType: "",
     roomSize: "",
     bedType: "",
-    guests: 2,
+    guests: "",
     pricePerNight: "",
     promotionPrice: "",
     roomDescription: "",
@@ -72,7 +74,7 @@ export default function PropertyViewEdit() {
           roomType: roomData.room_type || "",
           roomSize: roomData.room_size || "",
           bedType: roomData.bed_type || "",
-          guests: roomData.guests || 2,
+          guests: roomData.guests || "",
           pricePerNight: roomData.price ? roomData.price : "",
           promotionPrice: roomData.promotion_price
             ? roomData.promotion_price
@@ -230,11 +232,14 @@ export default function PropertyViewEdit() {
                 <Label htmlFor="roomNumber">Room Number</Label>
                 <Input
                   id="roomNumber"
-                  type="number"
+                  type="text"
                   value={formData.roomNumber}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomNumber: e.target.value })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // ตรวจสอบว่าเป็นตัวเลข
+                      setFormData({ ...formData, roomNumber: e.target.value });
+                    }
+                  }}
                 />
               </div>
 
@@ -262,11 +267,14 @@ export default function PropertyViewEdit() {
                 <Label htmlFor="roomSize">Room Size (sqm)</Label>
                 <Input
                   id="roomSize"
-                  type="number"
+                  type="text"
                   value={formData.roomSize}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roomSize: e.target.value })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({ ...formData, roomSize: e.target.value });
+                    }
+                  }}
                 />
               </div>
 
@@ -292,35 +300,54 @@ export default function PropertyViewEdit() {
                 <Label htmlFor="guests">Guests</Label>
                 <Input
                   id="guests"
-                  type="number"
+                  list="guestOptions"
                   value={formData.guests}
                   onChange={(e) =>
                     setFormData({ ...formData, guests: e.target.value })
                   }
                 />
+                <datalist id="guestOptions">
+                  <option value="2" />
+                  <option value="3" />
+                  <option value="4" />
+                  <option value="5" />
+                  <option value="6" />
+                </datalist>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="pricePerNight">Price per Night (THB)</Label>
                 <Input
                   id="pricePerNight"
-                  type="number"
+                  type="text"
                   value={formData.pricePerNight}
-                  onChange={(e) =>
-                    setFormData({ ...formData, pricePerNight: e.target.value })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({
+                        ...formData,
+                        pricePerNight: e.target.value,
+                      });
+                    }
+                  }}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="promotionPrice">Promotion Price</Label>
+                <Label htmlFor="promotionPrice">Promotion Price (THB)</Label>
                 <Input
                   id="promotionPrice"
-                  type="number"
+                  type="text"
                   value={formData.promotionPrice}
-                  onChange={(e) =>
-                    setFormData({ ...formData, promotionPrice: e.target.value })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      // รับเฉพาะตัวเลข
+                      setFormData({
+                        ...formData,
+                        promotionPrice: e.target.value,
+                      });
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -361,13 +388,7 @@ export default function PropertyViewEdit() {
             </div>
           </form>
           <div className="mx-auto mt-4 flex max-w-5xl justify-end space-y-8 rounded-lg">
-            <button
-              variant="destructive"
-              onClick={handleDelete}
-              className="px-2 py-4 font-openSans text-base font-semibold text-[#646D89]"
-            >
-              Delete Room
-            </button>
+            <DeleteRoomWithModal roomId={id} />
           </div>
         </div>
       </div>

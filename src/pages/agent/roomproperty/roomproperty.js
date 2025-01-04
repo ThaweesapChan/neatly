@@ -35,7 +35,7 @@ function RoomProperty() {
         Object.values(room)
           .join(" ")
           .toLowerCase()
-          .includes(query.toLowerCase())
+          .includes(query.toLowerCase()),
       );
       setFilteredRooms(filtered);
     } else {
@@ -46,7 +46,10 @@ function RoomProperty() {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentBookings = filteredRooms.slice(indexOfFirstItem, indexOfLastItem);
+  const currentBookings = filteredRooms.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -76,7 +79,9 @@ function RoomProperty() {
                   <tr
                     key={room.room_id}
                     onClick={() =>
-                      router.push(`/agent/roomproperty/property-view-edit/${room.room_id}`)
+                      router.push(
+                        `/agent/roomproperty/property-view-edit/${room.room_id}`,
+                      )
                     }
                     className="h-20 cursor-pointer border-b text-left ease-out hover:bg-gray-100"
                   >
@@ -109,7 +114,10 @@ function RoomProperty() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
+                  <td
+                    colSpan="7"
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
                     No bookings available
                   </td>
                 </tr>
@@ -138,7 +146,7 @@ function RoomProperty() {
                 >
                   {index + 1}
                 </button>
-              )
+              ),
             )}
             <button
               onClick={() => setCurrentPage(currentPage + 1)}

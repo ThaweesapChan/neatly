@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Sidebar from "@/component/sidebar";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import RoomImage from "@/components/ui/createRoomImage";
 import CreateAmenities from "@/components/ui/createAmenites";
 import axios from "axios";
+import CancelButtonWithModal from "@/component/cancelbutton-modal";
+import CreateRoomWithModal from "@/component/createroombutton-modal";
 
 export default function CreateRoom() {
   const [formData, setFormData] = useState({
@@ -38,7 +39,7 @@ export default function CreateRoom() {
       amenities: [],
     });
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -86,15 +87,12 @@ export default function CreateRoom() {
       amenities: formData.amenities.map((x) => x.value) || [],
     };
 
-    console.log(data); // ล็อกข้อมูลที่จะแสดงใน console
-
     try {
       const response = await axios.post("/api/createRoom", data);
       console.log(response.data);
       resetFormData(); // รีเซ็ต formData หลังจากสร้างห้องพักเสร็จสิ้น
       alert("Room created successfully");
     } catch (error) {
-      console.error("Error creating room:", error);
       alert("Failed to create room");
     }
   };
@@ -109,18 +107,11 @@ export default function CreateRoom() {
         <div className="flex h-20 w-full items-center justify-between bg-white px-6 shadow">
           <h1 className="text-2xl font-semibold">Create New Room</h1>
           <div className="space-x-2">
-            <Button
-              variant="outline"
-              className="border-[#E76B39] px-6 text-[#E76B39] hover:bg-orange-600 hover:text-white active:bg-[#C14817] active:text-white"
-            >
-              Cancel
-            </Button>
-            <Button
-              className="bg-[#C14817] px-6 hover:bg-orange-600 hover:text-white active:bg-[#E76B39] active:text-[#C14817]"
-              onClick={handleSubmit}
-            >
-              Create
-            </Button>
+            <CancelButtonWithModal />
+            <CreateRoomWithModal
+              formData={formData}
+              resetFormData={resetFormData}
+            />
           </div>
         </div>
 
@@ -245,12 +236,11 @@ export default function CreateRoom() {
                 <Label htmlFor="promotionPrice">Promotion Price</Label>
                 <Input
                   id="promotionPrice"
-                  type="text" // ใช้ text และตรวจสอบเอง
+                  type="text"
                   value={formData.promotionPrice}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (/^\d*$/.test(value)) {
-                      // ตรวจสอบให้เป็นตัวเลขเท่านั้น
                       setFormData({
                         ...formData,
                         promotionPrice: value,
@@ -273,7 +263,7 @@ export default function CreateRoom() {
                   })
                 }
                 rows={4}
-                className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2"
+                className="textarea-class h-24 w-full rounded-md border border-gray-300 p-2 hover:border-gray-400"
               />
             </div>
 
