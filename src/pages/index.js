@@ -1,9 +1,9 @@
-import CreateRoom from "./agent/roomproperty/createRoom";
+import Homepage from "./homepage";
 
 export default function Home() {
   return (
     <div>
-      <CreateRoom/>
+      <Homepage/>
     </div>
   );
 }
