@@ -235,7 +235,7 @@ function BookingHistoryCard({ bookings }) {
                   </div>
 
                   {/* Button */}
-                  {booking.status !== "cancelled" && (
+                  {booking.status !== "cancelled" && !booking.isCheckedIn && (
                     <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
                       <button
                         onClick={handleRoomDetail}
@@ -256,7 +256,7 @@ function BookingHistoryCard({ bookings }) {
                   )}
 
                   {/* Cancel Button */}
-                  {booking.status !== "cancelled" && (
+                  {booking.status !== "cancelled" && !booking.isCheckedIn && (
                     <div className="mt-2 text-right md:flex md:-translate-y-12">
                       {booking.canCancelBooking && (
                         <button

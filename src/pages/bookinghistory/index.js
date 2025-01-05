@@ -26,7 +26,6 @@ function BookingHistoryPage() {
         },
       );
 
-      // Sort bookings by booking_date (latest first)
       const sortedBookings = response.data.bookings.sort(
         (a, b) => new Date(b.booking_date) - new Date(a.booking_date),
       );
@@ -69,10 +68,10 @@ function BookingHistoryPage() {
         Booking History
       </h1>
 
-      {/* Pass bookings data to BookingHistoryCard */}
+      {/* ส่ง bookings data ไปให้ BookingHistoryCard */}
       <BookingHistoryCard bookings={bookings} />
 
-      {/* Styled Pagination Controls */}
+      {/* Pagination Controls */}
       <div className="mb-4 mt-6 flex items-center justify-center">
         <button
           onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}

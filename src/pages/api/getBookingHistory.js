@@ -92,6 +92,8 @@ export default async function handler(req, res) {
       // คำนวณ canCancelBooking , canChangeDate และ canRefund
       const canCancelBooking = now < checkInDate; // ปุ่ม cancel ได้เฉพาะก่อนวัน check-in
       const canChangeDate = (now - bookingTime) / 3600000 < 24; // ไม่เกิน 24 ชั่วโมง
+      const isCheckedIn = now >= checkInDate; // Checked-in or past
+      const isCheckedOut = now > checkOutDate; // Already checked-out
       const canRefund = canChangeDate;
 
       return {
@@ -100,6 +102,8 @@ export default async function handler(req, res) {
         canCancelBooking,
         canChangeDate,
         canRefund,
+        isCheckedIn,
+        isCheckedOut,
       };
     });
 
