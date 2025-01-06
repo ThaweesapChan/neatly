@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "@/component/sidebar";
 import NavHotelInformation from "@/components/room-information-nav";
 
@@ -27,18 +27,19 @@ function HotelInformationPage() {
 
   return (
     <>
-      <div className="flex flex-row bg-yellow-400">
+      <div className="flex flex-row">
         <Sidebar />
-        <div className="flex h-screen w-screen flex-col bg-gray-800">
+
+        <div className="flex h-screen w-screen flex-col bg-gray-100">
           <NavHotelInformation
             hotel_name={hotelName}
             hotel_description={hotelDescription}
             hotelLogo={hotelLogo}
           />
-          <div className="h-auto p-4 bg-green-500 m-14">
+          <div className="m-14 h-auto rounded-lg border-2 px-10 py-8">
             <form className="space-y-4">
               <div>
-                <label htmlFor="hotelName" className="block font-medium text-white">
+                <label htmlFor="hotelName" className="block font-medium">
                   Hotel Name*
                 </label>
                 <input
@@ -52,7 +53,7 @@ function HotelInformationPage() {
               </div>
 
               <div>
-                <label htmlFor="hotelDescription" className="block font-medium text-white">
+                <label htmlFor="hotelDescription" className="block font-medium">
                   Hotel Description*
                 </label>
                 <textarea
@@ -60,18 +61,20 @@ function HotelInformationPage() {
                   value={hotelDescription}
                   onChange={(e) => setHotelDescription(e.target.value)}
                   className="w-full rounded border p-2"
-                  rows="4"
+                  rows="14"
                   required
                 ></textarea>
               </div>
 
-              <div className="flex flex-col items-start gap-6">
-                <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">
-                  Profile Picture
-                </h1>
+              <div className="flex flex-col items-start ">
+                <label htmlFor="hotelName" className="block font-medium">
+                  Hotel logo*
+                </label>
 
                 <label
-                  className={`w-[50%] cursor-pointer ${selectedImage ? "" : "bg-gray-600 bg-opacity-15"}`}
+                  className={`w-1/4 cursor-pointer ${
+                    selectedImage ? "" : "border border-gray-300 bg-white"
+                  }`}
                 >
                   {selectedImage ? (
                     <div className="relative flex h-full w-full items-center justify-center">
@@ -83,15 +86,15 @@ function HotelInformationPage() {
                       <button
                         type="button"
                         onClick={handleCancel}
-                        className="absolute right-2 top-2 rounded-full bg-white p-2 text-black"
+                        className="absolute right-2 top-2 rounded-full bg-white p-1 text-black"
                       >
                         &times;
                       </button>
                     </div>
                   ) : (
                     <div className="flex aspect-[3/2] h-full w-full flex-col items-center justify-center">
-                      <div className="text-5xl text-orange-600">+</div>
-                      <h1 className="text-orange-600">Upload photo</h1>
+                      <div className="text-3xl text-orange-600">+</div>
+                      <h1 className="text-sm text-orange-600">Upload photo</h1>
                     </div>
                   )}
                   <input
