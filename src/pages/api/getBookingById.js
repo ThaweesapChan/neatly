@@ -17,6 +17,7 @@ export default async function getBookingById(req, res) {
         check_out_date,
         booking_date,
         special_requests,
+        additional_request,
         payment:payments ( payment_method )
       `,
       )

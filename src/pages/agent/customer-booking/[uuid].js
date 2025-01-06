@@ -10,6 +10,7 @@ function BookingDetailPage() {
   const [bookingDetails, setBookingDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  console.log(bookingDetails);
 
   const getBookingById = async (bookingId) => {
     try {
@@ -251,7 +252,7 @@ function BookingDetailPage() {
                 Additional Request
               </h2>
               <p className="text-gray-700">
-                {bookingDetails.additional_request || "None"}
+                {bookingDetails.additional_request || "No additional request"}
               </p>
             </div>
           </div>
