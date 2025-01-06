@@ -1,9 +1,12 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { uploadFile } from "@/pages/api/upload";
 import { Button } from "@/component/button";
 
 export default function NavHotelInformation({ hotel_name, hotel_description, hotelLogo,}) {
+  const router = useRouter();
+
 
   /*รับค่า parameterมา 3 ตัว ซึ่งจะเป็น props ในหน้า hotel infomartion */
   
@@ -43,6 +46,10 @@ export default function NavHotelInformation({ hotel_name, hotel_description, hot
 
       const response = await axios.post("/api/updateRoomInformation", body);
       console.log("Response:", response.data);
+      console.log("suuccess");
+      router.push("http://localhost:3000");
+
+    
     } catch (error) {
       console.error("Error updating hotel information:", error);
     }
