@@ -21,6 +21,7 @@ function Navbar() {
   const [toastShown, setToastShown] = useState(false);
   const router = useRouter();
 
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -102,6 +103,25 @@ function Navbar() {
     }
   }, []);
 
+  const [hotelInfo, setHotelInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchHotelInformation = async () => {
+      try {
+        const response = await axios.get("/api/getHotelInformation");
+        setHotelInfo(response.data.data);
+      } catch (error) {
+        console.error("Error fetching hotel information:", error);
+      }
+    };
+
+    fetchHotelInformation();
+  }, []);
+
+  if (!hotelInfo) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <nav
@@ -113,7 +133,7 @@ function Navbar() {
 
           <div className="flex-shrink-0 cursor-pointer">
             <Image
-              src="/asset/logo.png"
+              src={hotelInfo[0].hotel_logo_url}
               width={170}
               height={100}
               alt="logo"
