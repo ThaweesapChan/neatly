@@ -1,11 +1,14 @@
 import supabase from "@/utils/supabaseClient";
 
 // Get Data From Database
-export default async function getRoomdetail(_req, res) {
+export default async function getRoomdetailById(req, res) {
+  const { id } = req.query;
   try {
     // ดึงข้อมูลจากตาราง "rooms"
-    const { data, error } = await supabase.from("rooms").select("*");
-    console.log("backend fetched data:", data);
+    const { data, error } = await supabase
+      .from("rooms")
+      .select("*")
+      .eq("room_id", parseInt(id)); // แปลง id เป็น integer เพราะ room_id เป็นตัวเลข;
 
     // ตรวจสอบว่ามีข้อผิดพลาดจากการดึงข้อมูลหรือไม่
     if (error) {

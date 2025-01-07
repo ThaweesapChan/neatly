@@ -1,6 +1,14 @@
 import React from "react";
+import { useRouter } from "next/router";
 
-export default function RoomsSuitsPost({ label = "", src = "", onClick }) {
+export default function RoomsSuitsPost({ label = "", src = "", roomId }) {
+   const router = useRouter();
+
+   const handleExploreRoom = () => {
+     console.log("Navigating to room:", roomId);
+     router.push(`/roomdetail/${roomId}`);
+   };
+
   return (
     <div className="relative h-[250px] w-full md:h-full">
       {/* รูปภาพ */}
@@ -25,7 +33,7 @@ export default function RoomsSuitsPost({ label = "", src = "", onClick }) {
         <button className="flex w-[148px] flex-row items-center justify-between pl-2">
           <h1
             className="font-openSans text-[16px] font-semibold leading-[16px] text-white"
-            onClick={onClick}
+            onClick={handleExploreRoom}
           >
             Explore Room
           </h1>

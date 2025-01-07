@@ -15,6 +15,7 @@ import RoomsSuitsPost from "@/component/roomssuitspost";
 
 export default function RoomDetail() {
   const [roomData, setRoomData] = useState(null);
+  const [allRooms, setAllRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function RoomDetail() {
   // Fetch room data from API
   async function fetchRoomData() {
     try {
-      const response = await axios.get("/api/getRoomdetail");
+      const response = await axios.get(`/api/getRoomDetailById?id=${id}`);
       const data = await response.data;
       setRoomData(data);
     } catch (err) {
@@ -32,9 +33,26 @@ export default function RoomDetail() {
       setLoading(false);
     }
   }
+
+  // Fetch all rooms for carousel
+  async function fetchAllRooms() {
+    try {
+      const response = await axios.get("/api/getRoomDetail");
+      const data = await response.data;
+      setAllRooms(data);
+    } catch (err) {
+      console.error("Error fetching all rooms:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    fetchRoomData();
-  }, []);
+    if (id) {
+      fetchRoomData();
+    }
+     fetchAllRooms();
+  }, [id]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -45,7 +63,8 @@ export default function RoomDetail() {
   }
 
   // กรองข้อมูลให้แสดงเฉพาะห้องที่ตรงกับ ID
-  const room = roomData?.find((room) => room.id === id);
+  // แก้ไขส่วนที่หา room จาก roomData
+  const room = roomData?.find((room) => room.room_id === parseInt(id));
 
   if (!room) {
     return <div>Room not found</div>;
@@ -57,7 +76,7 @@ export default function RoomDetail() {
   ];
 
   return (
-    <div className="w-full bg-[#F7F7FB]">
+    <div className="w-full bg-[#F7F7FB] ">
       {/* Navbar Section */}
       <div className="w-full">
         <Navbar />
@@ -127,7 +146,7 @@ export default function RoomDetail() {
                   </p>
                 </div>
                 {/* ปุ่ม Book Now */}
-                <Link href={`/book/${room.id || ""}`} legacyBehavior>
+                <Link href={`/book/${room.room_id || ""}`} legacyBehavior>
                   <a className="mt-4 flex h-[48px] items-center justify-center rounded-sm bg-orange-600 px-12 py-0 text-center font-openSans text-base font-medium text-white transition-transform hover:scale-105 md:mt-0">
                     Book Now
                   </a>
@@ -165,17 +184,20 @@ export default function RoomDetail() {
           className="flex h-96 w-full overflow-hidden md:h-[25rem]"
         >
           <CarouselContent className="flex h-full">
-            {roomData?.map((otherRoom) => (
-              <CarouselItem
-                key={otherRoom.id}
-                className="flex h-full w-full shrink-0 basis-3/4 items-center justify-center"
-              >
-                <RoomsSuitsPost
-                  label={otherRoom.room_type}
-                  src={otherRoom.room_image_url}
-                />
-              </CarouselItem>
-            ))}
+            {allRooms
+              .filter((room) => room.room_id !== parseInt(id)) // ไม่แสดงห้องปัจจุบัน
+              .map((otherRoom) => (
+                <CarouselItem
+                  key={otherRoom.room_id}
+                  className="flex h-full w-full shrink-0 basis-3/4 items-center justify-center"
+                >
+                  <RoomsSuitsPost
+                    label={otherRoom.room_type}
+                    src={otherRoom.room_image_url}
+                    roomId={otherRoom.room_id}
+                  />
+                </CarouselItem>
+              ))}
           </CarouselContent>
           <CarouselPrevious className="absolute left-4 z-10 text-zinc-200" />
           <CarouselNext className="absolute right-4 z-10 text-zinc-200" />
