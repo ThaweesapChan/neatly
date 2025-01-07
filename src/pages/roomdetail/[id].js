@@ -14,13 +14,17 @@ import {
 import RoomsSuitsPost from "@/component/roomssuitspost";
 
 export default function RoomDetail() {
-  /* const [roomData, setRoomData] = useState(null); */
-  /* const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); */
+  const [roomData, setRoomData] = useState(null);
+  const [allRooms, setAllRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const router = useRouter();
+  const { id } = router.query; // ดึง ID ของห้องจาก URL
+
   // Fetch room data from API
-  /*   async function fetchRoomData() {
+  async function fetchRoomData() {
     try {
-      const response = await axios.get("/api/getRoomdetail");
+      const response = await axios.get(`/api/getRoomDetailById?id=${id}`);
       const data = await response.data;
       setRoomData(data);
     } catch (err) {
@@ -28,58 +32,48 @@ export default function RoomDetail() {
     } finally {
       setLoading(false);
     }
-  } */
-  /*  useEffect(() => {
-    fetchRoomData();
-  }, []);
- */
-  /*   if (loading) {
+  }
+
+  // Fetch all rooms for carousel
+  async function fetchAllRooms() {
+    try {
+      const response = await axios.get("/api/getRoomDetail");
+      const data = await response.data;
+      setAllRooms(data);
+    } catch (err) {
+      console.error("Error fetching all rooms:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (id) {
+      fetchRoomData();
+    }
+     fetchAllRooms();
+  }, [id]);
+
+  if (loading) {
     return <div>Loading...</div>;
   }
 
   if (error) {
     return <div>Error: {error}</div>;
   }
- */
-  const [roomDetail, setRoomDetails] = useState(null);
-  const router = useRouter();
-  const { roomData } = router.query;
-  console.log(roomData);
 
-  useEffect(() => {
-    if (roomData) {
-      try {
-        setRoomDetails(roomData);
-      } catch (e) {
-        console.error("Error parsing room data:", e);
-      }
-    }
-  }, [roomData]); // ทำงานเมื่อ roomData เปลี่ยนแปลง
+  // กรองข้อมูลให้แสดงเฉพาะห้องที่ตรงกับ ID
+  // แก้ไขส่วนที่หา room จาก roomData
+  const room = roomData?.find((room) => room.room_id === parseInt(id));
 
-  // ถ้ายังไม่ได้รับข้อมูล, ให้แสดงข้อความ Loading...
-  if (!roomDetail) {
-    return <div>Loading...</div>;
+  if (!room) {
+    return <div>Room not found</div>;
   }
-  console.log(roomDetail);
+
   const images = [
-    "/asset/premier.jpeg",
-    "/asset/superior.jpeg",
-    "/asset/supreme.jpeg",
-    "/asset/loginduochair.jpeg",
-    "/asset/premier.jpeg",
-    "/asset/superior.jpeg",
+    room.room_image_url, // เพิ่ม room_image_url เป็นรูปแรก
+    ...(room.image_gallery || []), // ตามด้วยรูปจาก image_gallery
   ];
-
-  const posts = [
-    { label: "Superior Garden View", src: "/asset/superior.jpeg" },
-    { label: "Deluxe", src: "/asset/deluxe.jpeg" },
-    { label: "Superior", src: "/asset/room.jpeg" },
-    { label: "Premier Sea View", src: "/asset/premier.jpeg" },
-    { label: "Supreme", src: "/asset/supreme.jpeg" },
-    { label: "Suite", src: "/asset/room2.jpeg" },
-  ];
-
-  console.log(posts);
 
   return (
     <div className="w-full bg-[#F7F7FB]">
@@ -97,14 +91,14 @@ export default function RoomDetail() {
           className="mt-6 flex h-96 w-full overflow-hidden"
         >
           <CarouselContent className="flex h-full">
-            {Array.from({ length: 6 }).map((_, index) => (
+            {images.map((imageUrl, index) => (
               <CarouselItem
-                key={index}
+                key={`${room.id}-${index}`}
                 className="flex h-full w-full shrink-0 items-center justify-center md:basis-2/5"
               >
                 <img
-                  src={images[index]}
-                  alt={`Image ${index + 1}`}
+                  src={imageUrl}
+                  alt={`Room Image ${index + 1}`}
                   className="h-full w-full rounded object-cover"
                 />
               </CarouselItem>
@@ -117,37 +111,48 @@ export default function RoomDetail() {
 
       {/* Content Section */}
       <div className="flex w-full items-start justify-center">
-        <div className="px-10 py-10 md:w-[870px]">
+        <div className="mt-6 px-10 py-10 md:w-[1000px]">
           <div className="mt-4 space-y-10">
             <h1 className="mb-4 font-notoSerif text-5xl font-medium text-green-800 md:text-6xl">
-              {roomData[0]?.room_type || "Room Details"}
+              {room.room_type || "Room Details"}
             </h1>
             <div className="md:flex md:justify-between">
               <div className="md:mt-4 md:w-1/2">
                 <p className="font-inter text-base text-gray-700">
-                  {`Rooms (${roomData[0]?.size || "N/A"} sqm) with full garden views, ${roomData[0]?.bed_type || "N/A"} bed, bathroom with bathtub & shower.`}
+                  {`${room?.room_description || "N/A"} `}
                 </p>
                 <p className="mb-4 mt-10 font-inter text-base text-gray-700">
-                  {`${roomData[0]?.guests || "N/A"} Person | ${roomData[0]?.bed_type || "N/A"} | ${roomData.size || "N/A"} sqm`}
+                  {`${room.guests || "N/A"} Person | ${room?.bed_type || "N/A"} | ${room.room_size || "N/A"} sqm`}
                 </p>
               </div>
 
               <div className="flex flex-row justify-between font-inter md:flex md:flex-col md:items-end">
                 <div className="text-center md:text-right">
-                  <p className="m-1 font-inter text-base text-gray-700 line-through">
-                    THB 3,100.00
-                  </p>
+                  {room.promotion_price && (
+                    <p className="m-1 font-inter text-base text-gray-700 line-through">
+                      THB{" "}
+                      {room.price
+                        ? Intl.NumberFormat("en-US", {
+                            minimumFractionDigits: 2,
+                          }).format(room.price)
+                        : "N/A"}
+                    </p>
+                  )}
                   <p className="font-inter text-xl font-semibold text-gray-900">
                     THB{" "}
-                    {roomData[0]?.price
+                    {room.promotion_price
                       ? Intl.NumberFormat("en-US", {
                           minimumFractionDigits: 2,
-                        }).format(roomData[0].price)
-                      : "N/A"}
+                        }).format(room.promotion_price)
+                      : room.price
+                        ? Intl.NumberFormat("en-US", {
+                            minimumFractionDigits: 2,
+                          }).format(room.price)
+                        : "N/A"}
                   </p>
                 </div>
                 {/* ปุ่ม Book Now */}
-                <Link href="#" legacyBehavior>
+                <Link href={`/book/${room.room_id || ""}`} legacyBehavior>
                   <a className="mt-4 flex h-[48px] items-center justify-center rounded-sm bg-orange-600 px-12 py-0 text-center font-openSans text-base font-medium text-white transition-transform hover:scale-105 md:mt-0">
                     Book Now
                   </a>
@@ -158,23 +163,13 @@ export default function RoomDetail() {
 
           <div className="mt-16 h-full w-full md:mt-20">
             <h3 className="font-inter text-xl font-semibold">Room Amenities</h3>
-            <div className="mt-6 px-4">
-              <ul className="grid list-inside list-disc grid-cols-1 gap-x-10 font-inter text-base text-gray-700 md:grid-cols-2">
-                <li className="m-0">Safe in Room</li>
-                <li className="m-0">Air Conditioning</li>
-                <li className="m-0">High speed internet connection</li>
-                <li className="m-0">Hairdryer</li>
-                <li className="m-0">Shower</li>
-                <li className="m-0">Bathroom amenities</li>
-                <li className="m-0">Lamp</li>
-                <li className="m-0">Minibar</li>
-                <li className="m-0">Telephone</li>
-                <li className="m-0">Ironing board</li>
-                <li className="m-0">
-                  A floor only accessible via a guest room key
-                </li>
-                <li className="m-0">Alarm clock</li>
-                <li className="m-0">Bathrobe</li>
+            <div className="mt-6 px-5">
+              <ul className="grid list-inside list-disc grid-cols-1 gap-x-5 font-inter text-base text-gray-700 md:grid-cols-2">
+                {room.amenities.map((amenity, index) => (
+                  <li key={index} className="m-0">
+                    {amenity}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -188,8 +183,6 @@ export default function RoomDetail() {
             Other Rooms
           </p>
         </div>
-
-        {/* Carousel */}
         <Carousel
           opts={{
             align: "start",
@@ -197,14 +190,20 @@ export default function RoomDetail() {
           className="flex h-96 w-full overflow-hidden md:h-[25rem]"
         >
           <CarouselContent className="flex h-full">
-            {posts.map((post, index) => (
-              <CarouselItem
-                key={index}
-                className="flex h-full w-full shrink-0 basis-3/4 items-center justify-center"
-              >
-                <RoomsSuitsPost label={post.label} src={post.src} />
-              </CarouselItem>
-            ))}
+            {allRooms
+              .filter((room) => room.room_id !== parseInt(id)) // ไม่แสดงห้องปัจจุบัน
+              .map((otherRoom) => (
+                <CarouselItem
+                  key={otherRoom.room_id}
+                  className="flex h-full w-full shrink-0 basis-3/4 items-center justify-center"
+                >
+                  <RoomsSuitsPost
+                    label={otherRoom.room_type}
+                    src={otherRoom.room_image_url}
+                    roomId={otherRoom.room_id}
+                  />
+                </CarouselItem>
+              ))}
           </CarouselContent>
           <CarouselPrevious className="absolute left-4 z-10 text-zinc-200" />
           <CarouselNext className="absolute right-4 z-10 text-zinc-200" />
