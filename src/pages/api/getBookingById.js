@@ -33,6 +33,10 @@ export default async function getBookingById(req, res) {
         (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24),
       );
       booking.stay = stay;
+
+      const totalPrice = stay * booking.room.price;
+
+      booking.total_price = totalPrice;
     }
 
     res.status(200).json(response.data[0]);
