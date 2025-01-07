@@ -76,7 +76,7 @@ export default function RoomDetail() {
   ];
 
   return (
-    <div className="w-full bg-[#F7F7FB] ">
+    <div className="w-full bg-[#F7F7FB]">
       {/* Navbar Section */}
       <div className="w-full">
         <Navbar />
@@ -128,21 +128,27 @@ export default function RoomDetail() {
 
               <div className="flex flex-row justify-between font-inter md:flex md:flex-col md:items-end">
                 <div className="text-center md:text-right">
-                  <p className="m-1 font-inter text-base text-gray-700 line-through">
-                    THB{" "}
-                    {room.price
-                      ? Intl.NumberFormat("en-US", {
-                          minimumFractionDigits: 2,
-                        }).format(room.price)
-                      : "N/A"}
-                  </p>
+                  {room.promotion_price && (
+                    <p className="m-1 font-inter text-base text-gray-700 line-through">
+                      THB{" "}
+                      {room.price
+                        ? Intl.NumberFormat("en-US", {
+                            minimumFractionDigits: 2,
+                          }).format(room.price)
+                        : "N/A"}
+                    </p>
+                  )}
                   <p className="font-inter text-xl font-semibold text-gray-900">
                     THB{" "}
                     {room.promotion_price
                       ? Intl.NumberFormat("en-US", {
                           minimumFractionDigits: 2,
                         }).format(room.promotion_price)
-                      : "N/A"}
+                      : room.price
+                        ? Intl.NumberFormat("en-US", {
+                            minimumFractionDigits: 2,
+                          }).format(room.price)
+                        : "N/A"}
                   </p>
                 </div>
                 {/* ปุ่ม Book Now */}
