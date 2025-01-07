@@ -4,18 +4,9 @@ import supabase from "@/utils/supabaseClient";
 export default async function getRoomdetail(_req, res) {
   try {
     // ดึงข้อมูลจากตาราง "rooms"
-    const { data, error } = await supabase.from("rooms").select(
-      `
-        room_id,
-        room_type,
-        price,
-        room_image_url,
-        bed_type,
-        guests
-        `,
-    );
-     //console.log("backend fetched data:", data); 
-     
+    const { data, error } = await supabase.from("rooms").select("*");
+    console.log("backend fetched data:", data);
+
     // ตรวจสอบว่ามีข้อผิดพลาดจากการดึงข้อมูลหรือไม่
     if (error) {
       throw new Error(`Database query failed: ${error.message}`);
