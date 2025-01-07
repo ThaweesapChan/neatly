@@ -58,7 +58,10 @@ function BookingHistoryCard({ bookings }) {
     /* // ดึงส่วนลดจาก promotion_code (หากมี)
     const promotionCodeDiscount = Number(booking.promotion_code_discount || 0); */
 
-    return roomPrice + specialRequestsTotal /* - promotionCodeDiscount */;
+    return (
+      (roomPrice + specialRequestsTotal) *
+      booking.stay /* - promotionCodeDiscount */
+    );
   };
 
   // Format date function
