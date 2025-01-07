@@ -46,6 +46,10 @@ function Navbar() {
     router.push("/");
   };
 
+  const handleProfile = () => {
+    router.push("/user-profile");
+  };
+
   const handleHistory = () => {
     router.push("/bookinghistory");
   };
@@ -176,13 +180,9 @@ function Navbar() {
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleProfile}>
                     <UserRound className="mr-2 text-gray-500" />
                     Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard className="mr-2 text-gray-500" />
-                    Payment Method
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleHistory}>
                     <BriefcaseBusiness className="mr-2 text-gray-500" />
@@ -294,13 +294,12 @@ function Navbar() {
 
                   <hr className="my-4 w-full rounded-md border-b bg-gray-300" />
                   <ul className="flex flex-col items-start gap-8 font-openSans text-xl font-normal text-gray-700">
-                    <li className="flex w-full items-center gap-7 p-4">
+                    <li
+                      className="flex w-full items-center gap-7 p-4"
+                      onClick={handleProfile}
+                    >
                       <UserRound className="text-gray-500" />
                       Profile
-                    </li>
-                    <li className="flex w-full items-center gap-7 p-4">
-                      <CreditCard className="text-gray-500" />
-                      Payment Method
                     </li>
                     <li
                       className="flex w-full items-center gap-7 p-4"
