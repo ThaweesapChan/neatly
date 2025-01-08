@@ -1,41 +1,54 @@
 import React from "react";
 import Image from "next/image";
 import { Images } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
-function Roomcard({ room, onClick, check_in, check_out }) {
+import { useBookingDetail } from "@/lib/BookingDetailContext";
+function Roomcard({ room, onClick, checkIn, checkOut }) {
+  const [roomData, setRoomData] = useState(null);
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
   const router = useRouter();
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
+
+  useEffect(() => {
+    if (room) {
+      setRoomData(room);
+      setCheckInDate(checkIn);
+      setCheckOutDate(checkOut);
+    }
+  }, []);
+
   // ฟังก์ชันจัดการการคลิกปุ่ม "Rom detail"
   const handleRoomDetailClick = () => {
     router.push({
       pathname: "/roomdetail",
       query: {
-        roomData: room,
+        roomId: room.room_id,
       },
     });
   };
+
   // ฟังก์ชันจัดการการคลิกปุ่ม "Book Now"
   const handleBookNowClick = () => {
-    // ส่งข้อมูลของห้องไปยังหน้า booking ผ่าน query parameters
-    router.push({
-      pathname: "/booking",
-      query: {
-        room_type: room.room_type,
-        price: room.price,
-        size: room.size,
-        guests: room.guests,
-        room_description: room.room_description,
-        check_in,
-        check_out,
-      },
-    });
+    // ส่งข้อมูลการจองเข้า Context
+    const bookingData = {
+      roominfo: roomData,
+      check_in_date: checkInDate,
+      check_out_date: checkOutDate,
+    };
+    // บันทึกข้อมูลลงใน Context
+    updateBookingDetail(bookingData);
+    // เปลี่ยนหน้าไปยัง Payment Step 1
+    router.push("/payment/step1");
   };
+
   return (
     <div className="flex h-[400px] w-[90%] flex-col items-center justify-center gap-2 bg-white md:flex-row">
       <div className="relative w-[60%]">
         <Image
-          src="/asset/deluxe.jpeg"
-          alt="Mountain view from hotel room"
+          src={room.room_image_url}
+          alt="room-image"
           className="h-[265px] rounded-md md:w-[453px]"
           width={453}
           height={265}
@@ -80,7 +93,7 @@ function Roomcard({ room, onClick, check_in, check_out }) {
             </p>
             {/* ราคาลด */}
             <h3 className="font-inter text-2xl font-semibold text-gray-900">
-              {room.price}
+              {room.promotion_price}
             </h3>
           </div>
 

@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useState } from "react";
 
 const BookingContext = createContext({
-  bookingData: { basicInfo: {}, specialRequest: {}, paymentMethod: {} },
+  bookingData: {
+    basicInfo: {},
+    specialRequest: {},
+    paymentMethod: {},
+    additionalRequest: {},
+  },
   setBookingData: () => {},
 });
 

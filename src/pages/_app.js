@@ -1,14 +1,17 @@
 import "@/styles/globals.css";
 import { AuthProvider } from "@/lib/AuthContext";
 import { BookingProvider } from "@/lib/BookingContext";
-import { ToastContainer } from "react-toastify";
-
+import { TotalProvider } from "@/lib/TotalPriceContext";
+import { BookingDetailProvider } from "@/lib/BookingDetailContext";
 export default function App({ Component, pageProps }) {
   return (
     <AuthProvider>
       <BookingProvider>
-        <ToastContainer />
-        <Component {...pageProps} />
+        <BookingDetailProvider>
+          <TotalProvider>
+            <Component {...pageProps} />
+          </TotalProvider>
+        </BookingDetailProvider>
       </BookingProvider>
     </AuthProvider>
   );
