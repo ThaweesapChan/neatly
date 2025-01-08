@@ -4,24 +4,20 @@ import { Images } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
-
 function Roomcard({ room, onClick, checkIn, checkOut }) {
   const [roomData, setRoomData] = useState(null);
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
-  const [roomId, setRoomId] = useState("");
-  const { bookingDetail, setBookingDetail } = useBookingDetail();
   const router = useRouter();
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
 
   useEffect(() => {
     if (room) {
       setRoomData(room);
       setCheckInDate(checkIn);
       setCheckOutDate(checkOut);
-    } else {
-      setRoomId(room.room.id);
     }
-  }, [room, checkIn, checkOut, roomId]);
+  }, []);
 
   // ฟังก์ชันจัดการการคลิกปุ่ม "Rom detail"
   const handleRoomDetailClick = () => {
@@ -32,42 +28,27 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
       },
     });
   };
+
   // ฟังก์ชันจัดการการคลิกปุ่ม "Book Now"
-
   const handleBookNowClick = () => {
-    // ตรวจสอบว่าข้อมูลที่ต้องการส่งเข้ามามีครบ
-    if (!roomData || !checkInDate || !checkOutDate) {
-      console.error("Missing required booking details");
-      return;
-    }
-
-    // อัปเดต bookingDetail ใน Context
-    setBookingDetail({
-      checkIn: checkInDate,
-      checkOut: checkOutDate,
-      roominfo: {
-        room_id: roomData.room_id,
-        room_type: roomData.room_type,
-        price: roomData.price,
-        guests: roomData.guests,
-        size: roomData.size,
-        description: roomData.room_description,
-        images: roomData.room_images_url,
-      },
-    });
-
-    // ส่งไปที่หน้าชำระเงิน
-    router.push({
-      pathname: "/payment/step1",
-    });
+    // ส่งข้อมูลการจองเข้า Context
+    const bookingData = {
+      roominfo: roomData,
+      check_in_date: checkInDate,
+      check_out_date: checkOutDate,
+    };
+    // บันทึกข้อมูลลงใน Context
+    updateBookingDetail(bookingData);
+    // เปลี่ยนหน้าไปยัง Payment Step 1
+    router.push("/payment/step1");
   };
 
   return (
     <div className="flex h-[400px] w-[90%] flex-col items-center justify-center gap-2 bg-white md:flex-row">
       <div className="relative w-[60%]">
         <Image
-          src={room.room_images_url || "/images/room.jpg"}
-          alt="Mountain view from hotel room"
+          src={room.room_image_url}
+          alt="room-image"
           className="h-[265px] rounded-md md:w-[453px]"
           width={453}
           height={265}
@@ -112,7 +93,7 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
             </p>
             {/* ราคาลด */}
             <h3 className="font-inter text-2xl font-semibold text-gray-900">
-              {room.price}
+              {room.promotion_price}
             </h3>
           </div>
 

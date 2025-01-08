@@ -104,9 +104,9 @@ function Herosection() {
           </div>
 
           <Button
-            variant="primary"
-            label="Search"
-            other="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
+            type="1"
+            name="Search"
+            style="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
             onClick={handleSearch}
           />
         </div>

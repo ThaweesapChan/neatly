@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import Navbar from "@/component/navbar";
 import { useRouter } from "next/router";
 import {
@@ -7,11 +7,22 @@ import {
 } from "@/component/payment/sectionstep";
 import Bookingdetail from "@/component/payment/bookingdetail";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
-
+import axios from "axios";
 export default function Standardrequest() {
   const router = useRouter();
-  const { bookingdetail, setBookingDetail } = useBookingDetail();
-  console.log(bookingdetail, "bookingdetail step2");
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
+  console.log(bookingDetail.additionalInfo.specialRequests, "step2");
+  // State
+  const [standardRequests, setStandardRequests] = useState([]);
+  const [specialRequests, setSpecialRequests] = useState([]);
+  const [additionalRequest, setAdditionalRequest] = useState("");
+  console.log(
+    additionalRequest,
+    specialRequests,
+    additionalRequest,
+    "step 2 req",
+  );
+
   const specialRequestOptions = [
     { name: "Baby cot", price: 400 },
     { name: "Airport transfer", price: 200 },
@@ -20,6 +31,7 @@ export default function Standardrequest() {
     { name: "Phone chargers and adapters", price: 100 },
     { name: "Breakfast", price: 150 },
   ];
+
   const standardRequestOptions = [
     "Early check-in",
     "Late check-out",
@@ -28,32 +40,40 @@ export default function Standardrequest() {
     "A quiet room",
   ];
 
-  // State
-  const [standardRequests, setStandardRequests] = useState([]);
-  const [specialRequests, setSpecialRequests] = useState([]);
-  const [additionalRequest, setAdditionalRequest] = useState("");
-
   // Handle checkbox changes
   const handleCheckboxChange = (e, type, option) => {
     const { checked } = e.target;
 
     if (type === "standard") {
-      // For standard requests, just add/remove the string values
       setStandardRequests((prev) => {
-        if (checked) {
-          return [...prev, option];
-        } else {
-          return prev.filter((item) => item !== option);
-        }
+        const updatedRequests = checked
+          ? [...prev, option]
+          : prev.filter((item) => item !== option);
+        // อัปเดตข้อมูลใน Context
+        updateBookingDetail({
+          additionalInfo: {
+            standardRequests,
+            specialRequests,
+            additionalRequest,
+          },
+        });
+
+        return updatedRequests;
       });
     } else if (type === "special") {
-      // For special requests, add/remove objects with name and price
       setSpecialRequests((prev) => {
-        if (checked) {
-          return [...prev, option];
-        } else {
-          return prev.filter((req) => req.name !== option.name);
-        }
+        const updatedRequests = checked
+          ? [...prev, option]
+          : prev.filter((req) => req.name !== option.name);
+        // อัปเดตข้อมูลใน Context
+        updateBookingDetail({
+          additionalInfo: {
+            standardRequests,
+            specialRequests: updatedRequests,
+            additionalRequest,
+          },
+        });
+        return updatedRequests;
       });
     }
   };
@@ -64,17 +84,27 @@ export default function Standardrequest() {
   };
 
   // Navigate next
-  const handleNext = (e) => {
-    e.preventDefault();
-    router.push({
-      pathname: "/payment/step3",
+  const handleNext = () => {
+    updateBookingDetail({
+      additionalInfo: {
+        standardRequests,
+        specialRequests,
+        additionalRequest,
+      },
     });
-    setBookingDetail({
-      specialRequest: specialRequests,
-      standardRequest: standardRequests,
-      additionalRequest: additionalRequest,
-    });
+
+    router.push("/payment/step3");
   };
+
+  useEffect(() => {
+    updateBookingDetail({
+      additionalInfo: {
+        standardRequests,
+        specialRequests,
+        additionalRequest,
+      },
+    });
+  }, [standardRequests, specialRequests, additionalRequest]);
 
   return (
     <div>
@@ -147,9 +177,7 @@ export default function Standardrequest() {
           <div className="ml-4 flex flex-col gap-4 md:hidden">
             <div className="w-[385px] md:block">
               <Bookingdetail
-                standardRequests={standardRequests}
-                specialRequests={specialRequests}
-                additionalRequest={additionalRequest}
+            
               />
             </div>
             <div className="w-[385px] md:block">

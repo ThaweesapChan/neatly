@@ -1,6 +1,7 @@
 import CreditCard from "@/component/payment/creditcard";
 import Cash from "@/component/payment/cash";
 import Navbar from "@/component/navbar";
+import { useBooking } from "@/lib/BookingContext";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 import {
   ConditionRefund,
@@ -12,7 +13,7 @@ import Bookingdetail from "../../../component/payment/bookingdetail";
 export default function Step3() {
   const [selectedPayment, setSelectedPayment] = useState("credit");
   const router = useRouter();
-  const { bookingdetail, setBookingDetail } = useBookingDetail();
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
 
   return (
     <>
