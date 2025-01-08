@@ -1,10 +1,17 @@
 import React from "react";
-import { Button } from "@/component/button";
+import { Button } from "../button";
+import { useRouter } from "next/router";
 
 function Herosection() {
+  const router = useRouter();
+
+  function handleSearch() {
+    router.push("/searchresultpage"); // ใช้ path แทน URL เต็ม
+  }
+
   return (
     <main
-      className="relative w-full h-screen md:w-[90rem] md:h-[56.25rem] md:top-[6.25rem] md:opacity-100 md:px-16 bg-cover bg-center flex flex-col items-center justify-center "
+      className="relative flex h-screen w-full flex-col items-center justify-center bg-cover bg-center md:h-[56.25rem] md:w-full md:px-16 md:opacity-100"
       style={{
         backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.6) 19.66%, rgba(0, 0, 0, 0) 100%), url("/asset/loginduochair.jpeg")`, // ตรวจสอบ path รูปภาพ
         backgroundSize: "cover",
@@ -12,7 +19,7 @@ function Herosection() {
       }}
     >
       {/* กล่องข้อความ */}
-      <div className="flex items-center justify-center font-notoSerif font-medium text-white text-center px-4 py-8  shadow-lg w-11/12 max-w-3xl md:flex">
+      <div className="flex w-11/12 max-w-3xl items-center justify-center px-4 py-8 text-center font-notoSerif font-medium text-white shadow-lg md:flex">
         <p
           className="text-6xl leading-tight tracking-tight"
           style={{
@@ -26,13 +33,14 @@ function Herosection() {
       </div>
 
       {/* กล่องแบบฟอร์ม */}
-      <div className="md:w-full md:flex md:items-center flex flex-row md:mt-10">
-        <div className="bg-white  p-6 rounded w-80 mt-12 my-12 shadow-lg md:w-full md:flex md:py relative md:justify-end md:py-10">
+
+      <div className="flex flex-row md:mt-10 md:flex md:w-[1120px] md:items-center">
+        <div className="md:py relative my-12 mt-12 w-80 rounded bg-white p-6 shadow-lg md:flex md:w-full md:justify-end md:py-10">
           {/* Check In */}
-          <div className="mb-6 md:mb-0 md:mr-4 flex-1 ">
+          <div className="mb-6 flex-1 md:mb-0 md:mr-4">
             <label
               htmlFor="checkin"
-              className="block font-normal font-inter text-[1rem] mb-2 text-gray-900"
+              className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
             >
               Check In
             </label>
@@ -40,7 +48,7 @@ function Herosection() {
               type="date"
               id="checkin"
               name="checkin"
-              className="w-full p-3 rounded border border-gray-300 text-gray-400"
+              className="w-full rounded border border-gray-300 p-3 text-gray-400"
             />
             <style jsx>{`
               input[type="date"]::-webkit-calendar-picker-indicator {
@@ -50,10 +58,11 @@ function Herosection() {
             `}</style>
           </div>
           {/* Check Out */}
-          <div className="mb-6 md:mb-0 md:mr-4 flex-1 ">
+
+          <div className="mb-6 flex-1 md:mb-0 md:mr-4">
             <label
               htmlFor="checkout"
-              className="block font-normal font-inter text-[1rem] mb-2 text-gray-900"
+              className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
             >
               Check Out
             </label>
@@ -61,7 +70,7 @@ function Herosection() {
               type="date"
               id="checkout"
               name="checkout"
-              className="w-full p-3 rounded border border-gray-300 text-gray-400"
+              className="w-full rounded border border-gray-300 p-3 text-gray-400"
             />
             <style jsx>{`
               input[type="date"]::-webkit-calendar-picker-indicator {
@@ -71,19 +80,21 @@ function Herosection() {
             `}</style>
           </div>
           {/* Rooms & Guests */}
-          <div className="mb-6 md:mb-0 md:mr-4 flex-1">
+
+          <div className="mb-6 flex-1 md:mb-0 md:mr-4">
             <label
               htmlFor="rooms-guests"
-              className="block font-normal font-inter text-[1rem] mb-2 text-gray-900"
+              className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
             >
               Rooms & Guests
             </label>
             <select
               id="rooms-guests"
               name="rooms-guests"
-              className="w-full p-4 rounded border border-gray-300 text-gray-400"
+              defaultValue=""
+              className="w-full rounded border border-gray-300 p-4 text-gray-400"
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 1 room, 2 guests {/* ข้อความตัวอย่าง */}
               </option>
               <option value="1">1 room, 2 guests</option>
@@ -91,15 +102,12 @@ function Herosection() {
               <option value="3">3 rooms, 6 guests</option>
             </select>
           </div>
-          {/* ปุ่ม Search */}
 
-          {/* <button className="w-full p-4 bg-orange-600 text-white rounded text-lg hover:bg-orange-700 md:absolute bottom-6 md:h-8 md:w-56">
-            Search
-          </button> */}
           <Button
-            variant="primary"
-            label="Search"
-            other="w-full md:w-36 md:translate-y-9 "
+            type="1"
+            name="Search"
+            style="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
+            onClick={handleSearch}
           />
         </div>
       </div>

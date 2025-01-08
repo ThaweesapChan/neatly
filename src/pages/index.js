@@ -1,15 +1,11 @@
 import Homepage from "./homepage";
-import Navbar from "@/component/navbar";
-import Footer from "@/component/footer";
-
+import Searchresultpage from "./searchresultpage";
+import Booking from "./payment";
+import Bookingdetail from "@/component/payment/bookingdetail";
 export default function Home() {
-
   return (
     <div>
-      {/* landing page */}
-      <Navbar />
       <Homepage />
-      <Footer />
     </div>
   );
 }
