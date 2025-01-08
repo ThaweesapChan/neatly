@@ -24,7 +24,7 @@ export default function RoomDetail() {
   // Fetch room data from API
   async function fetchRoomData() {
     try {
-      const response = await axios.get(`/api/getRoomDetailById?id=${id}`);
+      const response = await axios.get(`/api/getRoomdetailById?id=${id}`);
       const data = await response.data;
       setRoomData(data);
     } catch (err) {
@@ -51,7 +51,7 @@ export default function RoomDetail() {
     if (id) {
       fetchRoomData();
     }
-     fetchAllRooms();
+    fetchAllRooms();
   }, [id]);
 
   if (loading) {

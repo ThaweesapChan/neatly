@@ -35,8 +35,8 @@ function BookingHistoryCard({ bookings }) {
     router.push(`/changedate/${uuid}`);
   };
 
-  const handleRoomDetail = () => {
-    router.push("/roomdetail");
+  const handleRoomDetail = (id) => {
+    router.push(`/roomdetail/${id}`);
   };
 
   const toggleDetails = (id) => {
@@ -241,7 +241,7 @@ function BookingHistoryCard({ bookings }) {
                   {booking.status !== "cancelled" && !booking.isCheckedIn && (
                     <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
                       <button
-                        onClick={handleRoomDetail}
+                        onClick={() => handleRoomDetail(booking.rooms?.id)}
                         className="z-10 flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none md:cursor-pointer md:hover:text-orange-400"
                       >
                         Room Detail

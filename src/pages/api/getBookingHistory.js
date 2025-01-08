@@ -52,6 +52,7 @@ export default async function handler(req, res) {
         cancellation_date,
         status,
         rooms:room_id (
+          id:room_id,
           room_type,
           room_image_url,
           price
