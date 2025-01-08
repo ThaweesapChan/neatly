@@ -14,7 +14,6 @@ const Searchresult = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // ใช้เปิดปิด modal
   const [selectedRoom, setSelectedRoom] = useState(null); // เก็บห้องที่ถูกเลือก
-  
   // ฟังก์ชันเปิด Modal และตั้งค่า room ที่เลือก
   const openModal = (room) => {
     setSelectedRoom(room); // เก็บข้อมูลห้องที่ถูกเลือก
@@ -43,6 +42,7 @@ const Searchresult = () => {
         params: { check_in: checkIn, check_out: checkOut, guest },
       });
       setRoomDetails(response.data.data || []);
+      console.log(roomDetails, "ข้อมูลของห้อง");
       setError(null);
     } catch (err) {
       setError("Failed to fetch rooms. Please try again.");
@@ -102,9 +102,7 @@ const Searchresult = () => {
               name="rooms-guests"
               className="w-full rounded border border-gray-300 p-4 text-gray-400"
             >
-              <option value="" >
-                Select rooms and guests
-              </option>
+              <option value="">Select rooms and guests</option>
               <option value="2">1 room, 2 guests</option>
               <option value="4">2 rooms, 4 guests</option>
               <option value="6">3 rooms, 6 guests</option>
@@ -112,9 +110,9 @@ const Searchresult = () => {
           </div>
           <Button
             onClick={fetchRooms}
-            variant="primary"
-            label="Search"
-            other="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
+            type="1"
+            name="Search"
+            style="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
           />
         </div>
       </div>
@@ -122,11 +120,15 @@ const Searchresult = () => {
       <div className="flex w-full flex-col items-center justify-center gap-5 px-3 py-3">
         {error && <p className="text-red-500">{error}</p>}
         {roomDetails.length > 0 ? (
-          roomDetails.map((room,check_in,chec) => (
+          roomDetails.map((room) => (
             <Roomcard
               key={room.room_id}
               room={room}
-              onClick={() => openModal(room)}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              onClick={() => {
+                openModal(room);
+              }}
             />
           ))
         ) : (

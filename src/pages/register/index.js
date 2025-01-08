@@ -5,9 +5,6 @@ import Navbar from "@/component/navbar";
 import { uploadFile } from "../api/upload";
 import { useRouter } from "next/router";
 
-
-const country = [{ name: "Thailand" }, { name: "USA" }, { name: "Japan" }];
-
 const RegisterForm = () => {
   const router = useRouter();
 
@@ -26,6 +23,23 @@ const RegisterForm = () => {
     confirmPassword: "",
     profile_picture_url: "",
   });
+
+  const [country, setCountry] = useState([]);
+
+  useEffect(() => {
+    // โหลดรายชื่อประเทศจาก API
+    const fetchCountries = async () => {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      const data = await response.json();
+      const sortedCountries = data
+        .map((country) => ({
+          name: country.name.common,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      setCountry(sortedCountries);
+    };
+    fetchCountries();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,12 +60,59 @@ const RegisterForm = () => {
       reader.readAsDataURL(file); // อ่านไฟล์ภาพ
     }
   };
+
   const handleCancel = () => {
     setSelectedImage(null); // รีเซ็ตค่า selectedImage เป็น null
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 1) ตรวจสอบ First Name
+    //    - ต้องไม่ว่าง
+    //    - ต้องเป็นตัวอักษร (a-z หรือ A-Z) และมีความยาวอย่างน้อย 5 ตัว
+    const nameRegex = /^[A-Za-z]{5,}$/; 
+    // ถ้าต้องการให้รองรับการเว้นวรรคด้วย: /^[A-Za-z\s]{5,}$/
+    if (!nameRegex.test(formData.first_name)) {
+      alert("First Name must contain only letters and be at least 5 characters long.");
+      return;
+    }
+
+    // 2) ตรวจสอบ Last Name
+    if (!nameRegex.test(formData.last_name)) {
+      alert("Last Name must contain only letters and be at least 5 characters long.");
+      return;
+    }
+
+    // 3) ตรวจสอบ Username
+    //    - ใช้เงื่อนไขเดียวกับ First/Last Name คือ a-z หรือ A-Z และความยาว >= 5
+    if (!nameRegex.test(formData.username)) {
+      alert("Username must contain only letters and be at least 5 characters long.");
+      return;
+    }
+
+    // 4) ตรวจสอบ Date of Birth
+    //    - ต้องไม่ว่าง
+    //    - ต้องเป็นวันในอดีต (ไม่ใช่วันปัจจุบันหรืออนาคต)
+    if (!formData.date_of_birth) {
+      alert("Please select your Date of Birth.");
+      return;
+    }
+
+    const today = new Date();
+    const birthDate = new Date(formData.date_of_birth);
+    // เคส: ถ้ากรอกวันเกิดเป็นวันนี้หรือวันอนาคต => ไม่ผ่าน
+    if (birthDate >= new Date(today.toDateString())) {
+      alert("Date of Birth must be in the past (before today).");
+      return;
+    }
+
+    // 5) ตรวจสอบ Country
+    //    - ต้องไม่เป็นค่าว่าง
+    if (!formData.country) {
+      alert("Please select your country.");
+      return;
+    }
 
     // ตรวจสอบว่า password และ confirmPassword ตรงกัน
     if (formData.password !== formData.confirmPassword) {
@@ -66,15 +127,16 @@ const RegisterForm = () => {
       return;
     }
 
-    // ★ เพิ่มการตรวจสอบว่า phone_number ต้องเป็นตัวเลขเท่านั้น ★
-    const phoneRegex = /^[0-9]+$/;
+    // ตรวจสอบว่า phone_number ต้องเป็นตัวเลขเท่านั้น
+    const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(formData.phone_number)) {
-      alert("Phone number must contain digits only");
+      alert("Phone number must contain 10 digits only");
       return;
     }
 
     // ส่งข้อมูลไปยัง API โดยไม่ส่ง confirmPassword
     try {
+      // ตรวจสอบว่ามีไฟล์ภาพหรือไม่ ถ้ามีก็ upload
       if (profile) {
         const url = await uploadFile(profile); // อัพโหลดไฟล์และรับ URL
         if (url) {
@@ -85,7 +147,8 @@ const RegisterForm = () => {
         }
       }
 
-      const { confirmPassword, ...dataToSubmit } = formData; // ตัด confirmPassword ออก
+      // ตัด confirmPassword ออกก่อนส่ง
+      const { confirmPassword, ...dataToSubmit } = formData;
       const response = await fetch("/api/register", {
         method: "POST",
         headers: {

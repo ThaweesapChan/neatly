@@ -7,8 +7,6 @@ export default async function handler(req, res) {
 
   const { check_in, check_out, guest } = req.query;
 
-  console.log(check_in, check_out, guest, "check date");
-
   if (!check_in || !check_out) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
@@ -27,6 +25,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Query for rooms that are already booked during the specified check-in and check-out dates
     const { data: bookedRooms, error: bookingsError } = await supabase
       .from("bookings")
       .select("room_id")
@@ -38,13 +37,15 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: bookingsError.message });
     }
 
-    const bookedRoomIds = bookedRooms?.map((booking) => booking.room_id) || [];
-    console.log("Booked Room IDs:", bookedRoomIds);
+    const bookedRoomIds =
+      bookedRooms
+        ?.filter((booking) => booking.room_id !== null) // Filter out null room_ids
+        .map((booking) => booking.room_id) || [];
 
+    // Query for available rooms that can accommodate the number of guests
     let { data: availableRooms, error: roomsError } = await supabase
       .from("rooms")
       .select("*")
-      .eq("status", "available")
       .gte("guests", parsedGuest);
 
     if (roomsError) {
@@ -52,14 +53,12 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: roomsError.message });
     }
 
+    // If there are booked rooms, filter them out from the available rooms
     if (bookedRoomIds.length > 0) {
-      const bookedRoomIdsSet = new Set(bookedRoomIds.map(String));
       availableRooms = availableRooms.filter(
-        (room) => !bookedRoomIdsSet.has(String(room.room_id)),
+        (room) => !bookedRoomIds.includes(room.id),
       );
     }
-
-    console.log("Available Rooms:", availableRooms);
 
     return res.status(200).json({ data: availableRooms });
   } catch (error) {

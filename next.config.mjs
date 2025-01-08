@@ -4,10 +4,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https", // โปรโตคอลของ URL
-        hostname: "example.com", // โฮสต์ของ URL
-        port: "", // กำหนดพอร์ต (ถ้ามี) หรือปล่อยว่างไว้
-        pathname: "/images/**", // กำหนดเส้นทางที่อนุญาต (ใช้ ** เป็น wildcard)
+        protocol: "https", // โปรโตคอลที่ใช้งาน
+        hostname: "tljwcwljvchdwzflopwn.supabase.co", // โฮสต์ของ Supabase
+        pathname: "/storage/v1/object/public/**", // เส้นทางที่อนุญาต (ใช้ wildcard สำหรับ Supabase paths)
       },
     ],
   },

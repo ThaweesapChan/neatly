@@ -1,22 +1,26 @@
-import React from "react";
-import Navbar from "@/component/navbar";
+import React, { use } from "react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useBooking } from "@/lib/BookingContext";
-import { SectionsStep1 } from "@/component/payment/sectionstep";
-
+import { useBookingDetail } from "@/lib/BookingDetailContext";
+import Navbar from "@/component/navbar";
+import {
+  ConditionRefund,
+  SectionsStep1,
+} from "@/component/payment/sectionstep";
+import Bookingdetail from "@/component/payment/bookingdetail";
 export default function Basicinformation() {
   const router = useRouter();
-  const { bookingData, setBookingData } = useBooking(); // ใช้ Context
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const [formData, setFormData] = useState({
-    firstName: bookingData.basicInfo.firstName || "",
-    lastName: bookingData.basicInfo.lastName || "",
-    email: bookingData.basicInfo.email || "",
-    phoneNumber: bookingData.basicInfo.phoneNumber || "",
-    dateOfBirth: bookingData.basicInfo.dateOfBirth || "",
-    country: bookingData.basicInfo.country || "",
+    firstName: bookingDetail.userinfo?.firstName || "",
+    lastName: bookingDetail.userinfo?.lastName || "",
+    email: bookingDetail.userinfo?.email || "",
+    phoneNumber: bookingDetail.userinfo?.phoneNumber || "",
+    dateOfBirth: bookingDetail.userinfo?.dateOfBirth || "",
+    country: bookingDetail.userinfo?.country || "",
   });
-  console.log(formData);
+  /*   console.log("Form Data:", formData);
+  console.log(bookingDetail, " from step1"); */
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -32,10 +36,7 @@ export default function Basicinformation() {
   // ฟังก์ชันเมื่อกดปุ่ม Next
   const handleNext = (e) => {
     e.preventDefault();
-    setBookingData((prev) => ({
-      ...prev,
-      basicInfo: { ...formData },
-    }));
+    updateBookingDetail({ userinfo: formData });
     router.push("http://localhost:3000/payment/step2");
   };
 
@@ -168,7 +169,14 @@ export default function Basicinformation() {
                 <option value="Singapore">Singapore</option>
               </select>
             </div>
-
+            <div className="ml-4 flex flex-col gap-4 md:hidden">
+              <div className="w-[385px] md:block">
+                <Bookingdetail />
+              </div>
+              <div className="w-[385px] md:block">
+                <ConditionRefund />
+              </div>
+            </div>
             <div className="flex justify-between pt-4">
               <button
                 type="button"
@@ -185,6 +193,15 @@ export default function Basicinformation() {
               </button>
             </div>
           </form>
+        </div>
+        {/* ด้านขวา */}
+        <div className="ml-4 flex flex-col gap-4">
+          <div className="hidden md:block md:w-[385px]">
+            <Bookingdetail />
+          </div>
+          <div className="hidden md:block md:w-[385px]">
+            <ConditionRefund />
+          </div>
         </div>
       </div>
     </div>

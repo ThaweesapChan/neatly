@@ -1,8 +1,8 @@
 import { ConditionRefund } from "@/component/payment/sectionstep";
 import Bookingdetail from "@/component/payment/bookingdetail";
 import { useState } from "react";
-import { useBooking } from "@/lib/BookingContext";
 import { useRouter } from "next/router";
+import { useBooking } from "@/lib/BookingContext";
 import {
   CardExpiryElement,
   CardCvcElement,
@@ -13,6 +13,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/component/button";
+import axios from "axios";
 
 import PaymentFailed from "../../pages/payment/payment-failed";
 
@@ -27,7 +28,7 @@ export function FormCreditCard() {
   const [promotionCode, setPromotionCode] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { bookingData, setBookingData } = useBooking();
+  const { bookingData } = useBooking();
 
   const handleBack = () => {
     console.log("Back button clicked");
@@ -54,26 +55,55 @@ export function FormCreditCard() {
 
     setLoading(true);
 
-    // สร้าง Payment Method
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: "card",
-      card: cardElement,
-      billing_details: { name: cardOwner },
-    });
+    try {
+      // เรียกข้อมูลจาก Context
+      const { basicInfo, specialRequest } = bookingData;
+      // ต้องมาเพิ่มที่หลังว่า front-end ที่แก้วทำส่ง data มาเป็นแบบไหน
 
-    if (error) {
+      // เรียก API Backend เพื่อสร้าง PaymentIntent และรับ client_secret
+      const response = await axios.post("/api/stripe/bookingHandler", {
+        basicInfo,
+        specialRequest,
+        checkInDate,
+        checkOutDate,
+        originalPrice,
+        promotionCode,
+        totalPrice,
+        amount,
+      });
+
+      // ตรวจสอบ Response
+      if (!response.data.client_secret) {
+        throw new Error("No client_secret received from API");
+      }
+
+      const { client_secret } = response.data;
+
+      // ใช้ client_secret กับ stripe.confirmCardPayment
+      const { error: confirmError, paymentIntent } =
+        await stripe.confirmCardPayment(client_secret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: cardOwner,
+            },
+          },
+        });
+
+      if (confirmError) {
+        console.error("Error confirming payment:", confirmError);
+        handlePaymentFailed();
+      } else {
+        console.log("PaymentIntent confirmed:", paymentIntent);
+        alert("การชำระเงินสำเร็จ!");
+        router.push("/payment/payment-success"); // Redirect ไปหน้า success
+      }
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
       handlePaymentFailed();
-      console.error("Error creating payment method:", error);
-    } else {
-      setBookingData((prev) => ({
-        ...prev,
-        paymentMethod: { cardOwner, promotionCode },
-      }));
-      console.log("Updated Booking Context:", bookingData);
-      console.log("PaymentMethod created success:", paymentMethod);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   // Stripe element styles
