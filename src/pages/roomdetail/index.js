@@ -4,6 +4,7 @@ import Navbar from "@/component/navbar";
 import Footer from "@/component/footer";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
 import {
   Carousel,
   CarouselContent,
@@ -14,13 +15,15 @@ import {
 import RoomsSuitsPost from "@/component/roomssuitspost";
 
 export default function RoomDetail() {
-  /* const [roomData, setRoomData] = useState(null); */
-  /* const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); */
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { id } = router.query;
+  const [roomData, setRoomData] = useState(null);
+  const [error, setError] = useState(null);
   // Fetch room data from API
-  /*   async function fetchRoomData() {
+  async function fetchRoomData() {
     try {
-      const response = await axios.get("/api/getRoomdetail");
+      const response = await axios.get(`/api/getRoomdetail?id=${id}`);
       const data = await response.data;
       setRoomData(data);
     } catch (err) {
@@ -28,39 +31,18 @@ export default function RoomDetail() {
     } finally {
       setLoading(false);
     }
-  } */
-  /*  useEffect(() => {
+  }
+  useEffect(() => {
     fetchRoomData();
   }, []);
- */
-  /*   if (loading) {
+
+  if (loading) {
     return <div>Loading...</div>;
   }
 
   if (error) {
     return <div>Error: {error}</div>;
   }
- */
-  const [roomDetail, setRoomDetails] = useState(null);
-  const router = useRouter();
-  const { roomData } = router.query;
-  console.log(roomData);
-
-  useEffect(() => {
-    if (roomData) {
-      try {
-        setRoomDetails(roomData);
-      } catch (e) {
-        console.error("Error parsing room data:", e);
-      }
-    }
-  }, [roomData]); // ทำงานเมื่อ roomData เปลี่ยนแปลง
-
-  // ถ้ายังไม่ได้รับข้อมูล, ให้แสดงข้อความ Loading...
-  if (!roomDetail) {
-    return <div>Loading...</div>;
-  }
-  console.log(roomDetail);
   const images = [
     "/asset/premier.jpeg",
     "/asset/superior.jpeg",
@@ -80,6 +62,18 @@ export default function RoomDetail() {
   ];
 
   console.log(posts);
+  function handleBookNowClick() {
+    router.push({
+      pathname: "/booking",
+      query: {
+        room_type: roomData[0].room_type,
+        price: roomData[0].price,
+        size: roomData[0].size,
+        guests: roomData[0].guests,
+        bed_type: roomData[0].bed_type,
+      },
+    });
+  }
 
   return (
     <div className="w-full bg-[#F7F7FB]">
@@ -138,7 +132,7 @@ export default function RoomDetail() {
                     THB 3,100.00
                   </p>
                   <p className="font-inter text-xl font-semibold text-gray-900">
-                    THB{" "}
+                    THB
                     {roomData[0]?.price
                       ? Intl.NumberFormat("en-US", {
                           minimumFractionDigits: 2,
@@ -147,7 +141,7 @@ export default function RoomDetail() {
                   </p>
                 </div>
                 {/* ปุ่ม Book Now */}
-                <Link href="#" legacyBehavior>
+                <Link href="#" legacyBehavior onClick={handleBookNowClick}>
                   <a className="mt-4 flex h-[48px] items-center justify-center rounded-sm bg-orange-600 px-12 py-0 text-center font-openSans text-base font-medium text-white transition-transform hover:scale-105 md:mt-0">
                     Book Now
                   </a>
