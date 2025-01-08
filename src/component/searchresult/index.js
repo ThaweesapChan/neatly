@@ -14,7 +14,6 @@ const Searchresult = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // ใช้เปิดปิด modal
   const [selectedRoom, setSelectedRoom] = useState(null); // เก็บห้องที่ถูกเลือก
-
   // ฟังก์ชันเปิด Modal และตั้งค่า room ที่เลือก
   const openModal = (room) => {
     setSelectedRoom(room); // เก็บข้อมูลห้องที่ถูกเลือก
@@ -43,6 +42,7 @@ const Searchresult = () => {
         params: { check_in: checkIn, check_out: checkOut, guest },
       });
       setRoomDetails(response.data.data || []);
+      console.log(roomDetails, "ข้อมูลของห้อง");
       setError(null);
     } catch (err) {
       setError("Failed to fetch rooms. Please try again.");
@@ -124,8 +124,8 @@ const Searchresult = () => {
             <Roomcard
               key={room.room_id}
               room={room}
-              checkIn={checkIn} 
-              checkOut={checkOut} 
+              checkIn={checkIn}
+              checkOut={checkOut}
               onClick={() => {
                 openModal(room);
               }}

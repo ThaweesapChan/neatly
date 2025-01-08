@@ -1,8 +1,6 @@
 import React, { use } from "react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useEffect } from "react";
-import { useBooking } from "@/lib/BookingContext";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 import Navbar from "@/component/navbar";
 import {
@@ -10,18 +8,19 @@ import {
   SectionsStep1,
 } from "@/component/payment/sectionstep";
 import Bookingdetail from "@/component/payment/bookingdetail";
-
 export default function Basicinformation() {
   const router = useRouter();
-  const { bookingData, setBookingData } = useBooking(); // ใช้ Context
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const [formData, setFormData] = useState({
-    firstName: bookingData.basicInfo.firstName || "",
-    lastName: bookingData.basicInfo.lastName || "",
-    email: bookingData.basicInfo.email || "",
-    phoneNumber: bookingData.basicInfo.phoneNumber || "",
-    dateOfBirth: bookingData.basicInfo.dateOfBirth || "",
-    country: bookingData.basicInfo.country || "",
+    firstName: bookingDetail.userinfo?.firstName || "",
+    lastName: bookingDetail.userinfo?.lastName || "",
+    email: bookingDetail.userinfo?.email || "",
+    phoneNumber: bookingDetail.userinfo?.phoneNumber || "",
+    dateOfBirth: bookingDetail.userinfo?.dateOfBirth || "",
+    country: bookingDetail.userinfo?.country || "",
   });
+  /*   console.log("Form Data:", formData);
+  console.log(bookingDetail, " from step1"); */
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -37,11 +36,7 @@ export default function Basicinformation() {
   // ฟังก์ชันเมื่อกดปุ่ม Next
   const handleNext = (e) => {
     e.preventDefault();
-
-    setBookingData((prev) => ({
-      ...prev,
-      basicInfo: { ...formData },
-    }));
+    updateBookingDetail({ userinfo: formData });
     router.push("http://localhost:3000/payment/step2");
   };
 

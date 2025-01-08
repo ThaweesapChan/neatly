@@ -1,29 +1,37 @@
-import { useContext, createContext, useState } from "react";
+import React, { createContext, useState, useContext } from "react";
 
-const BookingDetailContext = createContext({
-  bookingDetail: {
-    checkIn: "",
-    checkOut: "",
-    roominfo: {},
-    specialRequest: [],
-    standardRequest: [],
-    additionalRequest: "",
-  },
-  setBookingDetail: () => {},
-});
+// Context Initialization
+const BookingDetailContext = createContext();
+
+// Provider Component
 export function BookingDetailProvider({ children }) {
-  const [bookingDetail, setBookingDetail] = useState({
-    checkIn: "",
-    checkOut: "",
+  // ตั้งค่า default value สำหรับ bookingDetail
+  const [bookingDetail, setBookingDetailState] = useState({
     roominfo: {},
+    check_in_date: "",
+    check_out_date: "",
+    userinfo: {},
+    additionalInfo: {},
   });
+
+  // ฟังก์ชันในการอัปเดตข้อมูลของ bookingDetail
+  const updateBookingDetail = (newDetails) => {
+    setBookingDetailState((prevDetails) => {
+      const updatedDetails = { ...prevDetails, ...newDetails };
+      return updatedDetails;
+    });
+  };
+
   return (
-    <BookingDetailContext.Provider value={{ bookingDetail, setBookingDetail }}>
+    <BookingDetailContext.Provider
+      value={{ bookingDetail, updateBookingDetail }}
+    >
       {children}
     </BookingDetailContext.Provider>
   );
 }
 
+// Hook for using BookingDetailContext
 export function useBookingDetail() {
   return useContext(BookingDetailContext);
 }
