@@ -4,8 +4,6 @@ import Navbar from "@/component/navbar";
 import Footer from "@/component/footer";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useBookingDetail } from "@/lib/BookingDetailContext";
-import { useBookingDetail } from "@/lib/BookingDetailContext";
 import {
   Carousel,
   CarouselContent,
@@ -24,7 +22,6 @@ export default function RoomDetail() {
   const { id } = router.query; // ดึง ID ของห้องจาก URL
 
   // Fetch room data from API
-  async function fetchRoomData() {
   async function fetchRoomData() {
     try {
       const response = await axios.get(`/api/getRoomdetailById?id=${id}`);
