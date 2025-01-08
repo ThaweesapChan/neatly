@@ -16,7 +16,7 @@ export default function Basicinformation() {
     dateOfBirth: bookingData.basicInfo.dateOfBirth || "",
     country: bookingData.basicInfo.country || "",
   });
-  console.log(formData)
+  console.log(formData);
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {

@@ -1,20 +1,28 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
 import Navbar from "@/component/navbar";
-
 import { Button } from "@/component/button";
 
-  const handleBack = () => {
-    console.log("Back button clicked");
-    router.push("http://localhost:3000");
-  };
 export default function PaymentFailed() {
+  const router = useRouter();
+
+  const handleBackToPaymentDetail = () => {
+    console.log("Back button clicked");
+    router.push("http://localhost:3000/payment");
+  };
+
+  const handleRetryPayment = async () => {
+    console.log("Back button clicked");
+    router.push("http://localhost:3000/payment/step3");
+  };
+
   return (
     <>
       <Navbar />
       <div className="md:flex md:w-screen md:flex-col md:items-center md:py-16">
         <div className="flex h-[594px] w-screen flex-col items-center justify-center gap-4 bg-orange-100 md:h-[349px] md:w-[738px]">
           <Image
-            src="/asset/icon/alert.png" // แก้ path ให้เริ่มต้นด้วย /
+            src="/asset/icon/alert.png"
             alt="payment-failed"
             width={64}
             height={64}
@@ -34,20 +42,35 @@ export default function PaymentFailed() {
         </div>
 
         <div className="flex w-screen flex-col items-center gap-4 px-6 py-8 md:hidden">
-          {/*ปุ่มนี้พาไป step 1 */}
           <Button
             type="1"
-            name="Back To Home"
+            name="Back to Payment details"
             style="w-[372px]"
-            onClick={handleBack}
+            onClick={handleBackToPaymentDetail}
           />
-          {/*ปุ่มนี้พาไปลองชำระอีกครั้ง */}
-          <Button type="3" name="Check Booking Detail" style="w-[372px]" />
+
+          <Button
+            type="3"
+            name="Retry payment"
+            style="w-[372px]"
+            onClick={handleRetryPayment} // เพิ่มการทำงาน Retry
+          />
         </div>
 
         <div className="hidden w-screen flex-row justify-center gap-4 px-6 py-8 md:flex">
-          <Button type="3" name="Retry payment" style="w-[150px]" />
-          <Button type="1" name="Back to Payment details" style="w-[372px]" />
+          <Button
+            type="3"
+            name="Retry payment"
+            style="w-[150px]"
+            onClick={handleRetryPayment} // เพิ่มการทำงาน Retry
+          />
+
+          <Button
+            type="1"
+            name="Back to Payment details"
+            style="w-[372px]"
+            onClick={handleBackToPaymentDetail}
+          />
         </div>
       </div>
     </>
