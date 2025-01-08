@@ -16,7 +16,6 @@ const CreateAmenities = ({ formData, setFormData }) => {
         ...amenities,
         {
           id: newId,
-          label: "Amenity",
           value: "",
         },
       ],
@@ -46,7 +45,7 @@ const CreateAmenities = ({ formData, setFormData }) => {
       ) : (
         amenities.map((amenity) => (
           <div key={amenity.id} className="space-y-2">
-            <Label className="text-sm text-gray-600">{amenity.label}</Label>
+            <Label className="text-sm text-gray-600">Amenity</Label>
             <div className="flex gap-2">
               <Input
                 value={amenity.value}

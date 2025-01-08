@@ -21,6 +21,7 @@ function Navbar() {
   const [toastShown, setToastShown] = useState(false);
   const router = useRouter();
 
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -44,6 +45,10 @@ function Navbar() {
 
   const handleHomepage = () => {
     router.push("/");
+  };
+
+  const handleProfile = () => {
+    router.push("/user-profile");
   };
 
   const handleHistory = () => {
@@ -102,6 +107,25 @@ function Navbar() {
     }
   }, []);
 
+  const [hotelInfo, setHotelInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchHotelInformation = async () => {
+      try {
+        const response = await axios.get("/api/getHotelInformation");
+        setHotelInfo(response.data.data);
+      } catch (error) {
+        console.error("Error fetching hotel information:", error);
+      }
+    };
+
+    fetchHotelInformation();
+  }, []);
+
+  if (!hotelInfo) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <nav
@@ -113,7 +137,7 @@ function Navbar() {
 
           <div className="flex-shrink-0 cursor-pointer">
             <Image
-              src="/asset/logo.png"
+              src={hotelInfo[0].hotel_logo_url}
               width={170}
               height={100}
               alt="logo"
@@ -176,13 +200,9 @@ function Navbar() {
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleProfile}>
                     <UserRound className="mr-2 text-gray-500" />
                     Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard className="mr-2 text-gray-500" />
-                    Payment Method
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleHistory}>
                     <BriefcaseBusiness className="mr-2 text-gray-500" />
@@ -294,13 +314,12 @@ function Navbar() {
 
                   <hr className="my-4 w-full rounded-md border-b bg-gray-300" />
                   <ul className="flex flex-col items-start gap-8 font-openSans text-xl font-normal text-gray-700">
-                    <li className="flex w-full items-center gap-7 p-4">
+                    <li
+                      className="flex w-full items-center gap-7 p-4"
+                      onClick={handleProfile}
+                    >
                       <UserRound className="text-gray-500" />
                       Profile
-                    </li>
-                    <li className="flex w-full items-center gap-7 p-4">
-                      <CreditCard className="text-gray-500" />
-                      Payment Method
                     </li>
                     <li
                       className="flex w-full items-center gap-7 p-4"

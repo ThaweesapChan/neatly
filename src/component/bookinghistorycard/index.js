@@ -5,11 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import CancelModal from "../modal";
 
-function BookingHistoryCard() {
+function BookingHistoryCard({ bookings }) {
   const router = useRouter();
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [openDetails, setOpenDetails] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -38,45 +35,13 @@ function BookingHistoryCard() {
     router.push(`/changedate/${uuid}`);
   };
 
-  const handleRoomDetail = () => {
-    router.push("/roomdetail");
+  const handleRoomDetail = (id) => {
+    router.push(`/roomdetail/${id}`);
   };
 
   const toggleDetails = (id) => {
     setOpenDetails((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-
-  // get Data Form API
-  const fetchBooking = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get("/api/getBookingHistory", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBookings(response.data.bookings);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBooking();
-  }, []);
-
-  if (loading)
-    return (
-      <h1 className="flex justify-center text-2xl text-green-700">
-        Loading...
-      </h1>
-    );
-  if (error)
-    return (
-      <h1 className="flex justify-center text-2xl text-black">
-        Error: {error}
-      </h1>
-    );
 
   // Total Price Calculation
   const calculateTotalPrice = (booking) => {
@@ -93,7 +58,10 @@ function BookingHistoryCard() {
     /* // ดึงส่วนลดจาก promotion_code (หากมี)
     const promotionCodeDiscount = Number(booking.promotion_code_discount || 0); */
 
-    return roomPrice + specialRequestsTotal /* - promotionCodeDiscount */;
+    return (
+      (roomPrice + specialRequestsTotal) *
+      booking.stay /* - promotionCodeDiscount */
+    );
   };
 
   // Format date function
@@ -270,10 +238,10 @@ function BookingHistoryCard() {
                   </div>
 
                   {/* Button */}
-                  {booking.status !== "cancelled" && (
+                  {booking.status !== "cancelled" && !booking.isCheckedIn && (
                     <div className="mt-6 flex flex-wrap gap-2 md:justify-end">
                       <button
-                        onClick={handleRoomDetail}
+                        onClick={() => handleRoomDetail(booking.rooms?.id)}
                         className="z-10 flex-grow rounded-md border px-4 py-2 font-semibold text-orange-500 md:flex-none md:cursor-pointer md:hover:text-orange-400"
                       >
                         Room Detail
@@ -291,7 +259,7 @@ function BookingHistoryCard() {
                   )}
 
                   {/* Cancel Button */}
-                  {booking.status !== "cancelled" && (
+                  {booking.status !== "cancelled" && !booking.isCheckedIn && (
                     <div className="mt-2 text-right md:flex md:-translate-y-12">
                       {booking.canCancelBooking && (
                         <button

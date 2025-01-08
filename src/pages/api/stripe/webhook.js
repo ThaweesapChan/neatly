@@ -40,10 +40,19 @@ export default async function handler(req, res) {
       switch (event.type) {
         case "payment_intent.succeeded":
           await updateBookingStatus(paymentIntent.id, "confirmed");
-          console.log("✅ Payment succeeded:", event.data.object);
+          // console.log("✅ Payment succeeded:", event.data.object);
           break;
         case "payment_intent.payment_failed":
           await updateBookingStatus(paymentIntent.id, "failed");
+          // console.log("❌ Payment failed:", paymentIntent);
+          break;
+        case "payment_intent.canceled":
+          await updateBookingStatus(paymentIntent.id, "cancelled");
+          // console.log("Payment was canceled");
+          break;
+        case "payment_intent.created":
+          await updateBookingStatus(paymentIntent.id, "pending");
+          // console.log("PaymentIntent was created");
           break;
         default:
           console.log(`Unhandled event type: ${event.type}`);
