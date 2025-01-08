@@ -7,21 +7,13 @@ import {
 } from "@/component/payment/sectionstep";
 import Bookingdetail from "@/component/payment/bookingdetail";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
-import axios from "axios";
 export default function Standardrequest() {
   const router = useRouter();
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
-  console.log(bookingDetail.additionalInfo.specialRequests, "step2");
   // State
   const [standardRequests, setStandardRequests] = useState([]);
   const [specialRequests, setSpecialRequests] = useState([]);
   const [additionalRequest, setAdditionalRequest] = useState("");
-  console.log(
-    additionalRequest,
-    specialRequests,
-    additionalRequest,
-    "step 2 req",
-  );
 
   const specialRequestOptions = [
     { name: "Baby cot", price: 400 },
@@ -176,9 +168,7 @@ export default function Standardrequest() {
 
           <div className="ml-4 flex flex-col gap-4 md:hidden">
             <div className="w-[385px] md:block">
-              <Bookingdetail
-            
-              />
+              <Bookingdetail />
             </div>
             <div className="w-[385px] md:block">
               <ConditionRefund />

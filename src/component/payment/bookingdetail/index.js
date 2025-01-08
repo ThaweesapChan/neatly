@@ -6,8 +6,6 @@ export default function Bookingdetail() {
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const { total, setTotal } = useTotal();
   const [bookingData, setBookingData] = useState(null);
-  console.log(total, "total constext from bookingdetail");
-  console.log(bookingData, "state form bookingdetail");
 
   const calculateDays = (checkInDate, checkOutDate) => {
     if (!checkInDate || !checkOutDate) return 0;
