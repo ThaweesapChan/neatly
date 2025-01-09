@@ -29,11 +29,11 @@ const RegisterForm = () => {
   useEffect(() => {
     // โหลดรายชื่อประเทศจาก API
     const fetchCountries = async () => {
-      const response = await fetch("https://restcountries.com/v3.1/all");
+      const response = await fetch("https://restcountries.com/v2/all");
       const data = await response.json();
       const sortedCountries = data
         .map((country) => ({
-          name: country.name.common,
+          name: country.name,
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
       setCountry(sortedCountries);
@@ -71,23 +71,29 @@ const RegisterForm = () => {
     // 1) ตรวจสอบ First Name
     //    - ต้องไม่ว่าง
     //    - ต้องเป็นตัวอักษร (a-z หรือ A-Z) และมีความยาวอย่างน้อย 5 ตัว
-    const nameRegex = /^[A-Za-z]{5,}$/; 
+    const nameRegex = /^[A-Za-z]{5,}$/;
     // ถ้าต้องการให้รองรับการเว้นวรรคด้วย: /^[A-Za-z\s]{5,}$/
     if (!nameRegex.test(formData.first_name)) {
-      alert("First Name must contain only letters and be at least 5 characters long.");
+      alert(
+        "First Name must contain only letters and be at least 5 characters long.",
+      );
       return;
     }
 
     // 2) ตรวจสอบ Last Name
     if (!nameRegex.test(formData.last_name)) {
-      alert("Last Name must contain only letters and be at least 5 characters long.");
+      alert(
+        "Last Name must contain only letters and be at least 5 characters long.",
+      );
       return;
     }
 
     // 3) ตรวจสอบ Username
     //    - ใช้เงื่อนไขเดียวกับ First/Last Name คือ a-z หรือ A-Z และความยาว >= 5
     if (!nameRegex.test(formData.username)) {
-      alert("Username must contain only letters and be at least 5 characters long.");
+      alert(
+        "Username must contain only letters and be at least 5 characters long.",
+      );
       return;
     }
 

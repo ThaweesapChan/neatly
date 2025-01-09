@@ -42,7 +42,7 @@ export default function Basicinformation() {
   useEffect(() => {
     // โหลดรายชื่อประเทศจาก API
     const fetchCountries = async () => {
-      const response = await fetch("https://restcountries.com/v3.1/all");
+      const response = await fetch("https://restcountries.com/v2/all");
       const data = await response.json();
       const sortedCountries = data
         .map((country) => ({
