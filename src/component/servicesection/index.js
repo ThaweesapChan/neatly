@@ -13,7 +13,7 @@ function Servicesection() {
     <>
       {/*  service section */}
       <section
-        className="mt-5 bg-green-700 p-4 text-white md:flex md:flex-col md:gap-5"
+        className="mt-20 bg-green-700 p-4 text-white md:flex md:flex-col md:gap-5"
         id="service-facilities"
       >
         <h1 className="m-20 text-center font-notoSerif text-7xl">
