@@ -1,6 +1,5 @@
-import React, { use } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 import Navbar from "@/component/navbar";
 import {
@@ -8,18 +7,21 @@ import {
   SectionsStep1,
 } from "@/component/payment/sectionstep";
 import Bookingdetail from "@/component/payment/bookingdetail";
+import axios from "axios";
+
 export default function Basicinformation() {
   const router = useRouter();
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const [formData, setFormData] = useState({
-    firstName: bookingDetail.userinfo?.firstName || "",
-    lastName: bookingDetail.userinfo?.lastName || "",
-    email: bookingDetail.userinfo?.email || "",
-    phoneNumber: bookingDetail.userinfo?.phoneNumber || "",
-    dateOfBirth: bookingDetail.userinfo?.dateOfBirth || "",
-    country: bookingDetail.userinfo?.country || "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    dateOfBirth: "",
+    country: "",
   });
   const [country, setCountry] = useState([]);
+  const [loading, setLoading] = useState(true); // สำหรับแสดงสถานะโหลดข้อมูล
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -29,30 +31,68 @@ export default function Basicinformation() {
 
   // ฟังก์ชันเมื่อกดปุ่ม Back
   const handleBack = () => {
-    router.push("http://localhost:3000/homepage");
+    router.push("/searchresultpage");
   };
 
   // ฟังก์ชันเมื่อกดปุ่ม Next
   const handleNext = (e) => {
     e.preventDefault();
     updateBookingDetail({ userinfo: formData });
-    router.push("http://localhost:3000/payment/step2");
+    router.push("/payment/step2");
+  };
+
+  // ฟังก์ชันดึงข้อมูลโปรไฟล์ผู้ใช้
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem("token"); // ดึง Token จาก Local Storage
+      if (!token) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await axios.get("/api/getUserProfile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // ตั้งค่า formData ด้วยข้อมูลที่ได้รับจาก API
+      const userData = response.data;
+      setFormData({
+        firstName: userData.first_name || "",
+        lastName: userData.last_name || "",
+        email: userData.email || "",
+        phoneNumber: userData.phone_number || "",
+        dateOfBirth: userData.date_of_birth || "",
+        country: userData.country || "",
+      });
+    } catch (error) {
+      console.error("Error fetching user profile:", error.message);
+    } finally {
+      setLoading(false); // ปิดสถานะโหลดข้อมูล
+    }
   };
 
   useEffect(() => {
-    // โหลดรายชื่อประเทศจาก API
+    // ดึงข้อมูล user profile
+    fetchUserProfile();
+    // โหลดรายชื่อประเทศ
     const fetchCountries = async () => {
-      const response = await fetch("https://restcountries.com/v2/all");
-      const data = await response.json();
-      const sortedCountries = data
-        .map((country) => ({
-          name: country.name.common,
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      setCountry(sortedCountries);
+      try {
+        const response = await axios.get("https://restcountries.com/v2/all");
+        const sortedCountries = response.data
+          .map((country) => ({ name: country.name }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setCountry(sortedCountries);
+      } catch (error) {
+        console.error("Error fetching countries:", error.message);
+      }
     };
     fetchCountries();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // แสดงสถานะโหลดข้อมูล
+  }
 
   return (
     <div>

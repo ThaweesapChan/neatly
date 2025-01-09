@@ -1,50 +1,38 @@
-import React, { useState, useEffect } from "react";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
-import { useTotal } from "@/lib/TotalPriceContext";
 import CountdownTimer from "@/components/CountdownTimer";
 import { BriefcaseBusiness } from "lucide-react";
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export default function Bookingdetail() {
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
-  const { total, setTotal } = useTotal();
-  const [bookingData, setBookingData] = useState(null);
-
-  const calculateDays = (checkInDate, checkOutDate) => {
-    if (!checkInDate || !checkOutDate) return 0;
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
-    const timeDiff = checkOut - checkIn;
-    return timeDiff / (1000 * 3600 * 24); // คำนวณจำนวนวันจากเวลาที่แตกต่าง
-  };
-
-  const calculateTotal = () => {
-    const days = calculateDays(
-      bookingData?.check_in_date,
-      bookingData?.check_out_date,
-    );
-
-    const specialRequestTotal = Array.isArray(
-      bookingData?.additionalInfo?.specialRequests,
-    )
-      ? bookingData?.additionalInfo?.specialRequests.reduce(
-          (acc, req) => acc + (req?.price || 0),
-          0,
-        )
-      : 0;
-
-    const roomPrice = bookingData?.roominfo?.promotion_price || 0;
-
-    const totalRoomPrice = roomPrice * days;
-    const totalprice = totalRoomPrice + specialRequestTotal;
-    return totalprice;
-  };
 
   useEffect(() => {
-    setBookingData(bookingDetail);
-    setTotal({ totalprice: calculateTotal() });
-  }, [bookingDetail]);
+    // ดึง token จาก localStorage
+    const token = localStorage.getItem("token");
 
-  if (bookingData === null) {
+    if (token && !bookingDetail.user_id) {
+      try {
+        // Decode token เพื่อดึง user_id
+        const decoded = jwtDecode(token);
+
+        const user_id = decoded?.sub; // สมมติ user_id อยู่ใน token
+
+        if (user_id) {
+          // อัปเดต bookingDetail ใน context
+          updateBookingDetail({ user_id });
+        } else {
+          console.error("User ID not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error.message);
+      }
+    } else {
+      console.error("Token not found in localStorage");
+    }
+  }, [bookingDetail.user_id, updateBookingDetail]);
+
+  if (!bookingDetail || Object.keys(bookingDetail).length === 0) {
     return <div>Loading...</div>;
   }
 
@@ -69,6 +57,14 @@ export default function Bookingdetail() {
     }).format(price || 0);
   };
 
+  const {
+    check_in_date,
+    check_out_date,
+    roominfo,
+    totalprice,
+    additionalInfo,
+  } = bookingDetail;
+
   return (
     <div>
       <div className="space-y-4 rounded-lg bg-[#465C50] font-inter text-white">
@@ -92,19 +88,19 @@ export default function Bookingdetail() {
 
         <div className="px-6 pt-2 text-sm">
           <div>
-            {bookingData
-              ? `${formatDate(bookingData?.check_in_date)} - ${formatDate(bookingData?.check_out_date)}`
+            {check_in_date && check_out_date
+              ? `${formatDate(check_in_date)} - ${formatDate(check_out_date)}`
               : "Loading dates..."}
           </div>
-          <div className="pt-2">{`${bookingData?.roominfo?.guests || 0} guests`}</div>
+          <div className="pt-2">{`${roominfo?.guests || 0} guests`}</div>
         </div>
 
         <div className="px-6 pt-2 text-[#D5DFDA]">
           <div className="flex items-center justify-between">
-            {`${bookingData?.roominfo?.room_type || "Unknown Room"}`}
+            {`${roominfo?.room_type || "Unknown Room"}`}
             <span className="text-white">
               {" "}
-              {formatPrice(bookingData?.roominfo?.promotion_price || 0)}
+              {formatPrice(roominfo?.promotion_price || 0)}
             </span>
           </div>
         </div>
@@ -114,9 +110,9 @@ export default function Bookingdetail() {
             Special Requests
           </h4>
           <ul>
-            {Array.isArray(bookingData?.additionalInfo?.specialRequests) &&
-            bookingData?.additionalInfo?.specialRequests.length > 0 ? (
-              bookingData?.additionalInfo?.specialRequests.map((req, index) => (
+            {Array.isArray(additionalInfo?.specialRequests) &&
+            additionalInfo?.specialRequests.length > 0 ? (
+              additionalInfo?.specialRequests.map((req, index) => (
                 <li
                   key={index}
                   className="flex justify-between text-sm text-gray-200"
@@ -137,15 +133,13 @@ export default function Bookingdetail() {
             Standard Requests
           </h4>
           <ul>
-            {Array.isArray(bookingData?.additionalInfo?.standardRequests) &&
-            bookingData?.additionalInfo?.standardRequests.length > 0 ? (
-              bookingData?.additionalInfo?.standardRequests.map(
-                (req, index) => (
-                  <li key={index} className="text-sm text-gray-200">
-                    {req}
-                  </li>
-                ),
-              )
+            {Array.isArray(additionalInfo?.standardRequests) &&
+            additionalInfo?.standardRequests.length > 0 ? (
+              additionalInfo?.standardRequests.map((req, index) => (
+                <li key={index} className="text-sm text-gray-200">
+                  {req}
+                </li>
+              ))
             ) : (
               <li className="text-sm text-gray-400">
                 No standard requests selected
@@ -157,9 +151,9 @@ export default function Bookingdetail() {
           <h4 className="text-lg font-semibold text-gray-300">
             Additional Requests
           </h4>
-          {bookingData?.additionalInfo?.additionalRequest ? (
+          {additionalInfo?.additionalRequest ? (
             <div className="text-sm text-gray-200">
-              {bookingData.additionalInfo.additionalRequest}
+              {additionalInfo.additionalRequest}
             </div>
           ) : (
             <div className="text-sm text-gray-400">No additional requests</div>
@@ -171,7 +165,7 @@ export default function Bookingdetail() {
           <div className="flex items-center justify-between pt-4">
             <span>Total</span>
             <span className="text-xl font-semibold">
-              {formatPrice(calculateTotal())}
+              {formatPrice(totalprice)}
             </span>
           </div>
         </div>
