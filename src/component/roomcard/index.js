@@ -45,7 +45,6 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
 
   return (
     <>
-      {/*
       <div className="flex h-[400px] w-[90%] flex-col items-center justify-center gap-2 bg-white md:flex-row">
         <div className="relative w-[60%]">
           <Image
@@ -91,11 +90,10 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
 
           <div className="space-y-1">
             <div className="flex flex-col items-end">
-              
               <p className="font-inter text-sm text-gray-700 text-muted-foreground line-through">
                 {room.price}
               </p>
-              
+
               <h3 className="font-inter text-2xl font-semibold text-gray-900">
                 {room.promotion_price}
               </h3>
@@ -122,82 +120,6 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
             >
               Book Now
             </button>
-          </div>
-        </div>
-      </div>
-     */}
-      {/*new ui*/}
-      <div className="overflow-hidden rounded-lg bg-white shadow-sm md:w-[80%]">
-        <div className="md:flex md:h-[280px]">
-          <div className="relative aspect-[4/3] md:aspect-auto md:h-full md:w-[420px]">
-            <Image
-              src={room.room_image_url}
-              alt="Superior Garden View room"
-              fill
-              className="object-cover"
-              priority
-            />
-            <button
-              onClick={onClick}
-              className="absolute bottom-4 left-4 z-10 flex items-center justify-center rounded-full bg-gray-800 p-2 text-white hover:bg-gray-700"
-              aria-label="View Images"
-            >
-              <Images className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="w-[80%] p-4 md:flex md:flex-1 md:flex-col md:p-6">
-            <div className="gap-20 font-inter md:flex md:items-start md:justify-between">
-              <div className="space-y-4 md:space-y-6">
-                <h3 className="text-xl font-semibold"> {room.room_type}</h3>
-
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                  <div className="flex items-center gap-1.5">
-                    <Users className="h-4 w-4" />
-                    <span>{room.guests} Guests</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Bed className="h-4 w-4" />
-                    <span>1 {room.bed_type}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Maximize className="h-4 w-4" />
-                    <span> {room.size} sqm</span>
-                  </div>
-                </div>
-
-                <p className="text-sm text-gray-600">{room.room_description}</p>
-              </div>
-
-              <div className="mt-4 p-1 md:mt-0 md:text-right">
-                <div className="text-sm text-gray-500 line-through">
-                  THB{room.price}
-                </div>
-                <div className="text-xl font-semibold">
-                  THB{room.promotion_price}
-                </div>
-                <div className="text-sm text-gray-500">
-                  Per Night
-                  <br />
-                  (Including Taxes & Fees)
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-auto grid grid-cols-2 gap-3 pt-6 md:ml-auto">
-              <button
-                onClick={handleRoomDetailClick}
-                className="rounded border border-orange-600 px-4 py-2 font-openSans text-sm font-medium text-orange-600 transition-colors hover:bg-orange-50"
-              >
-                Room Detail
-              </button>
-              <button
-                onClick={handleBookNowClick}
-                className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-700"
-              >
-                Book Now
-              </button>
-            </div>
           </div>
         </div>
       </div>
