@@ -6,9 +6,9 @@ import { BriefcaseBusiness } from "lucide-react";
 
 export default function Bookingdetail() {
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
-  const { total, setTotal } = useTotal();
+  const { totalprice, setTotalPrice } = useTotal();
   const [bookingData, setBookingData] = useState(null);
-
+  console.log(bookingDetail, totalprice, "context from bookingdetail");
   const calculateDays = (checkInDate, checkOutDate) => {
     if (!checkInDate || !checkOutDate) return 0;
     const checkIn = new Date(checkInDate);
@@ -16,7 +16,7 @@ export default function Bookingdetail() {
     const timeDiff = checkOut - checkIn;
     return timeDiff / (1000 * 3600 * 24); // คำนวณจำนวนวันจากเวลาที่แตกต่าง
   };
-
+  console;
   const calculateTotal = () => {
     const days = calculateDays(
       bookingData?.check_in_date,

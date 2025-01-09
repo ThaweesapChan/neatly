@@ -1,22 +1,29 @@
 import React, { createContext, useContext, useState } from "react";
 
+// Create context
 const TotalPriceContext = createContext({
-  totalprice: "",
-  setTotal: () => {},
+  totalprice: 0,
+  setTotalPrice: () => {},
 });
 
+// Provider component
 export function TotalProvider({ children }) {
-  const [total, setTotal] = useState({
-    totalprice: "",
-  });
+  const [totalprice, setTotalPrice] = useState(0);
 
   return (
-    <TotalPriceContext.Provider value={{ total, setTotal }}>
+    <TotalPriceContext.Provider value={{ totalprice, setTotalPrice }}>
       {children}
     </TotalPriceContext.Provider>
   );
 }
 
+// Custom hook for consuming context
 export function useTotal() {
-  return useContext(TotalPriceContext);
+  const context = useContext(TotalPriceContext);
+
+  if (!context) {
+    throw new Error("useTotal must be used within a TotalProvider");
+  }
+
+  return context;
 }

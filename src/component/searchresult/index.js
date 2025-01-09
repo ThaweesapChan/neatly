@@ -117,7 +117,7 @@ const Searchresult = () => {
         </div>
       </div>
 
-      <div className="flex w-full flex-col items-center justify-center gap-5 px-3 py-3">
+      <div className="flex w-full flex-col items-center justify-center gap-10">
         {error && <p className="text-red-500">{error}</p>}
         {roomDetails.length > 0 ? (
           roomDetails.map((room) => (
