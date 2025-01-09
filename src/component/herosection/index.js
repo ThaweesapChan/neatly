@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "../button";
 import { useRouter } from "next/router";
 
+
 function Herosection() {
   const router = useRouter();
   const [checkinValue, setCheckinValue] = useState("");
@@ -43,7 +44,7 @@ function Herosection() {
 
     // ส่งข้อมูลไปยังหน้า Searchresultpage ผ่าน URL query parameters
     router.push({
-      pathname: "/searchresult",
+      pathname: "/searchresultpage",
       query: {
         checkin: checkinValue,
         checkout: checkoutValue,
@@ -65,9 +66,9 @@ function Herosection() {
       }}
     >
       {/* กล่องข้อความ */}
-      <div className="flex  max-w-3xl items-center justify-center px-4 py-8 text-center font-notoSerif font-medium text-white shadow-lg md:flex">
+      <div className="flex max-w-3xl items-center justify-center px-4 py-8 text-center font-notoSerif font-medium text-white shadow-lg md:flex">
         <p
-          className="text-5xl sm:text-6xl leading-tight tracking-tight sm:mt-18 mt-20"
+          className="sm:mt-18 mt-20 text-5xl leading-tight tracking-tight sm:text-6xl"
           style={{
             letterSpacing: "-0.02em",
             textUnderlinePosition: "from-font",
@@ -79,8 +80,8 @@ function Herosection() {
       </div>
 
       {/* กล่องแบบฟอร์ม */}
-      <div className="flex flex-row sm:mt-10 w-full p-8 sm:w-full sm:items-cente">
-        <div className="relative my-12 mt-12 w-full rounded bg-white p-6 shadow-lg sm:flex sm:w-full sm:justify-end sm:py-10">
+      <div className="sm:items-center flex w-full flex-row p-10 sm:mt-10 sm:w-full sm:p-20">
+        <div className="relative w-full rounded bg-white p-6 shadow-lg sm:my-12 sm:mt-12 sm:flex sm:w-full sm:justify-end sm:py-10">
           {/* Check In */}
           <div className="mb-6 flex-1 sm:mb-0 sm:mr-4">
             <label
@@ -150,6 +151,7 @@ function Herosection() {
                 roomsGuestsValue ? "text-gray-700" : "text-gray-400"
               }`}
             >
+              <option value="">Select rooms and guests</option>
               <option value="1">1 room, 2 guests</option>
               <option value="2">2 rooms, 4 guests</option>
               <option value="3">3 rooms, 6 guests</option>
