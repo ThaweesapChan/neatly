@@ -7,7 +7,7 @@ export default function RoomsSuits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch all rooms by room_type and store their room_ids
+  // Fetch all rooms by room_type and return room_ids
   async function fetchAllRooms(room_type) {
     try {
       const response = await axios.get("/api/getRoomDetail");
@@ -44,7 +44,6 @@ export default function RoomsSuits() {
         };
 
         setRoomData(roomIds);
-        console.log("Room data:", roomIds);
       } catch (err) {
         console.error("Error in useEffect:", err);
         setError(err.message);
@@ -96,7 +95,7 @@ export default function RoomsSuits() {
             <RoomsSuitsPost
               label="Premier Sea View"
               src="/asset/premier.jpeg"
-              roomId={roomData.PremierSeaView?.join(" ")}
+              roomId={roomData.PremierSeaView?.join(", ")}
             />
             <RoomsSuitsPost
               label="Supreme"
@@ -108,6 +107,62 @@ export default function RoomsSuits() {
               src="/asset/room2.jpeg"
               roomId={roomData.Suite?.join(", ")}
             />
+          </div>
+          {/* Desktop layout */}
+          <div className="hidden md:block">
+            <section className="ml-[11%] mr-[11%] flex flex-col gap-4">
+              {/* Desktop 1 */}
+              <div className="h-[540px] bg-yellow-500">
+                <RoomsSuitsPost
+                  label="Superior Garden View"
+                  src="/asset/superior.jpeg"
+                  roomId={roomData.SuperiorGardenView?.join(", ")}
+                />
+              </div>
+              {/* Desktop 2 */}
+              <div className="flex h-[400px] flex-row gap-4">
+                <div className="w-[58.24%]">
+                  <RoomsSuitsPost
+                    label="Deluxe"
+                    src="/asset/deluxe.jpeg"
+                    roomId={roomData.Deluxe?.join(", ")}
+                  />
+                </div>
+                <div className="w-[41.26%]">
+                  <RoomsSuitsPost
+                    label="Superior"
+                    src="/asset/room.jpeg"
+                    roomId={roomData.Superior?.join(", ")}
+                  />
+                </div>
+              </div>
+              {/* Desktop 3 */}
+              <div className="flex h-[400px] flex-row gap-4">
+                <div className="w-[41%]">
+                  <RoomsSuitsPost
+                    label="Premier Sea View"
+                    src="/asset/premier.jpeg"
+                    roomId={roomData.PremierSeaView?.join(", ")}
+                  />
+                </div>
+                <div className="flex w-[59%] flex-col gap-4">
+                  <div className="h-[48%]">
+                    <RoomsSuitsPost
+                      label="Supreme"
+                      src="/asset/supreme.jpeg"
+                      roomId={roomData.Supreme?.join(", ")}
+                    />
+                  </div>
+                  <div className="h-[48%]">
+                    <RoomsSuitsPost
+                      label="Suite"
+                      src="/asset/room2.jpeg"
+                      roomId={roomData.Suite?.join(", ")}
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </figure>
       </article>
