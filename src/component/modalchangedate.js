@@ -21,7 +21,6 @@ const ChangeDateModal = ({ booking, checkInDate, checkOutDate, onClose }) => {
         check_out_date: updatedCheckOutDate,
       });
 
-      alert("Booking dates updated successfully");
       onClose();
       router.push("/bookinghistory");
     } catch (error) {
