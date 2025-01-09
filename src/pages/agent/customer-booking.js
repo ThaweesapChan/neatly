@@ -35,7 +35,7 @@ function CustomerBookingpage() {
     setSearchQuery(query);
     if (query) {
       const filtered = bookings.filter((booking) =>
-        `${booking.user?.first_name} ${booking.user?.last_name}`
+        `${booking.user?.first_name} ${booking.user?.last_name} ${booking.room?.room_type} ${booking.room?.bed_type} ${booking.amount} ${booking.guests} ${booking.check_in_date} ${booking.check_out_date}`
           .toLowerCase()
           .includes(query.toLowerCase()),
       );
