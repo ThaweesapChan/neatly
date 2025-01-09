@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 
 // Create context
 const TotalPriceContext = createContext({
-  totalprice: 0,
+  totalprice: "",
   setTotalPrice: () => {},
 });
 

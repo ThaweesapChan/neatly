@@ -77,26 +77,11 @@ export default function Standardrequest() {
 
   // Navigate next
   const handleNext = () => {
-    updateBookingDetail({
-      additionalInfo: {
-        standardRequests,
-        specialRequests,
-        additionalRequest,
-      },
-    });
+   
 
     router.push("/payment/step3");
   };
 
-  useEffect(() => {
-    updateBookingDetail({
-      additionalInfo: {
-        standardRequests,
-        specialRequests,
-        additionalRequest,
-      },
-    });
-  }, [standardRequests, specialRequests, additionalRequest]);
 
   return (
     <div>

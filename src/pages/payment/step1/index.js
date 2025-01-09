@@ -20,7 +20,6 @@ export default function Basicinformation() {
     country: bookingDetail.userinfo?.country || "",
   });
   const [country, setCountry] = useState([]);
-
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,7 +45,7 @@ export default function Basicinformation() {
       const data = await response.json();
       const sortedCountries = data
         .map((country) => ({
-          name: country.name.common,
+          name: country.name,
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
       setCountry(sortedCountries);
