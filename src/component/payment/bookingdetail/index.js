@@ -41,7 +41,6 @@ export default function Bookingdetail() {
 
   useEffect(() => {
     setBookingData(bookingDetail);
-    setTotal({ totalprice: calculateTotal() });
     setTotalPrice({ totalprice: calculateTotal() });
   }, [bookingDetail]);
 
