@@ -20,19 +20,19 @@ function Herosection() {
   };
 
   const handleSearch = () => {
-  // Check if each field is filled and show a specific message
-  if (!checkinValue) {
-    alert("Please select a check-in date.");
-    return;
-  }
-  if (!checkoutValue) {
-    alert("Please select a check-out date.");
-    return;
-  }
-  if (!roomsGuestsValue) {
-    alert("Please select the number of rooms and guests.");
-    return;
-  }
+    // Check if each field is filled and show a specific message
+    if (!checkinValue) {
+      alert("Please select a check-in date.");
+      return;
+    }
+    if (!checkoutValue) {
+      alert("Please select a check-out date.");
+      return;
+    }
+    if (!roomsGuestsValue) {
+      alert("Please select the number of rooms and guests.");
+      return;
+    }
 
     // แปลงค่า roomsGuestsValue เป็นจำนวนห้องและผู้เข้าพัก
     const [rooms, guests] = {
@@ -65,9 +65,9 @@ function Herosection() {
       }}
     >
       {/* กล่องข้อความ */}
-      <div className="flex  max-w-3xl items-center justify-center px-4 py-8 text-center font-notoSerif font-medium text-white shadow-lg md:flex">
+      <div className="flex max-w-3xl items-center justify-center px-4 py-8 text-center font-notoSerif font-medium text-white shadow-lg md:flex">
         <p
-          className="text-5xl sm:text-6xl leading-tight tracking-tight sm:mt-18 mt-20"
+          className="sm:mt-18 mt-20 text-5xl leading-tight tracking-tight sm:text-6xl"
           style={{
             letterSpacing: "-0.02em",
             textUnderlinePosition: "from-font",
@@ -79,7 +79,7 @@ function Herosection() {
       </div>
 
       {/* กล่องแบบฟอร์ม */}
-      <div className="flex flex-row sm:mt-10 w-full p-8 sm:w-full sm:items-cente">
+      <div className="sm:items-cente flex w-full flex-row p-8 sm:mt-10 sm:w-full">
         <div className="relative my-12 mt-12 w-full rounded bg-white p-6 shadow-lg sm:flex sm:w-full sm:justify-end sm:py-10">
           {/* Check In */}
           <div className="mb-6 flex-1 sm:mb-0 sm:mr-4">
