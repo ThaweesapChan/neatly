@@ -1,6 +1,6 @@
 import React, { use } from "react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 import Navbar from "@/component/navbar";
 import {
@@ -19,6 +19,7 @@ export default function Basicinformation() {
     dateOfBirth: bookingDetail.userinfo?.dateOfBirth || "",
     country: bookingDetail.userinfo?.country || "",
   });
+  const [country, setCountry] = useState([]);
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -38,6 +39,21 @@ export default function Basicinformation() {
     router.push("http://localhost:3000/payment/step2");
   };
 
+  useEffect(() => {
+    // โหลดรายชื่อประเทศจาก API
+    const fetchCountries = async () => {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      const data = await response.json();
+      const sortedCountries = data
+        .map((country) => ({
+          name: country.name.common,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      setCountry(sortedCountries);
+    };
+    fetchCountries();
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -51,7 +67,7 @@ export default function Basicinformation() {
           </div>
 
           {/* ฟอร์มกรอกข้อมูล */}
-          <form className="space-y-6" onSubmit={handleNext}>
+          <form className="space-y-6 font-inter" onSubmit={handleNext}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label
@@ -66,8 +82,9 @@ export default function Basicinformation() {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   placeholder="Enter your first name"
+                  required
                 />
               </div>
 
@@ -84,8 +101,9 @@ export default function Basicinformation() {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   placeholder="Enter your last name"
+                  required
                 />
               </div>
             </div>
@@ -103,8 +121,9 @@ export default function Basicinformation() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter your email"
+                required
               />
             </div>
 
@@ -121,8 +140,9 @@ export default function Basicinformation() {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter your phone number"
+                required
               />
             </div>
 
@@ -139,7 +159,8 @@ export default function Basicinformation() {
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
 
@@ -155,16 +176,24 @@ export default function Basicinformation() {
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-[4px] border border-gray-300 pl-3 font-inter shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 sm:text-sm"
+                style={{
+                  height: "48px",
+                  fontSize: "16px",
+                  fontWeight: 400,
+                  borderRadius: "4px",
+                  borderWidth: "1px",
+                }}
+                required
               >
-                <option value="">Select your country</option>
-                <option value="Thailand">Thailand</option>
-                <option value="United States">United States</option>
-                <option value="United Kingdom">United Kingdom</option>
-                <option value="Canada">Canada</option>
-                <option value="Australia">Australia</option>
-                <option value="Japan">Japan</option>
-                <option value="Singapore">Singapore</option>
+                <option value="" disabled>
+                  Select your country
+                </option>
+                {country.map((country, index) => (
+                  <option key={index} value={country.name}>
+                    {country.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="ml-4 flex flex-col gap-4 md:hidden">
