@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import axios from "axios";
 import Image from "next/image";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 function Aboutsection() {
   const [hotelInfo, setHotelInfo] = useState(null);
@@ -22,7 +17,7 @@ function Aboutsection() {
           axios.get("/api/getHotelInformation"),
           axios.get("/api/getRoomDetail"),
         ]);
-        
+
         setHotelInfo(hotelResponse.data.data);
         setAllRooms(roomsResponse.data);
       } catch (error) {
@@ -51,7 +46,6 @@ function Aboutsection() {
 
         <div className="mt-6 flex flex-col items-center justify-center">
           <div className="sm:mb-10 sm:w-[60%]">
-            {/*แทน <p> เหล่านี้ด้วยข้อมูล hotel_detail ที่ได้จากการ get hotel_information ให้ใช้ ส่วนของการ style ตามเดิม*/}
             <p
               className="m-5 text-left font-inter text-base font-normal text-[#646D89]"
               style={{ whiteSpace: "pre-line" }}
@@ -59,34 +53,34 @@ function Aboutsection() {
               {hotelInfo[0].hotel_description}
             </p>
           </div>
-          <div className="h-[full] w-[full] md:mt-10">
+          <div className="h-full w-full mt-10">
             {allRooms.length > 0 ? (
               <Carousel
-                opts={{
-                  align: "start",
+                centerMode
+                infinite
+                autoPlaySpeed={3000}
+                responsive={{
+                  desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
+                  tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
+                  mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
                 }}
-                className="flex h-[440px] w-full overflow-hidden"
+                showDots={false}
+                swipeable
               >
-                <CarouselContent className="flex h-full w-full">
-                  {allRooms.map((room) => (
-                    <CarouselItem
-                      key={room.room_id}
-                      className="flex h-full w-full shrink-0 basis-2/3 items-center justify-center md:basis-2/5"
-                      style={{ width: "calc(33.333% + 20px)" }} // เพิ่มพื้นที่ครึ่งหนึ่งของรูปที่ 4 และ 5
-                    >
-                      <Image
-                        src={room.room_image_url}
-                        alt={room.room_type}
-                        width={400}
-                        height={500}
-                        className="h-full w-full object-cover"
-                      />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-
-                <CarouselPrevious className="absolute left-4 z-10 text-zinc-200" />
-                <CarouselNext className="absolute right-4 z-10 text-zinc-200" />
+                {allRooms.map((room) => (
+                  <div
+                    key={room.room_id}
+                    className="h-[260px] w-full p-2 sm:h-[480px]"
+                  >
+                    <Image
+                      src={room.room_image_url}
+                      alt={room.room_type}
+                      width={400}
+                      height={500}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ))}
               </Carousel>
             ) : (
               <div>No rooms available</div>
