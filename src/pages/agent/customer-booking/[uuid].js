@@ -10,7 +10,6 @@ function BookingDetailPage() {
   const [bookingDetails, setBookingDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
-  console.log(bookingDetails);
 
   const getBookingById = async (bookingId) => {
     try {

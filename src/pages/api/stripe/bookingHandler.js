@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export default async function bookingHandler(req, res) {
   // Logic สำหรับจัดการคำขอแบบ POST ดึงข้อมูลที่ส่งมาจาก Front-End ผ่าน req.body
   if (req.method === "POST") {
-    console.log("Request received:", req.body);
+    /* console.log("Request received:", req.body); */
     const {
       user_id,
       roominfo, // ข้อมูลห้องพัก
@@ -41,7 +41,7 @@ export default async function bookingHandler(req, res) {
 
       // สร้าง booking_id
       const bookingId = uuidv4();
-      console.log("Generated bookingId:", bookingId); // ตรวจสอบการสร้าง bookingId
+      /* console.log("Generated bookingId:", bookingId); // ตรวจสอบการสร้าง bookingId */
 
       // บันทึกข้อมูลการจองใน Database
       // Prepare booking data
@@ -80,14 +80,14 @@ export default async function bookingHandler(req, res) {
         });
       }
 
-      console.log("Booking saved successfully in database"); // ตรวจสอบว่า INSERT สำเร็จ
+      /* console.log("Booking saved successfully in database"); // ตรวจสอบว่า INSERT สำเร็จ */
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // คูณ 100 และปัดเป็นจำนวนเต็ม
         currency: "thb",
         metadata: { booking_id: bookingId },
       });
-      console.log("PaymentIntent created:", paymentIntent); // ตรวจสอบ PaymentIntent
+      /* console.log("PaymentIntent created:", paymentIntent); // ตรวจสอบ PaymentIntent */
 
       // อัปเดต payment_intent_id ใน Database
       await supabase
@@ -95,7 +95,7 @@ export default async function bookingHandler(req, res) {
         .update({ payment_intent_id: paymentIntent.id })
         .eq("booking_id", bookingId);
 
-      console.log("PaymentIntent ID updated in database"); // ตรวจสอบว่าข้อมูลอัปเดตสำเร็จ
+      /* console.log("PaymentIntent ID updated in database"); // ตรวจสอบว่าข้อมูลอัปเดตสำเร็จ */
 
       return res
         .status(200)
@@ -105,7 +105,7 @@ export default async function bookingHandler(req, res) {
       return res.status(500).json({ message: "Internal Server Error", error });
     }
   } else {
-    console.log("Invalid request method:", req.method); // Log method อื่นที่ไม่ใช่ POST
+    /* console.log("Invalid request method:", req.method); // Log method อื่นที่ไม่ใช่ POST */
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 }

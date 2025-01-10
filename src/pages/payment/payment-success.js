@@ -7,13 +7,11 @@ export default function PaymentSuccess() {
   const router = useRouter();
 
   const handleBackToHome = () => {
-    console.log("Back button clicked");
-    router.push("http://localhost:3000/homepage");
+    router.push("/");
   };
 
   const handleCheckBookingDetail = () => {
-    console.log("Back button clicked");
-    router.push("http://localhost:3000/payment");
+    router.push(`/bookinghistory`);
   };
 
   return (
@@ -54,7 +52,12 @@ export default function PaymentSuccess() {
         {/*ปุ่ม*/}
         <div className="flex w-[375px] justify-center gap-6 pt-8 md:w-[738px]">
           <div className="hidden md:flex">
-            <Button type="3" name="Check Booking Detail" style="w-44" />
+            <Button
+              type="3"
+              name="Check Booking Detail"
+              style="w-44"
+              onClick={handleCheckBookingDetail}
+            />
           </div>
           <Button
             type="1"

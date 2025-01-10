@@ -176,16 +176,16 @@ function BookingHistoryCard({ bookings }) {
                         <div>
                           {booking.special_requests &&
                           booking.special_requests.length > 0 ? (
-                            booking.special_requests.map((request, index) => {
+                            booking.special_requests.map((name, index) => {
                               // Parse JSON string ก่อนใช้งาน
-                              const parsedRequest = JSON.parse(request);
+                              const parsedRequest = JSON.parse(name);
                               return (
                                 <div
                                   key={index}
                                   className="flex justify-between text-gray-700"
                                 >
                                   <span className="mb-2">
-                                    {parsedRequest.request}
+                                    {parsedRequest.name}
                                   </span>
                                   <span className="font-semibold text-gray-900">
                                     {parseFloat(
