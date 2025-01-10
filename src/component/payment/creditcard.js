@@ -15,7 +15,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/component/button";
 import axios from "axios";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
-import { useTotal } from "@/lib/TotalPriceContext";
 
 import PaymentFailed from "../../pages/payment/payment-failed";
 
@@ -32,8 +31,7 @@ export function FormCreditCard() {
   const { bookingData } = useBooking();
   //ยังสงสัย bookingDetail ว่าเปลี่ยนชื่อเป็นอย่างอื่นได้หรือป่าว
   const { bookingDetail } = useBookingDetail();
-  const { total } = useTotal();
-
+  console.log("Booking Details:", bookingDetail);
   const handleBack = () => {
     console.log("Back button clicked");
     router.push("http://localhost:3000/payment/step2");
@@ -61,17 +59,14 @@ export function FormCreditCard() {
 
     try {
       // เรียกข้อมูลจาก Context
-      // เรียกข้อมูลจาก Context
       const {
         roominfo,
         check_in_date,
         check_out_date,
         userinfo,
+        totalprice,
         additionalInfo,
       } = bookingDetail;
-
-      const { totalprice } = total;
-      console.log("นรี่จร้าา :", total);
 
       // เรียก API Backend เพื่อสร้าง PaymentIntent และรับ client_secret
       const response = await axios.post("/api/stripe/bookingHandler", {
@@ -81,6 +76,8 @@ export function FormCreditCard() {
         userinfo,
         additionalInfo,
         totalprice,
+        amount: totalprice,
+        user_id: bookingDetail.user_id,
       });
 
       // ตรวจสอบ Response
