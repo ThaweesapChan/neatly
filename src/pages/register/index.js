@@ -68,38 +68,33 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1) ตรวจสอบ First Name
-    //    - ต้องไม่ว่าง
-    //    - ต้องเป็นตัวอักษร (a-z หรือ A-Z) และมีความยาวอย่างน้อย 5 ตัว
-    const nameRegex = /^[A-Za-z]{5,}$/;
-    // ถ้าต้องการให้รองรับการเว้นวรรคด้วย: /^[A-Za-z\s]{5,}$/
-    if (!nameRegex.test(formData.first_name)) {
+    // ตรวจสอบ First Name
+    const nameRegex = /^[A-Za-z\s]{5,}$/; // รองรับการเว้นวรรค
+    if (!formData.first_name.trim() || !nameRegex.test(formData.first_name)) {
       alert(
-        "First Name must contain only letters and be at least 5 characters long.",
+        "First Name must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
     }
 
-    // 2) ตรวจสอบ Last Name
-    if (!nameRegex.test(formData.last_name)) {
+    // ตรวจสอบ Last Name
+    if (!formData.last_name.trim() || !nameRegex.test(formData.last_name)) {
       alert(
-        "Last Name must contain only letters and be at least 5 characters long.",
+        "Last Name must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
     }
 
-    // 3) ตรวจสอบ Username
-    //    - ใช้เงื่อนไขเดียวกับ First/Last Name คือ a-z หรือ A-Z และความยาว >= 5
-    if (!nameRegex.test(formData.username)) {
+    // ตรวจสอบ Username
+    if (!formData.username.trim() || !nameRegex.test(formData.username)) {
       alert(
-        "Username must contain only letters and be at least 5 characters long.",
+        "Username must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
     }
 
     // 4) ตรวจสอบ Date of Birth
-    //    - ต้องไม่ว่าง
-    //    - ต้องเป็นวันในอดีต (ไม่ใช่วันปัจจุบันหรืออนาคต)
+    // ตรวจสอบว่า Date of Birth ไม่ว่าง
     if (!formData.date_of_birth) {
       alert("Please select your Date of Birth.");
       return;
@@ -107,7 +102,24 @@ const RegisterForm = () => {
 
     const today = new Date();
     const birthDate = new Date(formData.date_of_birth);
-    // เคส: ถ้ากรอกวันเกิดเป็นวันนี้หรือวันอนาคต => ไม่ผ่าน
+
+    // คำนวณอายุ
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    // ถ้าเดือนหรือวันเกิดยังไม่ถึงปีปัจจุบัน ให้ลดอายุลง 1 ปี
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+
+    // ตรวจสอบว่าอายุ < 18 ปี
+    if (age < 18) {
+      alert("You must be at least 18 years old to register.");
+      return;
+    }
+
+    // ตรวจสอบว่า Date of Birth เป็นวันในอนาคตหรือไม่
     if (birthDate >= new Date(today.toDateString())) {
       alert("Date of Birth must be in the past (before today).");
       return;
