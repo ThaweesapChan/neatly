@@ -45,12 +45,12 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
 
   return (
     <>
-      <div className="flex h-[400px] w-[90%] flex-col items-center justify-center gap-2 bg-white md:flex-row">
-        <div className="relative w-[60%]">
+      {/*<div className="flex w-[90%] flex-col items-center justify-center gap-2 border bg-white md:h-[400px] md:flex-row">
+        <div className="relative flex w-full md:w-[60%]">
           <Image
             src={room.room_image_url}
             alt="room-image"
-            className="h-[265px] rounded-md md:w-[453px]"
+            className="max-h-[265px] w-full rounded-md md:w-[453px]"
             width={453}
             height={265}
           />
@@ -109,17 +109,86 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
             <button
               onClick={handleRoomDetailClick}
               variant="link"
-              className="flex-1 text-orange-600 md:max-h-[48px] md:max-w-[143px]"
+              className="h-[48px] w-[143px] flex-1 text-orange-600"
             >
               Room Detail
             </button>
 
             <button
               onClick={handleBookNowClick}
-              className="flex-1 rounded-md bg-orange-600 hover:bg-orange-700 md:max-h-[48px] md:max-w-[143px]"
+              className="h-[48px] w-[143px] flex-1 rounded-md bg-orange-600 text-white hover:bg-orange-700"
             >
               Book Now
             </button>
+          </div>
+        </div>
+      </div>*/}
+
+      <div className="overflow-hidden rounded-lg bg-white shadow-sm md:w-[80%]">
+        <div className="md:flex md:h-[280px] ">
+          <div className="relative flex w-full md:w-[60%]">
+            <Image
+              src={room.room_image_url}
+              alt="room-image"
+              className="max-h-[265px] w-full rounded-md md:w-[453px]"
+              width={453}
+              height={265}
+            />
+            <button
+              onClick={onClick}
+              className="absolute bottom-4 left-4 flex items-center justify-center rounded-full bg-gray-800 p-2 text-white hover:bg-gray-700"
+              aria-label="View Images"
+            >
+              <Images className="h-6 w-6" />
+            </button>
+          </div>
+
+          <div className="p-4 md:flex md:flex-1 md:flex-col md:p-6">
+            <div className="md:flex md:items-start md:justify-between">
+              <div className="space-y-4 md:space-y-6">
+                <h3 className="text-xl font-semibold">{room.room_type}</h3>
+
+                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-4 w-4" />
+                    <span>{room.guests} Guests</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Bed className="h-4 w-4" />
+                    <span>{room.bed_type}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Maximize className="h-4 w-4" />
+                    <span>{room.size} sqm</span>
+                  </div>
+                </div>
+
+                <p className="text-sm text-gray-600">{room.room_description}</p>
+              </div>
+
+              <div className="mt-4 md:mt-0 md:text-right">
+                <div className="text-sm text-gray-500 line-through">
+                  THB {room.price}
+                </div>
+                <div className="text-xl font-semibold">
+                  THB {room.promotion_price}
+                </div>
+                <div className="text-sm text-gray-500">
+                  Per Night
+                  <br />
+                  (Including Taxes & Fees)
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-auto grid grid-cols-2 gap-3 pt-6 md:ml-auto md:max-w-[260px]">
+              <button className="rounded border border-orange-600 px-4 py-2 text-sm font-medium text-orange-600 transition-colors hover:bg-orange-50">
+                Room Detail
+              </button>
+              <button className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-700">
+                Book Now
+              </button>
+            </div>
           </div>
         </div>
       </div>
