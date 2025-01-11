@@ -1,36 +1,40 @@
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 import CountdownTimer from "@/components/CountdownTimer";
 import { BriefcaseBusiness } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 export default function Bookingdetail() {
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
+  const [hasFetchedUserId, setHasFetchedUserId] = useState(false);
 
   useEffect(() => {
-    // ดึง token จาก localStorage
-    const token = localStorage.getItem("token");
+    // เช็คว่าได้เรียกข้อมูล user_id จาก token แล้วรึยัง
+    if (!hasFetchedUserId) {
+      const token = localStorage.getItem("token");
 
-    if (token && !bookingDetail.user_id) {
-      try {
-        // Decode token เพื่อดึง user_id
-        const decoded = jwtDecode(token);
+      if (token && !bookingDetail.user_id) {
+        try {
+          // Decode token เพื่อดึง user_id
+          const decoded = jwtDecode(token);
+          const user_id = decoded?.sub;
 
-        const user_id = decoded?.sub; // สมมติ user_id อยู่ใน token
-
-        if (user_id) {
-          // อัปเดต bookingDetail ใน context
-          updateBookingDetail({ user_id });
-        } else {
-          console.error("User ID not found in token");
+          if (user_id) {
+            // อัปเดต bookingDetail ใน context
+            updateBookingDetail({ user_id });
+          } else {
+            console.error("User ID not found in token");
+          }
+        } catch (error) {
+          console.error("Error decoding token:", error.message);
         }
-      } catch (error) {
-        console.error("Error decoding token:", error.message);
+      } else if (!token) {
+        console.error("Token not found in localStorage");
       }
-    } else {
-      console.error("Token not found in localStorage");
+
+      setHasFetchedUserId(true);
     }
-  }, [bookingDetail.user_id, updateBookingDetail]);
+  }, [hasFetchedUserId, bookingDetail.user_id, updateBookingDetail]);
 
   if (!bookingDetail || Object.keys(bookingDetail).length === 0) {
     return <div>Loading...</div>;
@@ -99,8 +103,7 @@ export default function Bookingdetail() {
           <div className="flex items-center justify-between">
             {`${roominfo?.room_type || "Unknown Room"}`}
             <span className="text-white">
-              {" "}
-              {formatPrice(roominfo?.promotion_price || 0)}
+              {formatPrice(roominfo?.promotion_price || roominfo?.price || 0)}
             </span>
           </div>
         </div>

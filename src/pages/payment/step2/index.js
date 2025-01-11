@@ -37,51 +37,59 @@ export default function Standardrequest() {
     const { checked } = e.target;
 
     if (type === "standard") {
-      setStandardRequests((prev) => {
-        const updatedRequests = checked
-          ? [...prev, option]
-          : prev.filter((item) => item !== option);
-        // อัปเดตข้อมูลใน Context
-        updateBookingDetail({
-          additionalInfo: {
-            standardRequests,
-            specialRequests,
-            additionalRequest,
-          },
-        });
+      const updatedRequests = checked
+        ? [...standardRequests, option]
+        : standardRequests.filter((item) => item !== option);
 
-        return updatedRequests;
+      // อัปเดตข้อมูลใน State และ Context
+      setStandardRequests(updatedRequests);
+      updateBookingDetail({
+        additionalInfo: {
+          standardRequests: updatedRequests,
+          specialRequests,
+          additionalRequest,
+        },
       });
     } else if (type === "special") {
-      setSpecialRequests((prev) => {
-        const updatedRequests = checked
-          ? [...prev, option]
-          : prev.filter((req) => req.name !== option.name);
-        // อัปเดตข้อมูลใน Context
-        updateBookingDetail({
-          additionalInfo: {
-            standardRequests,
-            specialRequests: updatedRequests,
-            additionalRequest,
-          },
-        });
-        return updatedRequests;
+      const updatedRequests = checked
+        ? [...specialRequests, option]
+        : specialRequests.filter((req) => req.name !== option.name);
+
+      // อัปเดตข้อมูลใน State และ Context
+      setSpecialRequests(updatedRequests);
+      updateBookingDetail({
+        additionalInfo: {
+          standardRequests,
+          specialRequests: updatedRequests,
+          additionalRequest,
+        },
       });
     }
   };
 
+  const handleAdditionalRequestChange = (e) => {
+    const value = e.target.value;
+
+    // อัปเดตข้อมูลใน State และ Context
+    setAdditionalRequest(value);
+    updateBookingDetail({
+      additionalInfo: {
+        standardRequests,
+        specialRequests,
+        additionalRequest: value,
+      },
+    });
+  };
+
   // Navigate back
   const handleBack = () => {
-    router.push("http://localhost:3000/payment/step1");
+    router.push("/payment/step1");
   };
 
   // Navigate next
   const handleNext = () => {
-   
-
     router.push("/payment/step3");
   };
-
 
   return (
     <div>
@@ -145,7 +153,7 @@ export default function Standardrequest() {
             </h2>
             <textarea
               value={additionalRequest}
-              onChange={(e) => setAdditionalRequest(e.target.value)}
+              onChange={handleAdditionalRequestChange}
               className="h-32 w-full rounded-lg border px-3 py-2 text-gray-700 focus:border-blue-500 focus:outline-none"
               placeholder="Enter any additional requests here..."
             />

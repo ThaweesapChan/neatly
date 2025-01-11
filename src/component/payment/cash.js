@@ -1,4 +1,4 @@
-import {ConditionRefund} from "@/component/payment/sectionstep"
+import { ConditionRefund } from "@/component/payment/sectionstep";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import {
@@ -24,7 +24,6 @@ export function FormCash() {
   const [loading, setLoading] = useState(false);
 
   const handleBack = () => {
-    console.log("Back button clicked");
     router.push("http://localhost:3000");
   };
 
@@ -103,4 +102,3 @@ export default function Cash() {
     </Elements>
   );
 }
-  

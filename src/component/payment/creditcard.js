@@ -16,8 +16,6 @@ import { Button } from "@/component/button";
 import axios from "axios";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 
-import PaymentFailed from "../../pages/payment/payment-failed";
-
 // โหลด Stripe ด้วย Publishable Key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
 
@@ -31,9 +29,8 @@ export function FormCreditCard() {
   const { bookingData } = useBooking();
   //ยังสงสัย bookingDetail ว่าเปลี่ยนชื่อเป็นอย่างอื่นได้หรือป่าว
   const { bookingDetail } = useBookingDetail();
-  console.log("Booking Details:", bookingDetail);
+
   const handleBack = () => {
-    console.log("Back button clicked");
     router.push("http://localhost:3000/payment/step2");
   };
 
@@ -102,7 +99,6 @@ export function FormCreditCard() {
         console.error("Error confirming payment:", confirmError);
         handlePaymentFailed();
       } else {
-        console.log("PaymentIntent confirmed:", paymentIntent);
         alert("การชำระเงินสำเร็จ!");
         router.push("/payment/payment-success"); // Redirect ไปหน้า success
       }
