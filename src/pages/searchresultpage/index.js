@@ -6,9 +6,11 @@ import Searchresult from "@/component/searchresult";
 export default function Searchresultpage() {
   return (
     <>
-      <Navbar />
-      <Searchresult />
-      <Footer />
+      <div>
+        <Navbar />
+        <Searchresult />
+        <Footer />
+      </div>
     </>
   );
 }
