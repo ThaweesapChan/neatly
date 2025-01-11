@@ -97,13 +97,13 @@ export function FormCreditCard() {
         });
 
       if (confirmError) {
-        console.error("Error confirming payment:", confirmError);
+        //console.error("Error confirming payment:", confirmError);
         handlePaymentFailed();
       } else {
         router.push("/payment/payment-success"); // Redirect ไปหน้า success
       }
     } catch (error) {
-      console.error("Error in handleSubmit:", error);
+      //console.error("Error in handleSubmit:", error);
       handlePaymentFailed();
     } finally {
       setLoading(false);
