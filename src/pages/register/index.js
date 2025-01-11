@@ -10,6 +10,7 @@ const RegisterForm = () => {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -71,7 +72,7 @@ const RegisterForm = () => {
     // ตรวจสอบ First Name
     const nameRegex = /^[A-Za-z\s]{5,}$/; // รองรับการเว้นวรรค
     if (!formData.first_name.trim() || !nameRegex.test(formData.first_name)) {
-      alert(
+      setError(
         "First Name must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
@@ -79,7 +80,7 @@ const RegisterForm = () => {
 
     // ตรวจสอบ Last Name
     if (!formData.last_name.trim() || !nameRegex.test(formData.last_name)) {
-      alert(
+      setError(
         "Last Name must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
@@ -87,7 +88,7 @@ const RegisterForm = () => {
 
     // ตรวจสอบ Username
     if (!formData.username.trim() || !nameRegex.test(formData.username)) {
-      alert(
+      setError(
         "Username must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
@@ -96,7 +97,7 @@ const RegisterForm = () => {
     // 4) ตรวจสอบ Date of Birth
     // ตรวจสอบว่า Date of Birth ไม่ว่าง
     if (!formData.date_of_birth) {
-      alert("Please select your Date of Birth.");
+      setError("Please select your Date of Birth.");
       return;
     }
 
@@ -115,40 +116,40 @@ const RegisterForm = () => {
 
     // ตรวจสอบว่าอายุ < 18 ปี
     if (age < 18) {
-      alert("You must be at least 18 years old to register.");
+      setError("You must be at least 18 years old to register.");
       return;
     }
 
     // ตรวจสอบว่า Date of Birth เป็นวันในอนาคตหรือไม่
     if (birthDate >= new Date(today.toDateString())) {
-      alert("Date of Birth must be in the past (before today).");
+      setError("Date of Birth must be in the past (before today).");
       return;
     }
 
     // 5) ตรวจสอบ Country
     //    - ต้องไม่เป็นค่าว่าง
     if (!formData.country) {
-      alert("Please select your country.");
+      setError("Please select your country.");
       return;
     }
 
     // ตรวจสอบว่า password และ confirmPassword ตรงกัน
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     // ตรวจสอบว่า email ถูกต้อง
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      alert("Invalid email format");
+      setError("Invalid email format");
       return;
     }
 
     // ตรวจสอบว่า phone_number ต้องเป็นตัวเลขเท่านั้น
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(formData.phone_number)) {
-      alert("Phone number must contain 10 digits only");
+      setError("Phone number must contain 10 digits only");
       return;
     }
 
@@ -180,11 +181,11 @@ const RegisterForm = () => {
       if (response.ok) {
         router.push("http://localhost:3000/homepage");
       } else {
-        alert(result.message || "Something went wrong!");
+        setError(result.message || "Something went wrong!");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while submitting the form.");
+      setError("An error occurred while submitting the form.");
     }
   };
   return (
@@ -319,6 +320,9 @@ const RegisterForm = () => {
             </div>
 
             {/*input picture*/}
+
+            {error && <p className="mt-2 text-red-500">{error}</p>}
+
             <div className="my-10 border-t-2 border-gray-400"></div>
 
             <div className="flex flex-col items-start gap-6">
@@ -520,6 +524,7 @@ const RegisterForm = () => {
                   </div>
                 </div>
                 {/* ส่วนของ profile picture*/}
+                {error && <p className="mt-2 text-red-500">{error}</p>}
                 <div className="my-10 border-t-2 border-gray-400"></div>
                 <div className="flex flex-col items-start gap-6">
                   <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">
