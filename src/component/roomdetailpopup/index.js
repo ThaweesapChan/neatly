@@ -1,24 +1,20 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function RoomModal({ room, isOpen, onClose }) {
   const [showAmenities, setShowAmenities] = useState(false);
-  const amenities = [
-    "Safe in Room",
-    "Air Conditioning",
-    "High speed internet connection",
-    "Hairdryer",
-    "Shower",
-    "Bathroom amenities",
-    "Lamp",
-    "Minibar",
-    "Telephone",
-    "Ironing board",
-    "A floor only accessible via a guest room key",
-    "Alarm clock",
+  const images = [
+    room.room_image_url, // เพิ่ม room_image_url เป็นรูปแรก
+    ...(room.image_gallery || []), // ตามด้วยรูปจาก image_gallery
   ];
-
   if (!isOpen || !room) return null; // หากไม่มีข้อมูลห้อง ให้ return null
 
   return (
@@ -51,20 +47,40 @@ export default function RoomModal({ room, isOpen, onClose }) {
         </div>
 
         <div className="relative aspect-video w-full">
-          <Image
-            src="/asset/deluxe.jpeg"
-            alt={room.room_type}
-            layout="fill"
-            objectFit="cover"
-            priority
-          />
+          <div className="h-auto w-full">
+            <Carousel
+              opts={{
+                align: "start",
+              }}
+              className="mt-6 flex h-auto w-full overflow-hidden"
+            >
+              <CarouselContent className="flex h-full">
+                {images.map((imageUrl, index) => (
+                  <CarouselItem
+                    key={`${room.id}-${index}`}
+                    className="flex h-full w-full shrink-0 items-center justify-center md:basis-2/5"
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={`Room Image ${index + 1}`}
+                      className="h-full w-full rounded object-cover"
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-8 z-10 text-zinc-200" />
+              <CarouselNext className="absolute right-8 z-10 text-zinc-200" />
+            </Carousel>
+          </div>
         </div>
 
         <div className="space-y-4 p-4">
           <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 md:text-sm">
             <span>{room.guests} Guests</span>
-            <span className="hidden h-4 w-px bg-gray-300 sm:inline-block"></span>
-            <span>{room.size} sqm</span>
+            <span className="h-4 w-px bg-gray-300 sm:inline-block"></span>
+            <span>{room.bed_type}</span>
+            <span className="h-4 w-px bg-gray-300 sm:inline-block"></span>
+            <span>{room.room_size} sqm</span>
           </div>
 
           <p className="text-sm text-gray-600">{room.room_description}</p>
@@ -98,7 +114,7 @@ export default function RoomModal({ room, isOpen, onClose }) {
                 id="amenities-list"
                 className="grid grid-cols-1 gap-2 text-xs text-gray-600 sm:grid-cols-2 md:text-sm"
               >
-                {amenities?.map((amenity, index) => (
+                {room.amenities?.map((amenity, index) => (
                   <li key={index} className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-gray-400"></span>
                     {amenity}

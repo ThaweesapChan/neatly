@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-
 const TimerContext = createContext();
 
 export const TimerProvider = ({ children }) => {

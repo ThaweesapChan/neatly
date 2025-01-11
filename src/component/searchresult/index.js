@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Roomcard from "@/component/roomcard";
 import axios from "axios";
-import { Button } from "@/component/button";
 import RoomModal from "../roomdetailpopup";
 import { useRouter } from "next/router";
+import { Button } from "../button";
 
 const Searchresult = () => {
   const router = useRouter();
+  const { checkin, checkout, guests, rooms } = router.query;
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guest, setGuest] = useState("");
   const [roomDetails, setRoomDetails] = useState([]);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false); // ใช้เปิดปิด modal
+  const [selectedRoom, setSelectedRoom] = useState(null); // เก็บห้องที่ถูกเลือก
+  const [currentDate, setCurrentDate] = useState(""); // เก็บวันที่ปัจจุบัน
   useEffect(() => {
     if (router.query.checkin) {
       setCheckIn(router.query.checkin);
@@ -27,7 +28,10 @@ const Searchresult = () => {
     }
   }, [router.query]);
 
+  // ฟังก์ชันเปิด Modal และตั้งค่า room ที่เลือก
   const openModal = (room) => {
+    setSelectedRoom(room);
+    setIsModalOpen(true);
     setSelectedRoom(room);
     setIsModalOpen(true);
   };
@@ -35,8 +39,10 @@ const Searchresult = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedRoom(null);
+    setSelectedRoom(null);
   };
 
+  // ฟังก์ชันเพื่อให้แน่ใจว่าไม่เลือกวันที่ย้อนหลัง
   const fetchRooms = async () => {
     if (!checkIn || !checkOut || !guest) {
       setError("Please fill in all fields.");
@@ -60,14 +66,16 @@ const Searchresult = () => {
   };
 
   useEffect(() => {
-    if (checkIn && checkOut && guest) {
-      fetchRooms();
-    }
+    const today = new Date().toISOString().split("T")[0];
+    setCurrentDate(today);
+  }, []);
+  useEffect(() => {
+    fetchRooms();
   }, [checkIn, checkOut, guest]);
 
   return (
-    <div className="relative flex flex-col items-center">
-      <div className="sticky top-0 z-50 flex w-full flex-row bg-white md:mt-10">
+    <div className=" flex flex-col items-center">
+      <div className="md:sticky top-0 z-50 flex w-full flex-row bg-white md:mt-10">
         <div className="w-full shadow-lg">
           <div className="mx-auto max-w-7xl bg-white px-4 py-6 md:px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -135,9 +143,17 @@ const Searchresult = () => {
       </div>
 
       <div className="mt-8 flex w-full max-w-7xl flex-col items-center justify-center gap-10 px-4 pb-10 md:px-6">
+      <div className="mt-8 flex w-full max-w-7xl flex-col items-center justify-center gap-10 px-4 pb-10 md:px-6">
         {error && <p className="text-red-500">{error}</p>}
         {roomDetails.length > 0 ? (
           roomDetails.map((room) => (
+            <Roomcard
+              key={room.room_id}
+              room={room}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              onClick={() => openModal(room)}
+            />
             <Roomcard
               key={room.room_id}
               room={room}
