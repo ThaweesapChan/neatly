@@ -3,7 +3,6 @@ import Roomcard from "@/component/roomcard";
 import axios from "axios";
 import RoomModal from "../roomdetailpopup";
 import { useRouter } from "next/router";
-import { Button } from "../button";
 
 const Searchresult = () => {
   const router = useRouter();
