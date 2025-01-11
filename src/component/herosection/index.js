@@ -24,7 +24,6 @@ function Herosection() {
   };
 
   const handleSearch = () => {
-
     if (!checkinValue) {
       setCurrentError("checkin");
       return;
@@ -70,10 +69,22 @@ function Herosection() {
         backgroundPosition: "center",
       }}
     >
+      {/* กล่องข้อความ */}
+      <div className="flex max-w-3xl items-center justify-center px-4 py-8 text-center font-notoSerif font-medium text-white shadow-lg md:flex">
+        <p
+          className="sm:mt-18 mt-20 text-5xl leading-tight tracking-tight sm:text-6xl"
+          style={{
+            letterSpacing: "-0.02em",
+            textUnderlinePosition: "from-font",
+            textDecorationSkipInk: "none",
+          }}
+        >
+          A Best Place <br className="md:hidden" /> for Your Neatly Experience
+        </p>
+      </div>
       {/* กล่องแบบฟอร์ม */}
       <div className="flex w-full flex-row p-10 sm:mt-10 sm:w-full sm:items-center sm:p-20">
         <div className="relative w-full rounded bg-white p-6 shadow-lg sm:my-12 sm:mt-12 sm:flex sm:w-full sm:justify-end sm:py-10">
-
           {/* Check In */}
           <div className="mb-6 flex-1 sm:mb-0 sm:mr-4">
             <label
