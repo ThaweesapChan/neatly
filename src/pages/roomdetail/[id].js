@@ -50,6 +50,10 @@ export default function RoomDetail() {
     fetchAllRooms();
   }, [id]);
 
+   const handleBookNow = () => {
+     router.push("/searchresultpage");
+   };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -186,18 +190,19 @@ export default function RoomDetail() {
                   </p>
                 </div>
                 {/* Book Now Button */}
-                <Link href={`/book/${room.room_id || ""}`} legacyBehavior>
-                  <a className="mt-4 flex h-[48px] items-center justify-center rounded-sm bg-orange-600 px-12 py-0 text-center font-openSans text-base font-medium text-white transition-transform hover:scale-105 md:mt-0">
-                    Book Now
-                  </a>
-                </Link>
+                <button
+                  onClick={handleBookNow}
+                  className="mt-4 flex h-[48px] items-center justify-center rounded-sm bg-orange-600 px-12 py-0 text-center font-openSans text-base font-medium text-white transition-transform hover:scale-105 md:mt-0"
+                >
+                  Book Now
+                </button>
               </div>
             </div>
           </div>
 
-          <div className="mt-16 h-full w-full md:mt-20 ">
+          <div className="mt-16 h-full w-full md:mt-20">
             <h3 className="font-inter text-xl font-semibold">Room Amenities</h3>
-            <div className="mt-6 sm:px-1 px-3">
+            <div className="mt-6 px-3 sm:px-1">
               <ul className="grid list-inside list-disc grid-cols-1 gap-x-5 font-inter text-base text-gray-700 md:grid-cols-2">
                 {room.amenities.map((amenity, index) => (
                   <li key={index} className="">
@@ -211,7 +216,7 @@ export default function RoomDetail() {
       </div>
 
       <div className="mt-10 flex h-[34rem] w-full flex-col items-center justify-center bg-[#E6EBE9] md:mt-28 md:h-[45rem]">
-        <div className="flex w-full flex-col items-center justify-center md:mb-20 ">
+        <div className="flex w-full flex-col items-center justify-center md:mb-20">
           <p className="font-notoSerif text-4xl font-medium text-[#2F3E35] md:text-5xl">
             Other Rooms
           </p>
