@@ -6,8 +6,8 @@ import axios from "axios";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const statusStyles = {
-  "Vacant": { textColor: "#006753", bgColor: "#F0F2F8" },
-  "Occupied": { textColor: "#084BAF", bgColor: "#E4ECFF" },
+  Vacant: { textColor: "#006753", bgColor: "#F0F2F8" },
+  Occupied: { textColor: "#084BAF", bgColor: "#E4ECFF" },
   "Assign Clean": { textColor: "#006753", bgColor: "#E5FFFA" },
   "Assign Dirty": { textColor: "#A50606", bgColor: "#FFE5E5" },
   "Vacant Clean": { textColor: "#006753", bgColor: "#E5FFFA" },
@@ -49,19 +49,22 @@ function Room_management_page() {
     try {
       const response = await axios.get("/api/getRoomProperty");
       const roomsData = response.data.data;
-  
+
       // ตรวจสอบสถานะของแต่ละห้อง
       const updatedRooms = await Promise.all(
         roomsData.map(async (room) => {
           if (!statusOptions.includes(room.status)) {
             const newStatus = "Vacant";
-            await axios.post("/api/updateRoomStatus", { roomId: room.room_id, status: newStatus });
+            await axios.post("/api/updateRoomStatus", {
+              roomId: room.room_id,
+              status: newStatus,
+            });
             return { ...room, status: newStatus };
           }
           return room;
-        })
+        }),
       );
-  
+
       const sortedRooms = updatedRooms.sort((a, b) => a.room_id - b.room_id);
       setRooms(sortedRooms);
       setFilteredRooms(sortedRooms);
@@ -75,13 +78,13 @@ function Room_management_page() {
       await axios.post("/api/updateRoomStatus", { roomId, status: newStatus });
       setRooms((prevRooms) =>
         prevRooms.map((room) =>
-          room.room_id === roomId ? { ...room, status: newStatus } : room
-        )
+          room.room_id === roomId ? { ...room, status: newStatus } : room,
+        ),
       );
       setFilteredRooms((prevRooms) =>
         prevRooms.map((room) =>
-          room.room_id === roomId ? { ...room, status: newStatus } : room
-        )
+          room.room_id === roomId ? { ...room, status: newStatus } : room,
+        ),
       );
     } catch (error) {
       console.error("Error updating room status:", error);
@@ -99,7 +102,7 @@ function Room_management_page() {
         Object.values(room)
           .join(" ")
           .toLowerCase()
-          .includes(query.toLowerCase())
+          .includes(query.toLowerCase()),
       );
       setFilteredRooms(filtered);
     } else {
@@ -110,7 +113,10 @@ function Room_management_page() {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentBookings = filteredRooms.slice(indexOfFirstItem, indexOfLastItem);
+  const currentBookings = filteredRooms.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -120,11 +126,6 @@ function Room_management_page() {
     <>
       <div className="flex flex-row bg-gray-100">
         <Sidebar />
-        <div>
-          <hi>Room Management</hi>
-        </div>
-        
-
         <div className="w-full">
           <RoomManageSearch onSearch={handleSearchChange} />
 
@@ -142,7 +143,10 @@ function Room_management_page() {
                 {currentBookings.length > 0 ? (
                   currentBookings.map((room) => {
                     const status = room.status;
-                    const styles = statusStyles[status] || { textColor: "#000000", bgColor: "#FFFFFF" };
+                    const styles = statusStyles[status] || {
+                      textColor: "#000000",
+                      bgColor: "#FFFFFF",
+                    };
 
                     console.log(`Status: ${status}`, styles); // สำหรับตรวจสอบในคอนโซล
 
@@ -184,7 +188,10 @@ function Room_management_page() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                    <td
+                      colSpan="4"
+                      className="px-6 py-4 text-center text-gray-500"
+                    >
                       No bookings available
                     </td>
                   </tr>
@@ -214,7 +221,7 @@ function Room_management_page() {
                   >
                     {index + 1}
                   </button>
-                )
+                ),
               )}
               <button
                 onClick={() => setCurrentPage(currentPage + 1)}
