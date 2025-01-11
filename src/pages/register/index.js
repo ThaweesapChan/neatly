@@ -159,10 +159,10 @@ const RegisterForm = () => {
       if (profile) {
         const url = await uploadFile(profile); // อัพโหลดไฟล์และรับ URL
         if (url) {
-          console.log(url);
+          //console.log(url);
           formData.profile_picture_url = url;
         } else {
-          console.error("Failed to upload file.");
+          //console.error("Failed to upload file.");
         }
       }
 
@@ -184,7 +184,7 @@ const RegisterForm = () => {
         setError(result.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error(error);
+      //console.error(error);
       setError("An error occurred while submitting the form.");
     }
   };
