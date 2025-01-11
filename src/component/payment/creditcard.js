@@ -31,11 +31,11 @@ export function FormCreditCard() {
   const { bookingDetail } = useBookingDetail();
 
   const handleBack = () => {
-    router.push("http://localhost:3000/payment/step2");
+    router.push("/payment/step2");
   };
 
   const handlePaymentFailed = () => {
-    router.push("http://localhost:3000/payment/payment-failed");
+    router.push("/payment/payment-failed");
   };
 
   const handleSubmit = async (e) => {
@@ -99,7 +99,6 @@ export function FormCreditCard() {
         console.error("Error confirming payment:", confirmError);
         handlePaymentFailed();
       } else {
-        alert("การชำระเงินสำเร็จ!");
         router.push("/payment/payment-success"); // Redirect ไปหน้า success
       }
     } catch (error) {
