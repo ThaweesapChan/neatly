@@ -69,7 +69,7 @@ function Herosection() {
         backgroundPosition: "center",
       }}
     >
-      {/* กล่องข้อความ */}
+      {/* กล่องข้อความ__ */}
       <div className="flex max-w-3xl items-center justify-center px-4 py-8 text-center font-notoSerif font-medium text-white shadow-lg md:flex">
         <p
           className="sm:mt-18 mt-20 text-5xl leading-tight tracking-tight sm:text-6xl"
