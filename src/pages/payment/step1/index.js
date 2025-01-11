@@ -99,7 +99,7 @@ export default function Basicinformation() {
       <Navbar />
       <SectionsStep1 />
       <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm">
+        <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-md">
           <div className="space-y-2">
             <h1 className="font-inter text-2xl font-semibold tracking-tight text-gray-600">
               Basic Information

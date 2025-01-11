@@ -64,6 +64,7 @@ export default async function bookingHandler(req, res) {
         promotion_code: roominfo?.promotion_code || null,
         status: "pending",
         total_price: totalprice,
+        amount: 1,
         booking_date: new Date().toISOString(),
       };
 
