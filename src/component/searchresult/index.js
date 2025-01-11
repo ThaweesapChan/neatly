@@ -12,19 +12,29 @@ const Searchresult = () => {
   const [guest, setGuest] = useState("");
   const [roomDetails, setRoomDetails] = useState([]);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // ใช้เปิดปิด modal
-  const [selectedRoom, setSelectedRoom] = useState(null); // เก็บห้องที่ถูกเลือก
-  
-  // ฟังก์ชันเปิด Modal และตั้งค่า room ที่เลือก
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
+  useEffect(() => {
+    if (router.query.checkin) {
+      setCheckIn(router.query.checkin);
+    }
+    if (router.query.checkout) {
+      setCheckOut(router.query.checkout);
+    }
+    if (router.query.guests) {
+      setGuest(parseInt(router.query.guests));
+    }
+  }, [router.query]);
+
   const openModal = (room) => {
-    setSelectedRoom(room); // เก็บข้อมูลห้องที่ถูกเลือก
-    setIsModalOpen(true); // เปิด Modal
+    setSelectedRoom(room);
+    setIsModalOpen(true);
   };
 
-  // ฟังก์ชันปิด Modal
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedRoom(null); // ล้างข้อมูลห้องที่เลือก
+    setSelectedRoom(null);
   };
 
   const fetchRooms = async () => {
@@ -56,76 +66,83 @@ const Searchresult = () => {
   }, [checkIn, checkOut, guest]);
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="top-0 flex w-full flex-row bg-white md:sticky md:mt-10 md:flex md:w-full md:items-center">
-        <div className="md:py my-12 mt-12 w-full rounded bg-white p-6 shadow-lg md:flex md:w-full md:justify-end md:py-10">
-          <div className="mb-6 flex-1 md:mb-0 md:mr-4">
-            <label
-              htmlFor="checkin"
-              className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
-            >
-              Check In
-            </label>
-            <input
-              onChange={(e) => setCheckIn(e.target.value)}
-              type="date"
-              id="checkin"
-              name="checkin"
-              className="w-full rounded border border-gray-300 p-3 text-gray-400"
-            />
+    <div className="relative flex flex-col items-center">
+      <div className="sticky top-0 z-50 flex w-full flex-row bg-white md:mt-10">
+        <div className="w-full shadow-lg">
+          <div className="mx-auto max-w-7xl bg-white px-4 py-6 md:px-6">
+            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+              <div className="flex-1">
+                <label
+                  htmlFor="checkin"
+                  className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
+                >
+                  Check In
+                </label>
+                <input
+                  value={checkIn}
+                  onChange={(e) => setCheckIn(e.target.value)}
+                  type="date"
+                  id="checkin"
+                  name="checkin"
+                  className="w-full rounded border border-gray-300 p-3 text-gray-700"
+                />
+              </div>
+              <div className="flex-1">
+                <label
+                  htmlFor="checkout"
+                  className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
+                >
+                  Check Out
+                </label>
+                <input
+                  value={checkOut}
+                  onChange={(e) => setCheckOut(e.target.value)}
+                  type="date"
+                  id="checkout"
+                  name="checkout"
+                  className="w-full rounded border border-gray-300 p-3 text-gray-700"
+                />
+              </div>
+              <div className="flex-1">
+                <label
+                  htmlFor="rooms-guests"
+                  className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
+                >
+                  Rooms & Guests
+                </label>
+                <select
+                  value={guest}
+                  onChange={(e) => setGuest(parseInt(e.target.value, 10))}
+                  id="rooms-guests"
+                  name="rooms-guests"
+                  className="w-full rounded border border-gray-300 p-4 text-gray-700"
+                >
+                  <option value="">Select rooms and guests</option>
+                  <option value="2">1 room, 2 guests</option>
+                  <option value="4">2 rooms, 4 guests</option>
+                  <option value="6">3 rooms, 6 guests</option>
+                </select>
+              </div>
+              <Button
+                onClick={fetchRooms}
+                type="1"
+                name="Search"
+                className="h-12 w-full gap-2.5 text-white md:w-36"
+              />
+            </div>
           </div>
-          <div className="mb-6 flex-1 md:mb-0 md:mr-4">
-            <label
-              htmlFor="checkout"
-              className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
-            >
-              Check Out
-            </label>
-            <input
-              onChange={(e) => setCheckOut(e.target.value)}
-              type="date"
-              id="checkout"
-              name="checkout"
-              className="w-full rounded border border-gray-300 p-3 text-gray-400"
-            />
-          </div>
-          <div className="mb-6 flex-1 md:mb-0 md:mr-4">
-            <label
-              htmlFor="rooms-guests"
-              className="mb-2 block font-inter text-[1rem] font-normal text-gray-900"
-            >
-              Rooms & Guests
-            </label>
-            <select
-              onChange={(e) => setGuest(parseInt(e.target.value, 10))}
-              id="rooms-guests"
-              name="rooms-guests"
-              className="w-full rounded border border-gray-300 p-4 text-gray-400"
-            >
-              <option value="" >
-                Select rooms and guests
-              </option>
-              <option value="2">1 room, 2 guests</option>
-              <option value="4">2 rooms, 4 guests</option>
-              <option value="6">3 rooms, 6 guests</option>
-            </select>
-          </div>
-          <Button
-            onClick={fetchRooms}
-            variant="primary"
-            label="Search"
-            other="w-full md:w-36 md:translate-y-9 h-12 gap-2.5 text-white"
-          />
         </div>
       </div>
 
-      <div className="flex w-full flex-col items-center justify-center gap-5 px-3 py-3">
+      <div className="mt-8 flex w-full max-w-7xl flex-col items-center justify-center gap-10 px-4 pb-10 md:px-6">
         {error && <p className="text-red-500">{error}</p>}
         {roomDetails.length > 0 ? (
-          roomDetails.map((room,check_in,chec) => (
+          roomDetails.map((room) => (
             <Roomcard
               key={room.room_id}
               room={room}
+              checkIn={checkIn}
+              checkOut={checkOut}
               onClick={() => openModal(room)}
             />
           ))
@@ -134,7 +151,6 @@ const Searchresult = () => {
         )}
       </div>
 
-      {/* เมื่อ isModalOpen เป็น true, จะแสดง RoomModal */}
       {isModalOpen && (
         <RoomModal
           room={selectedRoom}

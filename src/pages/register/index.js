@@ -10,6 +10,7 @@ const RegisterForm = () => {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -29,11 +30,11 @@ const RegisterForm = () => {
   useEffect(() => {
     // โหลดรายชื่อประเทศจาก API
     const fetchCountries = async () => {
-      const response = await fetch("https://restcountries.com/v3.1/all");
+      const response = await fetch("https://restcountries.com/v2/all");
       const data = await response.json();
       const sortedCountries = data
         .map((country) => ({
-          name: country.name.common,
+          name: country.name,
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
       setCountry(sortedCountries);
@@ -68,69 +69,87 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1) ตรวจสอบ First Name
-    //    - ต้องไม่ว่าง
-    //    - ต้องเป็นตัวอักษร (a-z หรือ A-Z) และมีความยาวอย่างน้อย 5 ตัว
-    const nameRegex = /^[A-Za-z]{5,}$/; 
-    // ถ้าต้องการให้รองรับการเว้นวรรคด้วย: /^[A-Za-z\s]{5,}$/
-    if (!nameRegex.test(formData.first_name)) {
-      alert("First Name must contain only letters and be at least 5 characters long.");
+    // ตรวจสอบ First Name
+    const nameRegex = /^[A-Za-z\s]{5,}$/; // รองรับการเว้นวรรค
+    if (!formData.first_name.trim() || !nameRegex.test(formData.first_name)) {
+      setError(
+        "First Name must contain only letters, spaces, and be at least 5 characters long.",
+      );
       return;
     }
 
-    // 2) ตรวจสอบ Last Name
-    if (!nameRegex.test(formData.last_name)) {
-      alert("Last Name must contain only letters and be at least 5 characters long.");
+    // ตรวจสอบ Last Name
+    if (!formData.last_name.trim() || !nameRegex.test(formData.last_name)) {
+      setError(
+        "Last Name must contain only letters, spaces, and be at least 5 characters long.",
+      );
       return;
     }
 
-    // 3) ตรวจสอบ Username
-    //    - ใช้เงื่อนไขเดียวกับ First/Last Name คือ a-z หรือ A-Z และความยาว >= 5
-    if (!nameRegex.test(formData.username)) {
-      alert("Username must contain only letters and be at least 5 characters long.");
+    // ตรวจสอบ Username
+    if (!formData.username.trim() || !nameRegex.test(formData.username)) {
+      setError(
+        "Username must contain only letters, spaces, and be at least 5 characters long.",
+      );
       return;
     }
 
     // 4) ตรวจสอบ Date of Birth
-    //    - ต้องไม่ว่าง
-    //    - ต้องเป็นวันในอดีต (ไม่ใช่วันปัจจุบันหรืออนาคต)
+    // ตรวจสอบว่า Date of Birth ไม่ว่าง
     if (!formData.date_of_birth) {
-      alert("Please select your Date of Birth.");
+      setError("Please select your Date of Birth.");
       return;
     }
 
     const today = new Date();
     const birthDate = new Date(formData.date_of_birth);
-    // เคส: ถ้ากรอกวันเกิดเป็นวันนี้หรือวันอนาคต => ไม่ผ่าน
+
+    // คำนวณอายุ
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    // ถ้าเดือนหรือวันเกิดยังไม่ถึงปีปัจจุบัน ให้ลดอายุลง 1 ปี
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+
+    // ตรวจสอบว่าอายุ < 18 ปี
+    if (age < 18) {
+      setError("You must be at least 18 years old to register.");
+      return;
+    }
+
+    // ตรวจสอบว่า Date of Birth เป็นวันในอนาคตหรือไม่
     if (birthDate >= new Date(today.toDateString())) {
-      alert("Date of Birth must be in the past (before today).");
+      setError("Date of Birth must be in the past (before today).");
       return;
     }
 
     // 5) ตรวจสอบ Country
     //    - ต้องไม่เป็นค่าว่าง
     if (!formData.country) {
-      alert("Please select your country.");
+      setError("Please select your country.");
       return;
     }
 
     // ตรวจสอบว่า password และ confirmPassword ตรงกัน
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     // ตรวจสอบว่า email ถูกต้อง
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      alert("Invalid email format");
+      setError("Invalid email format");
       return;
     }
 
     // ตรวจสอบว่า phone_number ต้องเป็นตัวเลขเท่านั้น
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(formData.phone_number)) {
-      alert("Phone number must contain 10 digits only");
+      setError("Phone number must contain 10 digits only");
       return;
     }
 
@@ -162,11 +181,11 @@ const RegisterForm = () => {
       if (response.ok) {
         router.push("http://localhost:3000/homepage");
       } else {
-        alert(result.message || "Something went wrong!");
+        setError(result.message || "Something went wrong!");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while submitting the form.");
+      setError("An error occurred while submitting the form.");
     }
   };
   return (
@@ -301,6 +320,9 @@ const RegisterForm = () => {
             </div>
 
             {/*input picture*/}
+
+            {error && <p className="mt-2 text-red-500">{error}</p>}
+
             <div className="my-10 border-t-2 border-gray-400"></div>
 
             <div className="flex flex-col items-start gap-6">
@@ -502,6 +524,7 @@ const RegisterForm = () => {
                   </div>
                 </div>
                 {/* ส่วนของ profile picture*/}
+                {error && <p className="mt-2 text-red-500">{error}</p>}
                 <div className="my-10 border-t-2 border-gray-400"></div>
                 <div className="flex flex-col items-start gap-6">
                   <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">

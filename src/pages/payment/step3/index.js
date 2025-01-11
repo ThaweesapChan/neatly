@@ -1,23 +1,26 @@
 import CreditCard from "@/component/payment/creditcard";
 import Cash from "@/component/payment/cash";
 import Navbar from "@/component/navbar";
-
+import { useBooking } from "@/lib/BookingContext";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
 import {
   ConditionRefund,
   SectionsStep3,
 } from "@/component/payment/sectionstep";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Bookingdetail from "../../../component/payment/bookingdetail";
-
 export default function Step3() {
   const [selectedPayment, setSelectedPayment] = useState("credit");
+  const router = useRouter();
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
 
   return (
     <>
       <Navbar />
       <SectionsStep3 />
-      <div className="mb-8 flex w-screen justify-center bg-slate-100">
-        <div className="flex h-screen w-[1150px] gap-4 bg-slate-100 px-12">
+      <div className="mb-8 flex w-screen justify-center bg-gray-50">
+        <div className="flex h-screen w-[1150px] gap-4 bg-gray-50 px-12">
           {/* ด้านซ้าย */}
           <div className="mx-auto h-max w-96 rounded border bg-white p-4 shadow-md md:w-[690px]">
             {/* ปุ่มเลือกการชำระเงิน */}

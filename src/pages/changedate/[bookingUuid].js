@@ -54,6 +54,12 @@ const ChangeDatePage = () => {
 
   // Validate New Dates
   const validateNewDates = () => {
+    const today = new Date().toISOString().split("T")[0]; // วันที่ปัจจุบัน
+    if (checkInDate < today || checkOutDate < today) {
+      setErrorMessage("Selected dates cannot be in the past.");
+      return false;
+    }
+
     const originalDays = calculateDays(
       bookingDetails.check_in_date,
       bookingDetails.check_out_date,
@@ -61,7 +67,6 @@ const ChangeDatePage = () => {
 
     const newDays = calculateDays(checkInDate, checkOutDate);
 
-    // ถ้าไม่ตรงกับจำนวนวันที่จองมาจะแจ้ง message นี้ขึ้นมา
     if (newDays !== originalDays) {
       setErrorMessage(
         `The new dates must have the same duration as your original booking (${originalDays} days).`,
@@ -165,6 +170,7 @@ const ChangeDatePage = () => {
                     type="date"
                     value={checkInDate}
                     onChange={(e) => setCheckInDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
                     className="mt-2 block w-full rounded border px-4 py-2"
                   />
                 </div>
@@ -174,6 +180,7 @@ const ChangeDatePage = () => {
                     type="date"
                     value={checkOutDate}
                     onChange={(e) => setCheckOutDate(e.target.value)}
+                    min={checkInDate || new Date().toISOString().split("T")[0]}
                     className="mt-2 block w-full rounded border px-4 py-2"
                   />
                 </div>

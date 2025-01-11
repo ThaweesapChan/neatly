@@ -39,6 +39,43 @@ const RefundSuccessPage = () => {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
+  // Total Price Calculation
+  const calculateTotalPrice = (bookingDetails) => {
+    const { room, check_in_date, check_out_date, special_requests } =
+      bookingDetails;
+
+    // คำนวณจำนวนวันเข้าพัก
+    const days =
+      (new Date(check_out_date) - new Date(check_in_date)) / (1000 * 3600 * 24);
+
+    // ราคาห้อง (ใช้ promotion_price ถ้ามี, ถ้าไม่มีใช้ price)
+    const roomPrice = Number(room?.promotion_price || room?.price || 0);
+
+    // คำนวณราคา special_requests
+    const specialRequestsTotal = special_requests
+      ? special_requests.reduce((total, request) => {
+          const parsedRequest = JSON.parse(request);
+
+          // เงื่อนไข: ไม่คูณจำนวนวันสำหรับ Airport transfer และ Phone chargers and adapters
+          if (
+            [
+              "Airport transfer",
+              "Extra bed",
+              "Phone chargers and adapters",
+            ].includes(parsedRequest.name)
+          ) {
+            return total + Number(parsedRequest.price || 0);
+          } else {
+            // คูณจำนวนวันสำหรับ special requests อื่นๆ
+            return total + Number(parsedRequest.price || 0) * days;
+          }
+        }, 0)
+      : 0;
+
+    // รวมราคาทั้งหมด (ราคาห้อง + special requests)
+    return roomPrice * days + specialRequestsTotal;
+  };
+
   return (
     <>
       <Navbar />
@@ -80,7 +117,7 @@ const RefundSuccessPage = () => {
             <hr className="my-8 border-gray-400 md:my-12" />
             <p className="flex justify-between text-lg font-bold text-white">
               <span className="text-[#D5DFDA]">Total Refund</span>THB{" "}
-              {parseFloat(bookingDetails.total_price).toLocaleString("en-US", {
+              {calculateTotalPrice(bookingDetails).toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}

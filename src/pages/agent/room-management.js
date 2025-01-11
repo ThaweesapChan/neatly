@@ -120,6 +120,10 @@ function Room_management_page() {
     <>
       <div className="flex flex-row bg-gray-100">
         <Sidebar />
+        <div>
+          <hi>Room Management</hi>
+        </div>
+        
 
         <div className="w-full">
           <RoomManageSearch onSearch={handleSearchChange} />

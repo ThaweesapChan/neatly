@@ -178,7 +178,6 @@ export default function LoginPage() {
                 Register
               </Link>
             </p>
-
             {error && <p style={{ color: "red" }}>{error}</p>}
           </div>
         </div>

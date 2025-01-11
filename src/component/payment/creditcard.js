@@ -1,8 +1,8 @@
 import { ConditionRefund } from "@/component/payment/sectionstep";
 import Bookingdetail from "@/component/payment/bookingdetail";
 import { useState } from "react";
-import { useBooking } from "@/lib/BookingContext";
 import { useRouter } from "next/router";
+import { useBooking } from "@/lib/BookingContext";
 import {
   CardExpiryElement,
   CardCvcElement,
@@ -14,8 +14,7 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/component/button";
 import axios from "axios";
-
-import PaymentFailed from "../../pages/payment/payment-failed";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
 
 // โหลด Stripe ด้วย Publishable Key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
@@ -27,12 +26,12 @@ export function FormCreditCard() {
   const [cardOwner, setCardOwner] = useState("");
   const [promotionCode, setPromotionCode] = useState("");
   const [loading, setLoading] = useState(false);
-
   const { bookingData } = useBooking();
+  //ยังสงสัย bookingDetail ว่าเปลี่ยนชื่อเป็นอย่างอื่นได้หรือป่าว
+  const { bookingDetail } = useBookingDetail();
 
   const handleBack = () => {
-    console.log("Back button clicked");
-    router.push("http://localhost:3000/homepage");
+    router.push("http://localhost:3000/payment/step2");
   };
 
   const handlePaymentFailed = () => {
@@ -57,19 +56,25 @@ export function FormCreditCard() {
 
     try {
       // เรียกข้อมูลจาก Context
-      const { basicInfo, specialRequest } = bookingData;
-      // ต้องมาเพิ่มที่หลังว่า front-end ที่แก้วทำส่ง data มาเป็นแบบไหน
+      const {
+        roominfo,
+        check_in_date,
+        check_out_date,
+        userinfo,
+        totalprice,
+        additionalInfo,
+      } = bookingDetail;
 
       // เรียก API Backend เพื่อสร้าง PaymentIntent และรับ client_secret
       const response = await axios.post("/api/stripe/bookingHandler", {
-        basicInfo,
-        specialRequest,
-        checkInDate,
-        checkOutDate,
-        originalPrice,
-        promotionCode,
-        totalPrice,
-        amount,
+        roominfo,
+        check_in_date,
+        check_out_date,
+        userinfo,
+        additionalInfo,
+        totalprice,
+        amount: totalprice,
+        user_id: bookingDetail.user_id,
       });
 
       // ตรวจสอบ Response
@@ -94,7 +99,6 @@ export function FormCreditCard() {
         console.error("Error confirming payment:", confirmError);
         handlePaymentFailed();
       } else {
-        console.log("PaymentIntent confirmed:", paymentIntent);
         alert("การชำระเงินสำเร็จ!");
         router.push("/payment/payment-success"); // Redirect ไปหน้า success
       }

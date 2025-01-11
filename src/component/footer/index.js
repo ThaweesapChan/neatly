@@ -57,9 +57,33 @@ function Footer() {
         <hr className="w-full rounded-md border-b border-green-700 md:my-10" />
         <div className="m-5 flex justify-between md:pt-8">
           <div className="flex gap-3 md:gap-10">
-            <Facebook />
-            <Instagram />
-            <Twitter />
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="hover:text-blue-500"
+            >
+              <Facebook />
+            </a>
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="hover:text-pink-500"
+            >
+              <Instagram />
+            </a>
+            <a
+              href="https://www.twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter"
+              className="hover:text-blue-400"
+            >
+              <Twitter />
+            </a>
           </div>
           <div className="text-right font-inter text-sm text-green-300">
             Copyright ©2022 Neatly Hotel

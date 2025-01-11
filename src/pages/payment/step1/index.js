@@ -1,22 +1,27 @@
-import React from "react";
-import Navbar from "@/component/navbar";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { useBooking } from "@/lib/BookingContext";
-import { SectionsStep1 } from "@/component/payment/sectionstep";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
+import Navbar from "@/component/navbar";
+import {
+  ConditionRefund,
+  SectionsStep1,
+} from "@/component/payment/sectionstep";
+import Bookingdetail from "@/component/payment/bookingdetail";
+import axios from "axios";
 
 export default function Basicinformation() {
   const router = useRouter();
-  const { bookingData, setBookingData } = useBooking(); // ใช้ Context
+  const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const [formData, setFormData] = useState({
-    firstName: bookingData.basicInfo.firstName || "",
-    lastName: bookingData.basicInfo.lastName || "",
-    email: bookingData.basicInfo.email || "",
-    phoneNumber: bookingData.basicInfo.phoneNumber || "",
-    dateOfBirth: bookingData.basicInfo.dateOfBirth || "",
-    country: bookingData.basicInfo.country || "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    dateOfBirth: "",
+    country: "",
   });
-  console.log(formData);
+  const [country, setCountry] = useState([]);
+  const [loading, setLoading] = useState(true); // สำหรับแสดงสถานะโหลดข้อมูล
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -26,18 +31,68 @@ export default function Basicinformation() {
 
   // ฟังก์ชันเมื่อกดปุ่ม Back
   const handleBack = () => {
-    router.push("http://localhost:3000/homepage");
+    router.push("/searchresultpage");
   };
 
   // ฟังก์ชันเมื่อกดปุ่ม Next
   const handleNext = (e) => {
     e.preventDefault();
-    setBookingData((prev) => ({
-      ...prev,
-      basicInfo: { ...formData },
-    }));
-    router.push("http://localhost:3000/payment/step2");
+    updateBookingDetail({ userinfo: formData });
+    router.push("/payment/step2");
   };
+
+  // ฟังก์ชันดึงข้อมูลโปรไฟล์ผู้ใช้
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem("token"); // ดึง Token จาก Local Storage
+      if (!token) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await axios.get("/api/getUserProfile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // ตั้งค่า formData ด้วยข้อมูลที่ได้รับจาก API
+      const userData = response.data;
+      setFormData({
+        firstName: userData.first_name || "",
+        lastName: userData.last_name || "",
+        email: userData.email || "",
+        phoneNumber: userData.phone_number || "",
+        dateOfBirth: userData.date_of_birth || "",
+        country: userData.country || "",
+      });
+    } catch (error) {
+      console.error("Error fetching user profile:", error.message);
+    } finally {
+      setLoading(false); // ปิดสถานะโหลดข้อมูล
+    }
+  };
+
+  useEffect(() => {
+    // ดึงข้อมูล user profile
+    fetchUserProfile();
+    // โหลดรายชื่อประเทศ
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get("https://restcountries.com/v2/all");
+        const sortedCountries = response.data
+          .map((country) => ({ name: country.name }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setCountry(sortedCountries);
+      } catch (error) {
+        console.error("Error fetching countries:", error.message);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // แสดงสถานะโหลดข้อมูล
+  }
 
   return (
     <div>
@@ -52,7 +107,7 @@ export default function Basicinformation() {
           </div>
 
           {/* ฟอร์มกรอกข้อมูล */}
-          <form className="space-y-6" onSubmit={handleNext}>
+          <form className="space-y-6 font-inter" onSubmit={handleNext}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label
@@ -62,14 +117,14 @@ export default function Basicinformation() {
                   First name
                 </label>
                 <input
-                  required
                   type="text"
                   id="firstName"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   placeholder="Enter your first name"
+                  required
                 />
               </div>
 
@@ -81,14 +136,14 @@ export default function Basicinformation() {
                   Last name
                 </label>
                 <input
-                  required
                   type="text"
                   id="lastName"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   placeholder="Enter your last name"
+                  required
                 />
               </div>
             </div>
@@ -101,14 +156,14 @@ export default function Basicinformation() {
                 Email
               </label>
               <input
-                required
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter your email"
+                required
               />
             </div>
 
@@ -120,14 +175,14 @@ export default function Basicinformation() {
                 Phone number
               </label>
               <input
-                required
                 type="tel"
                 id="phoneNumber"
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Enter your phone number"
+                required
               />
             </div>
 
@@ -139,13 +194,13 @@ export default function Basicinformation() {
                 Date of Birth
               </label>
               <input
-                required
                 type="date"
                 id="dateOfBirth"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
 
@@ -161,19 +216,34 @@ export default function Basicinformation() {
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-[4px] border border-gray-300 pl-3 font-inter shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 sm:text-sm"
+                style={{
+                  height: "48px",
+                  fontSize: "16px",
+                  fontWeight: 400,
+                  borderRadius: "4px",
+                  borderWidth: "1px",
+                }}
+                required
               >
-                <option value="">Select your country</option>
-                <option value="Thailand">Thailand</option>
-                <option value="United States">United States</option>
-                <option value="United Kingdom">United Kingdom</option>
-                <option value="Canada">Canada</option>
-                <option value="Australia">Australia</option>
-                <option value="Japan">Japan</option>
-                <option value="Singapore">Singapore</option>
+                <option value="" disabled>
+                  Select your country
+                </option>
+                {country.map((country, index) => (
+                  <option key={index} value={country.name}>
+                    {country.name}
+                  </option>
+                ))}
               </select>
             </div>
-
+            <div className="ml-4 flex flex-col gap-4 md:hidden">
+              <div className="w-[385px] md:block">
+                <Bookingdetail />
+              </div>
+              <div className="w-[385px] md:block">
+                <ConditionRefund />
+              </div>
+            </div>
             <div className="flex justify-between pt-4">
               <button
                 type="button"
@@ -190,6 +260,15 @@ export default function Basicinformation() {
               </button>
             </div>
           </form>
+        </div>
+        {/* ด้านขวา */}
+        <div className="ml-4 flex flex-col gap-4">
+          <div className="hidden md:block md:w-[385px]">
+            <Bookingdetail />
+          </div>
+          <div className="hidden md:block md:w-[385px]">
+            <ConditionRefund />
+          </div>
         </div>
       </div>
     </div>

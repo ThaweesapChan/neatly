@@ -1,64 +1,93 @@
-import React from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 function Aboutsection() {
+  const [hotelInfo, setHotelInfo] = useState(null);
+  const [allRooms, setAllRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [hotelResponse, roomsResponse] = await Promise.all([
+          axios.get("/api/getHotelInformation"),
+          axios.get("/api/getRoomDetail"),
+        ]);
+
+        setHotelInfo(hotelResponse.data.data);
+        setAllRooms(roomsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading || !hotelInfo) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      {/* about section */}
-      <section className="mt-20" id="about-neatly">
-        <h1 className="m-5 px-20 font-notoSerif text-4xl font-semibold text-green-800 md:mr-40 md:px-20">
-          Neatly Hotel
+      <section
+        className="flex h-full w-full flex-col bg-[#F7F7FB]"
+        id="about-neatly"
+      >
+        <h1 className="m-5 mt-14 px-0 font-notoSerif text-5xl font-medium text-[#2F3E35] sm:mr-40 sm:mt-28 sm:px-20 sm:text-6xl">
+          {hotelInfo[0].hotel_name}
         </h1>
-        <div className="flex flex-col items-center justify-center">
-          <div className="md:mb-10 md:w-[80%]">
-            <p className="p-4 text-left font-inter text-base text-gray-700">
-              Set in Bangkok, Thailand. Neatly Hotel offers 5-star accommodation
-              with an outdoor pool, kids club, sports facilities and a fitness
-              centre. There is also a spa, an indoor pool and saunas.
-            </p>
-            <p className="p-4 text-left font-inter text-base text-gray-700">
-              All units at the hotel are equipped with a seating area, a
-              flat-screen TV with satellite channels, a dining area and a
-              private bathroom with free toiletries, a bathtub and a hairdryer.
-              Every room in Neatly Hotel features a furnished balcony. Some
-              rooms are equipped with a coffee machine.
-            </p>
-            <p className="p-4 text-left font-inter text-base text-gray-700">
-              Free WiFi and entertainment facilities are available at property
-              and also rentals are provided to explore the area.
+
+        <div className="mt-6 flex flex-col items-center justify-center">
+          <div className="sm:mb-10 sm:w-[60%]">
+            <p
+              className="m-5 text-left font-inter text-base font-normal text-[#646D89]"
+              style={{ whiteSpace: "pre-line" }}
+            >
+              {hotelInfo[0].hotel_description}
             </p>
           </div>
-          <div className="flex items-center justify-center">
-            <Carousel
-              opts={{
-                align: "start",
-              }}
-              className="w-6/7 md:w-[50%]"
-            >
-              <CarouselContent>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <CarouselItem key={index}>
-                    <img
-                      src={`/asset/deluxe.jpeg`}
-                      alt={`Image ${index + 1}`}
-                      className="object-cover"
+          <div className="h-full w-full mt-10">
+            {allRooms.length > 0 ? (
+              <Carousel
+                centerMode
+                infinite
+                autoPlaySpeed={3000}
+                responsive={{
+                  desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
+                  tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
+                  mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
+                }}
+                showDots={false}
+                swipeable
+              >
+                {allRooms.map((room) => (
+                  <div
+                    key={room.room_id}
+                    className="h-[260px] w-full p-2 sm:h-[480px]"
+                  >
+                    <Image
+                      src={room.room_image_url}
+                      alt={room.room_type}
+                      width={400}
+                      height={500}
+                      className="h-full w-full object-cover"
                     />
-                  </CarouselItem>
+                  </div>
                 ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:block" />
-              <CarouselNext className="hidden md:block" />
-            </Carousel>
+              </Carousel>
+            ) : (
+              <div>No rooms available</div>
+            )}
           </div>
         </div>
       </section>
-      ;
     </>
   );
 }
