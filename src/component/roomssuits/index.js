@@ -19,10 +19,10 @@ export default function RoomsSuits() {
       // Return room_ids as an array of strings
       const roomIds = filteredData.map((room) => room.room_id.toString());
 
-      console.log(`Room IDs for ${room_type}:`, roomIds);
+      //console.log(`Room IDs for ${room_type}:`, roomIds);
       return roomIds;
     } catch (err) {
-      console.error("Error fetching all rooms:", err);
+      //console.error("Error fetching all rooms:", err);
       setError(err.message);
       return [];
     }
@@ -45,7 +45,7 @@ export default function RoomsSuits() {
 
         setRoomData(roomIds);
       } catch (err) {
-        console.error("Error in useEffect:", err);
+        //console.error("Error in useEffect:", err);
         setError(err.message);
       } finally {
         setLoading(false);

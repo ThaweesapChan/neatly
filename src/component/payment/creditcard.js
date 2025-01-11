@@ -27,28 +27,29 @@ export function FormCreditCard() {
   const [promotionCode, setPromotionCode] = useState("");
   const [loading, setLoading] = useState(false);
   const { bookingData } = useBooking();
+  const [error, setError] = useState("");
   //ยังสงสัย bookingDetail ว่าเปลี่ยนชื่อเป็นอย่างอื่นได้หรือป่าว
   const { bookingDetail } = useBookingDetail();
 
   const handleBack = () => {
-    router.push("http://localhost:3000/payment/step2");
+    router.push("/payment/step2");
   };
 
   const handlePaymentFailed = () => {
-    router.push("http://localhost:3000/payment/payment-failed");
+    router.push("/payment/payment-failed");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
-      alert("Stripe.js ยังไม่พร้อมใช้งาน โปรดรอสักครู่...");
+      setError("Stripe.js is not available yet. Please wait a moment...");
       return;
     }
 
     const cardElement = elements.getElement(CardNumberElement);
     if (!cardElement) {
-      alert("เกิดข้อผิดพลาดในการโหลดฟิลด์ข้อมูลบัตร");
+      setError("An error occurred loading the card information fields.");
       return;
     }
 
@@ -96,14 +97,13 @@ export function FormCreditCard() {
         });
 
       if (confirmError) {
-        console.error("Error confirming payment:", confirmError);
+        //console.error("Error confirming payment:", confirmError);
         handlePaymentFailed();
       } else {
-        alert("การชำระเงินสำเร็จ!");
         router.push("/payment/payment-success"); // Redirect ไปหน้า success
       }
     } catch (error) {
-      console.error("Error in handleSubmit:", error);
+      //console.error("Error in handleSubmit:", error);
       handlePaymentFailed();
     } finally {
       setLoading(false);
@@ -196,6 +196,8 @@ export function FormCreditCard() {
             }}
           />
         </div>
+
+        {error && <p className="mt-2 text-red-500">{error}</p>}
 
         {/* Booking Detail */}
         <div className="md:hidden">
