@@ -9,6 +9,7 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
   const [roomData, setRoomData] = useState(null);
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
+  const [roomId, setRoomId] = useState();
   const router = useRouter();
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const { resetTimer } = useTimer();
@@ -18,17 +19,13 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
       setRoomData(room);
       setCheckInDate(checkIn);
       setCheckOutDate(checkOut);
+      setRoomId(room.room_id);
     }
   }, []);
 
   // ฟังก์ชันจัดการการคลิกปุ่ม "Rom detail"
   const handleRoomDetailClick = () => {
-    router.push({
-      pathname: "/roomdetail",
-      query: {
-        roomId: room.room_id,
-      },
-    });
+    router.push(`/roomdetail/${roomId}`);
   };
 
   // ฟังก์ชันจัดการการคลิกปุ่ม "Book Now"
@@ -48,9 +45,9 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
 
   return (
     <div className="w-full overflow-hidden rounded-lg shadow-sm">
-      <div className="md:flex  items-center justify-between">
-        <div className="w-full md:w-1/2">
-          <div className="grid h-[300px] w-full grid-cols-1 grid-rows-1 overflow-hidden rounded-lg">
+      <div className="justify-between md:flex">
+        <div className="h-[320px] w-full md:mt-6 md:w-1/2 p-1">
+          <div className="grid h-[95%] w-full md:w-[94%] grid-cols-1 grid-rows-1 overflow-hidden rounded-lg">
             {/* Image Layer */}
             <div className="col-span-1 col-start-1 row-span-1 row-start-1">
               <Image
@@ -76,8 +73,8 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
         </div>
 
         <div className="p-3 font-inter md:flex md:flex-1 md:flex-col md:p-6">
-          <div className="flex flex-col items-end md:items-start md:justify-between md:gap-2">
-            <div className="space-y-4 md:w-[60%] md:space-y-6">
+          <div className="flex flex-col items-end md:flex-row md:items-stretch">
+            <div className="space-y-4 md:w-[60%]">
               <h3 className="whitespace-nowrap p-2 text-2xl font-semibold text-gray-700">
                 {room.room_type}
               </h3>
@@ -100,7 +97,11 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
                 </div>
               </div>
 
-              <p className="text-base text-gray-600">{room.room_description}</p>
+              <p className="text-base text-gray-600">
+                {room.room_description.length > 100
+                  ? room.room_description.slice(0, 100) + "..."
+                  : room.room_description}
+              </p>
             </div>
 
             <div className="mt-4 flex flex-col p-3 text-right md:mt-0">
@@ -134,7 +135,7 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
             </div>
           </div>
 
-          <div className="mt-auto grid grid-cols-2 gap-3 pt-6 md:ml-auto md:max-w-[260px]">
+          <div className="mr-3 mt-auto grid grid-cols-2 gap-3 pt-6 md:ml-auto md:max-w-[260px]">
             <button
               onClick={handleRoomDetailClick}
               className="rounded px-4 py-2 text-sm font-medium text-orange-600 transition-colors hover:bg-orange-500 hover:text-white"
