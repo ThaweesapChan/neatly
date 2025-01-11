@@ -96,7 +96,7 @@ export default function Standardrequest() {
       <Navbar />
       <SectionsStep2 />
       <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm">
+        <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-md">
           {/* Standard Request Section */}
           <div className="space-y-4">
             <h2 className="font-inter text-lg font-semibold text-gray-700">

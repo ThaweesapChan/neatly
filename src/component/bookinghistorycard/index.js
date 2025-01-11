@@ -108,7 +108,7 @@ function BookingHistoryCard({ bookings }) {
                     width={500}
                     height={250}
                     alt={booking.rooms.room_type}
-                    className="h-48 w-full object-cover md:h-full md:rounded-md md:object-contain md:object-top"
+                    className="h-48 w-full object-cover md:h-96 md:rounded-md md:object-cover md:object-top"
                   />
                 </div>
 

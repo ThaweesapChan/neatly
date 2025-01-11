@@ -11,7 +11,8 @@ import axios from "axios";
 
 export default function Basicinformation() {
   const router = useRouter();
-  const { bookingDetail, updateBookingDetail } = useBookingDetail();
+  const { bookingDetail, updateBookingDetail, resetBookingDetail } =
+    useBookingDetail();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -31,6 +32,7 @@ export default function Basicinformation() {
 
   // ฟังก์ชันเมื่อกดปุ่ม Back
   const handleBack = () => {
+    resetBookingDetail();
     router.push("/searchresultpage");
   };
 
@@ -99,7 +101,7 @@ export default function Basicinformation() {
       <Navbar />
       <SectionsStep1 />
       <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm">
+        <div className="w-full max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-md">
           <div className="space-y-2">
             <h1 className="font-inter text-2xl font-semibold tracking-tight text-gray-600">
               Basic Information

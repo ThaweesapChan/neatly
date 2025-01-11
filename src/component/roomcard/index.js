@@ -4,6 +4,7 @@ import { Images, Users, Bed, Maximize, SquareDashed } from "lucide-react";
 import { useRouter } from "next/router";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 import { useTimer } from "@/lib/TimerContext";
+import { useAuth } from "@/lib/AuthContext";
 
 function Roomcard({ room, onClick, checkIn, checkOut }) {
   const [roomData, setRoomData] = useState(null);
@@ -14,6 +15,7 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
   const router = useRouter();
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const { resetTimer } = useTimer();
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     if (room) {
@@ -40,6 +42,12 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
 
   // ฟังก์ชันจัดการการคลิกปุ่ม "Book Now"
   const handleBookNowClick = () => {
+    if (!isLoggedIn) {
+      // ถ้ายังไม่ได้ล็อกอิน ให้พาไปหน้า Login
+      router.push("/login");
+      return;
+    }
+
     // ส่งข้อมูลการจองเข้า Context
     const bookingData = {
       roominfo: roomData,
@@ -56,8 +64,8 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
   return (
     <div className="w-full overflow-hidden rounded-lg shadow-sm">
       <div className="justify-between md:flex">
-        <div className="h-[320px] w-full md:mt-6 md:w-1/2 p-1">
-          <div className="grid h-[95%] w-full md:w-[94%] grid-cols-1 grid-rows-1 overflow-hidden rounded-lg">
+        <div className="h-[320px] w-full p-1 md:mt-6 md:w-1/2">
+          <div className="grid h-[95%] w-full grid-cols-1 grid-rows-1 overflow-hidden rounded-lg md:w-[94%]">
             {/* Image Layer */}
             <div className="col-span-1 col-start-1 row-span-1 row-start-1">
               <Image
@@ -157,7 +165,7 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
               disabled={isBookNowDisabled} // ปิดการใช้งานปุ่มถ้ายังไม่ได้กรอกวันที่
               className={`rounded px-4 py-2 text-sm font-medium transition-colors ${
                 isBookNowDisabled
-                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  ? "cursor-not-allowed bg-gray-300 text-gray-600"
                   : "bg-orange-600 text-white hover:bg-orange-700 hover:text-orange-600"
               }`}
             >
