@@ -52,7 +52,7 @@ const Searchresult = () => {
       return;
     }
     try {
-      const response = await axios.get("http://localhost:3000/api/searchroom", {
+      const response = await axios.get("/api/searchroom", {
         params: { check_in: checkIn, check_out: checkOut, guest },
       });
       setRoomDetails(response.data.data || []);
