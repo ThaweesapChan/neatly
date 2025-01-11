@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Images, Users, Bed, Maximize, SquareDashed } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
 import { useTimer } from "@/lib/TimerContext";
+
 function Roomcard({ room, onClick, checkIn, checkOut }) {
   const [roomData, setRoomData] = useState(null);
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [roomId, setRoomId] = useState();
+  const [isBookNowDisabled, setIsBookNowDisabled] = useState(true); // เพิ่มตัวแปรเพื่อตรวจสอบการเปิด/ปิดปุ่ม
   const router = useRouter();
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
   const { resetTimer } = useTimer();
@@ -21,9 +22,18 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
       setCheckOutDate(checkOut);
       setRoomId(room.room_id);
     }
-  }, []);
+  }, [room, checkIn, checkOut]);
 
-  // ฟังก์ชันจัดการการคลิกปุ่ม "Rom detail"
+  // ตรวจสอบว่า checkInDate และ checkOutDate มีค่าแล้วหรือยัง
+  useEffect(() => {
+    if (checkInDate && checkOutDate) {
+      setIsBookNowDisabled(false); // ถ้ามีวันที่ครบก็เปิดใช้ปุ่ม
+    } else {
+      setIsBookNowDisabled(true); // ถ้าไม่มีวันที่ครบก็ปิดปุ่ม
+    }
+  }, [checkInDate, checkOutDate]);
+
+  // ฟังก์ชันจัดการการคลิกปุ่ม "Room detail"
   const handleRoomDetailClick = () => {
     router.push(`/roomdetail/${roomId}`);
   };
@@ -144,7 +154,12 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
             </button>
             <button
               onClick={handleBookNowClick}
-              className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-700 hover:text-orange-600"
+              disabled={isBookNowDisabled} // ปิดการใช้งานปุ่มถ้ายังไม่ได้กรอกวันที่
+              className={`rounded px-4 py-2 text-sm font-medium transition-colors ${
+                isBookNowDisabled
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-orange-600 text-white hover:bg-orange-700 hover:text-orange-600"
+              }`}
             >
               Book Now
             </button>
