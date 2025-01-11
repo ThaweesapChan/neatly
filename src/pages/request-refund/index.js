@@ -24,6 +24,7 @@ const RequestRefundPage = () => {
       await axios.put(`/api/updateBookingStatus`, {
         booking_id: bookingDetails.booking_id,
         status: "cancelled",
+        cancellation_date: new Date().toISOString(),
       });
 
       // Redirect ไปยังหน้า CancelSuccessPage พร้อมส่ง booking_id
@@ -61,6 +62,42 @@ const RequestRefundPage = () => {
 
   // ใช้ URL ของรูปภาพจาก database
   const roomImageUrl = bookingDetails.room?.room_image_url;
+
+  const calculateTotalPrice = (bookingDetails) => {
+    const { room, check_in_date, check_out_date, special_requests } =
+      bookingDetails;
+
+    // คำนวณจำนวนวันเข้าพัก
+    const days =
+      (new Date(check_out_date) - new Date(check_in_date)) / (1000 * 3600 * 24);
+
+    // ราคาห้อง (ใช้ promotion_price ถ้ามี, ถ้าไม่มีใช้ price)
+    const roomPrice = Number(room?.promotion_price || room?.price || 0);
+
+    // คำนวณราคา special_requests
+    const specialRequestsTotal = special_requests
+      ? special_requests.reduce((total, request) => {
+          const parsedRequest = JSON.parse(request);
+
+          // เงื่อนไข: ไม่คูณจำนวนวันสำหรับ Airport transfer และ Phone chargers and adapters
+          if (
+            [
+              "Airport transfer",
+              "Extra bed",
+              "Phone chargers and adapters",
+            ].includes(parsedRequest.name)
+          ) {
+            return total + Number(parsedRequest.price || 0);
+          } else {
+            // คูณจำนวนวันสำหรับ special requests อื่นๆ
+            return total + Number(parsedRequest.price || 0) * days;
+          }
+        }, 0)
+      : 0;
+
+    // รวมราคาทั้งหมด (ราคาห้อง + special requests)
+    return roomPrice * days + specialRequestsTotal;
+  };
 
   return (
     <>
@@ -122,7 +159,7 @@ const RequestRefundPage = () => {
                   <p>Total Refund</p>
                   <p className="text-2xl font-semibold">
                     THB{" "}
-                    {parseFloat(bookingDetails.total_price).toLocaleString(
+                    {calculateTotalPrice(bookingDetails).toLocaleString(
                       "en-US",
                       {
                         minimumFractionDigits: 2,

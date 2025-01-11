@@ -17,13 +17,25 @@ export function BookingDetailProvider({ children }) {
     const { roominfo, check_in_date, check_out_date, additionalInfo } = details;
     const days =
       (new Date(check_out_date) - new Date(check_in_date)) / (1000 * 3600 * 24);
-    const roomPrice = roominfo?.promotion_price || 0;
+    const roomPrice = roominfo?.promotion_price || roominfo?.price || 0;
 
+    // ตรวจสอบและคำนวณราคาของ special requests
     const specialRequestTotal = Array.isArray(additionalInfo?.specialRequests)
-      ? additionalInfo.specialRequests.reduce(
-          (acc, req) => acc + (req?.price || 0),
-          0,
-        )
+      ? additionalInfo.specialRequests.reduce((acc, req) => {
+          if (
+            [
+              "Airport transfer",
+              "Extra bed",
+              "Phone chargers and adapters",
+            ].includes(req.name)
+          ) {
+            // กรณีไม่ต้องคูณจำนวนวัน
+            return acc + (req?.price || 0);
+          } else {
+            // กรณีต้องคูณจำนวนวัน
+            return acc + (req?.price || 0) * days;
+          }
+        }, 0)
       : 0;
 
     return roomPrice * days + specialRequestTotal;

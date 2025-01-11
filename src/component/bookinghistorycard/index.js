@@ -45,23 +45,36 @@ function BookingHistoryCard({ bookings }) {
 
   // Total Price Calculation
   const calculateTotalPrice = (booking) => {
-    const roomPrice = Number(booking.rooms.price || 0);
+    const roomPrice = Number(
+      booking.rooms.promotion_price || booking.rooms.price || 0,
+    );
 
-    //  special requests total price
+    const days =
+      (new Date(booking.check_out_date) - new Date(booking.check_in_date)) /
+      (1000 * 3600 * 24);
+
+    // แยก special requests ที่ต้องคูณจำนวนวัน และไม่ต้องคูณ
     const specialRequestsTotal = booking.special_requests
       ? booking.special_requests.reduce((total, request) => {
           const parsedRequest = JSON.parse(request);
-          return total + Number(parsedRequest.price || 0);
+
+          if (
+            [
+              "Airport transfer",
+              "Extra bed",
+              "Phone chargers and adapters",
+            ].includes(parsedRequest.name)
+          ) {
+            // ไม่คูณจำนวนวัน
+            return total + Number(parsedRequest.price || 0);
+          } else {
+            // คูณจำนวนวัน
+            return total + Number(parsedRequest.price || 0) * days;
+          }
         }, 0)
       : 0;
 
-    /* // ดึงส่วนลดจาก promotion_code (หากมี)
-    const promotionCodeDiscount = Number(booking.promotion_code_discount || 0); */
-
-    return (
-      (roomPrice + specialRequestsTotal) *
-      booking.stay /* - promotionCodeDiscount */
-    );
+    return roomPrice * days + specialRequestsTotal;
   };
 
   // Format date function
@@ -170,7 +183,14 @@ function BookingHistoryCard({ bookings }) {
                         <div className="flex justify-between">
                           <span>{booking.rooms.room_type}</span>
                           <span className="font-semibold text-gray-900">
-                            {booking.rooms.price.toFixed(2)}
+                            {parseFloat(
+                              booking.rooms.promotion_price ||
+                                booking.rooms.price ||
+                                0,
+                            ).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
                           </span>
                         </div>
                         <div>

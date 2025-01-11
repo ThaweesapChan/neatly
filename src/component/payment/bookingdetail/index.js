@@ -103,8 +103,7 @@ export default function Bookingdetail() {
           <div className="flex items-center justify-between">
             {`${roominfo?.room_type || "Unknown Room"}`}
             <span className="text-white">
-              {" "}
-              {formatPrice(roominfo?.promotion_price || 0)}
+              {formatPrice(roominfo?.promotion_price || roominfo?.price || 0)}
             </span>
           </div>
         </div>
