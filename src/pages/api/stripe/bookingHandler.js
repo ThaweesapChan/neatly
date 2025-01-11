@@ -30,6 +30,7 @@ export default async function bookingHandler(req, res) {
         !userinfo?.dateOfBirth ||
         !userinfo?.country ||
         !roominfo?.room_id ||
+        !roominfo?.price ||
         !check_in_date ||
         !check_out_date ||
         !totalprice ||
@@ -60,7 +61,8 @@ export default async function bookingHandler(req, res) {
         standard_requests: additionalInfo?.standardRequests || null,
         additional_request: additionalInfo?.additionalRequest || null,
         room_id: roominfo.room_id,
-        original_price: roominfo?.original_price || null,
+        original_price: roominfo?.price || null,
+        guests: roominfo?.guests || 1,
         promotion_code: roominfo?.promotion_code || null,
         status: "pending",
         total_price: totalprice,

@@ -42,8 +42,10 @@ export default async function handler(req, res) {
         booking_id,
         check_in_date,
         check_out_date,
+        amount,
         guests,
         total_price,
+        original_price,
         special_requests,
         standard_requests,
         additional_request,
@@ -55,6 +57,7 @@ export default async function handler(req, res) {
           id:room_id,
           room_type,
           room_image_url,
+          promotion_price,
           price
         ),
         payment:payments ( payment_method )

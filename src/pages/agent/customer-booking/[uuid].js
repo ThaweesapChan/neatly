@@ -196,7 +196,7 @@ function BookingDetailPage() {
                           className="mb-2 flex justify-between text-gray-900"
                         >
                           <div className="flex-1">
-                            <p>{parsedRequest.request}</p>
+                            <p>{parsedRequest.name}</p>
                           </div>
                           <div className="text-right">
                             <p className="font-semibold text-gray-900">
