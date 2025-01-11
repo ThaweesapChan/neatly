@@ -48,10 +48,6 @@ const Searchresult = () => {
 
   // ฟังก์ชันดึงข้อมูลห้อง
   const fetchRooms = async () => {
-    if (!checkIn || !checkOut || !guest) {
-      setError("Please fill in all fields.");
-      return;
-    }
     if (new Date(checkOut) <= new Date(checkIn)) {
       setError("Check-out date must be after check-in date.");
       return;
@@ -63,7 +59,7 @@ const Searchresult = () => {
       setRoomDetails(response.data.data || []);
       setError(null);
     } catch (err) {
-      setError("Failed to fetch rooms. Please try again.");
+      setError("Please fill in complete information.");
     }
   };
 
@@ -71,6 +67,9 @@ const Searchresult = () => {
   useEffect(() => {
     fetchRooms();
   }, [checkIn, checkOut, guest]);
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   return (
     <div className="flex flex-col items-center">
