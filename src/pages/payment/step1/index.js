@@ -11,7 +11,8 @@ import axios from "axios";
 
 export default function Basicinformation() {
   const router = useRouter();
-  const { bookingDetail, updateBookingDetail } = useBookingDetail();
+  const { bookingDetail, updateBookingDetail, resetBookingDetail } =
+    useBookingDetail();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -31,6 +32,7 @@ export default function Basicinformation() {
 
   // ฟังก์ชันเมื่อกดปุ่ม Back
   const handleBack = () => {
+    resetBookingDetail();
     router.push("/searchresultpage");
   };
 

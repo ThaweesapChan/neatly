@@ -13,6 +13,18 @@ export function BookingDetailProvider({ children }) {
     totalprice: 0,
   });
 
+  const resetBookingDetail = () => {
+    setBookingDetailState({
+      user_id: null,
+      roominfo: {},
+      check_in_date: "",
+      check_out_date: "",
+      userinfo: {},
+      additionalInfo: {},
+      totalprice: 0,
+    });
+  };
+
   const calculateTotalPrice = (details) => {
     const { roominfo, check_in_date, check_out_date, additionalInfo } = details;
     const days =
@@ -53,7 +65,7 @@ export function BookingDetailProvider({ children }) {
 
   return (
     <BookingDetailContext.Provider
-      value={{ bookingDetail, updateBookingDetail }}
+      value={{ bookingDetail, updateBookingDetail, resetBookingDetail }}
     >
       {children}
     </BookingDetailContext.Provider>
