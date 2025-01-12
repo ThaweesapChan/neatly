@@ -42,7 +42,7 @@ const TimeUpPopup = () => {
             Time is up!
           </h2>
           <p className="mb-6 text-lg text-gray-600">
-            Time's up! You can return to the main page to proceed.
+            Time is up! You can return to the main page to proceed.
           </p>
           <div className="flex justify-center gap-4">
             <button
