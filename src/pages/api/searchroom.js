@@ -1,4 +1,5 @@
 import supabase from "@/utils/supabaseClient";
+import { useRouter } from "next/router";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -37,7 +38,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing required parameters" });
     }
 
-    if (new Date(check_out) <= new Date(check_in)) {
+    // ตรวจสอบวันที่ check_in และ check_out
+    const checkInDate = new Date(check_in);
+    const checkOutDate = new Date(check_out);
+
+    if (checkOutDate <= checkInDate) {
       return res.status(400).json({
         error: "Check-out date must be after check-in date",
       });
@@ -55,8 +60,7 @@ export default async function handler(req, res) {
       const { data: bookedRooms, error: bookingsError } = await supabase
         .from("bookings")
         .select("room_id")
-        .lte("check_in_date", check_out)
-        .gte("check_out_date", check_in);
+        .or(`check_in_date.lte.${check_out},check_out_date.gte.${check_in}`);
 
       if (bookingsError) {
         console.error("Error querying bookings:", bookingsError);
@@ -64,27 +68,32 @@ export default async function handler(req, res) {
       }
 
       const bookedRoomIds =
-        bookedRooms
-          ?.filter((booking) => booking.room_id !== null) // Filter out null room_ids
-          .map((booking) => booking.room_id) || [];
+        bookedRooms?.map((booking) => booking.room_id) || []; // ดึง room_id ทั้งหมด
+
+      // ใช้ Set เพื่อกรองห้องที่ซ้ำกัน
+      const uniqueBookedRoomIds = [...new Set(bookedRoomIds)];
 
       // Query for available rooms that can accommodate the number of guests
       let { data: availableRooms, error: roomsError } = await supabase
         .from("rooms")
-        .select("*")
-        .gte("guests", parsedGuest);
-
+        .select("*");
       if (roomsError) {
         console.error("Error querying rooms:", roomsError);
         return res.status(500).json({ error: roomsError.message });
       }
 
       // If there are booked rooms, filter them out from the available rooms
-      if (bookedRoomIds.length > 0) {
+      if (uniqueBookedRoomIds.length > 0) {
         availableRooms = availableRooms.filter(
-          (room) => !bookedRoomIds.includes(room.id),
+          (room) =>
+            !bookedRoomIds.includes(room.id) && room.guests === parsedGuest,
         );
       }
+
+      // เรียงลำดับห้องตามราคาจากน้อยไปมาก
+      availableRooms = availableRooms
+        .filter((room) => room.price != null) // กรองห้องที่ไม่มีราคา
+        .sort((a, b) => a.price - b.price); // เรียงลำดับห้องตามราคา
 
       return res.status(200).json({ data: availableRooms });
     } catch (error) {

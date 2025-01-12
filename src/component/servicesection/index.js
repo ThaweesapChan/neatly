@@ -16,7 +16,7 @@ function Servicesection() {
         className="mt-20 bg-green-700 p-4 text-white md:flex md:flex-col md:gap-5"
         id="service-facilities"
       >
-        <h1 className="m-20 text-center font-notoSerif text-7xl">
+        <h1 className="m-16 text-center font-notoSerif text-5xl md:text-7xl">
           Service & Facilities
         </h1>
 

@@ -166,7 +166,7 @@ function Roomcard({ room, onClick, checkIn, checkOut }) {
               className={`rounded px-4 py-2 text-sm font-medium transition-colors ${
                 isBookNowDisabled
                   ? "cursor-not-allowed bg-gray-300 text-gray-600"
-                  : "bg-orange-600 text-white hover:bg-orange-700 hover:text-orange-600"
+                  : "bg-orange-600 text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
               }`}
             >
               Book Now
