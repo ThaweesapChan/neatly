@@ -1,27 +1,16 @@
 import { ConditionRefund } from "@/component/payment/sectionstep";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import {
-  CardExpiryElement,
-  CardCvcElement,
-  CardNumberElement,
-  useStripe,
-  useElements,
-  Elements,
-} from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+import { useBookingDetail } from "@/lib/BookingDetailContext";
 import { Button } from "@/component/button";
-
-// โหลด Stripe ด้วย Publishable Key
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
+import Bookingdetail from "@/component/payment/bookingdetail";
+import { Banknote } from "lucide-react";
 
 export function FormCash() {
   const router = useRouter();
-  const stripe = useStripe();
-  const elements = useElements();
-  const [cardOwner, setCardOwner] = useState("");
-  const [promotionCode, setPromotionCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { bookingDetail } = useBookingDetail();
 
   const handleBack = () => {
     router.push("/payment/step2");
@@ -29,59 +18,87 @@ export function FormCash() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  };
 
-  // Stripe element styles
-  const stripeElementStyle = {
-    base: {
-      fontSize: "16px",
-      color: "#A0AEC0", // Light gray for text
-      "::placeholder": {
-        color: "#A0AEC0", // Light gray placeholder
-      },
-    },
-    invalid: { color: "#ff6b6b" },
+    setLoading(true);
+    setError(null);
+
+    try {
+      const {
+        roominfo,
+        check_in_date,
+        check_out_date,
+        userinfo,
+        totalprice,
+        additionalInfo,
+        user_id,
+      } = bookingDetail;
+
+      const response = await fetch("/api/cashBookingHandler", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roominfo,
+          check_in_date,
+          check_out_date,
+          userinfo,
+          additionalInfo,
+          totalprice,
+          amount: 1,
+          user_id,
+        }),
+      });
+
+      if (!response.ok) {
+        const { message } = await response.json();
+        throw new Error(message || "Failed to process booking.");
+      }
+
+      const data = await response.json();
+
+      router.push(`/payment/payment-success`);
+    } catch (err) {
+      console.error("Booking error:", err);
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
-      {/* Payment Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-10">
         <div className="font-inter text-xl font-semibold text-gray-600">
           Cash
         </div>
 
-        {/* Promotion Code */}
-        {/*  <div>
-          <label className="mb-1 block font-inter text-sm font-normal">
-            Promotion Code
-          </label>
-          <input
-            type="text"
-            value={promotionCode}
-            onChange={(e) => setPromotionCode(e.target.value)}
-            placeholder="NEATLYNEW400"
-            className="w-full rounded border p-2 text-gray-400 placeholder-gray-400"
-            style={{
-              fontSize: "16px",
-              color: "#A0AEC0",
-            }}
-          />
-        </div> */}
+        <div className="rounded-md bg-[#F1F2F6] p-6">
+          <div className="flex items-center gap-4">
+            <Banknote className="h-20 w-20 text-orange-500 md:h-10" />
+            <span className="font-inter text-sm text-[#2A2E3F] md:text-base">
+              Pay at the hotel with cash or cheque. No payment is required until
+              you check in.
+            </span>
+          </div>
+        </div>
 
-        {/* Booking Detail */}
-
-        <div className="h-12 w-full bg-green-800 md:hidden">Booking Detail</div>
+        <div className="md:hidden">
+          <Bookingdetail />
+        </div>
 
         <div className="md:hidden">
           <ConditionRefund />
         </div>
 
+        {error && <div className="text-red-500">{error}</div>}
+
         <div className="flex flex-row justify-between">
           <Button type="3" name="Back" style="w-[101PX]" onClick={handleBack} />
 
           <button
-            disabled={!stripe || loading}
+            type="submit"
+            disabled={loading}
             className={`w-[101PX] rounded py-2 text-white ${
               loading ? "cursor-not-allowed bg-gray-400" : "bg-orange-500"
             }`}
@@ -94,11 +111,6 @@ export function FormCash() {
   );
 }
 
-// Test Component ที่ครอบ Step3 ด้วย <Elements>
 export default function Cash() {
-  return (
-    <Elements stripe={stripePromise}>
-      <FormCash />
-    </Elements>
-  );
+  return <FormCash />;
 }
