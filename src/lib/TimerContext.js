@@ -1,25 +1,35 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+
 const TimerContext = createContext();
 
 export const TimerProvider = ({ children }) => {
-  const initialTime = 5 * 60; // 5 นาที
+  const initialTime = 5; // 5 นาที in seconds
   const [remainingTime, setRemainingTime] = useState(initialTime);
+  const [isTimeUp, setIsTimeUp] = useState(false);
 
   useEffect(() => {
+    // เมื่อ remainingTime ลดลงจนถึง 0
+    if (remainingTime === 0) {
+      setIsTimeUp(true); // เวลาได้หมดแล้ว
+    }
+  }, [remainingTime]);
+
+  useEffect(() => {
+    // Set an interval for countdown
     const interval = setInterval(() => {
       setRemainingTime((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
-    return () => clearInterval(interval); // Clear interval เมื่อ component ถูก unmount
+    return () => clearInterval(interval); // Clear the interval when component unmounts
   }, []);
 
-  // ฟังก์ชันสำหรับรีเซ็ต Timer
   const resetTimer = () => {
-    setRemainingTime(initialTime);
+    setRemainingTime(initialTime); // รีเซ็ตเวลาให้กลับไปที่ 5 นาที
+    setIsTimeUp(false); // รีเซ็ตสถานะเวลาหมด
   };
 
   return (
-    <TimerContext.Provider value={{ remainingTime, resetTimer }}>
+    <TimerContext.Provider value={{ remainingTime, isTimeUp, resetTimer }}>
       {children}
     </TimerContext.Provider>
   );

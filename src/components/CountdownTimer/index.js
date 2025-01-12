@@ -1,7 +1,7 @@
 import { useTimer } from "@/lib/TimerContext";
 
 export default function CountdownTimer() {
-  const { remainingTime } = useTimer();
+  const { remainingTime } = useTimer(); // ใช้ค่า remainingTime จาก context
 
   // แปลง seconds เป็นรูปแบบ mm:ss
   const formatTime = (time) => {
@@ -13,7 +13,7 @@ export default function CountdownTimer() {
   return (
     <div className="countdown-timer rounded-lg bg-orange-200 p-1">
       <div className="font-inter text-xl text-red-700">
-        {formatTime(remainingTime)}
+        {formatTime(remainingTime)} {/* แสดงเวลาในรูปแบบที่ต้องการ */}
       </div>
     </div>
   );
