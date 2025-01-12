@@ -83,7 +83,7 @@ function Herosection() {
         </p>
       </div>
       {/* กล่องแบบฟอร์ม */}
-      <div className="flex w-full flex-row p-10  sm:w-full sm:items-center sm:p-20">
+      <div className="flex w-full flex-row p-10  sm:p-0 sm:w-full ">
         <div className="relative w-full rounded bg-white p-6 shadow-lg sm:my-12 sm:mt-12 sm:flex sm:w-full sm:justify-end sm:py-10">
           {/* Check In */}
           <div className="mb-6 flex-1 sm:mb-0 sm:mr-4">

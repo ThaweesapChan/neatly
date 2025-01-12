@@ -15,22 +15,21 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   function validateUsernameOrEmail(input) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // ตรวจสอบว่าเป็น Email
-    const usernamePattern = /^[a-zA-Z0-9_]+$/; // ตรวจสอบว่าเป็น Username
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernamePattern = /^[a-zA-Z0-9_]+$/;
     if (emailPattern.test(input)) {
-      return "email"; // Input เป็น Email
+      return "email";
     } else if (usernamePattern.test(input)) {
-      return "username"; // Input เป็น Username
+      return "username";
     } else {
-      return "invalid"; // Input ไม่ผ่านการตรวจสอบ
+      return "invalid";
     }
   }
 
-  // ฟังก์ชันจัดการเมื่อผู้ใช้กด Login
   async function handleLogin() {
-    setError(""); // รีเซ็ตข้อผิดพลาดก่อนหน้า
-    setLoading(true); // แสดงสถานะกำลังโหลด
-    let email = ""; // เก็บค่า email
+    setError("");
+    setLoading(true);
+    let email = "";
 
     // ตรวจสอบ Input ของผู้ใช้
     const userInputType = validateUsernameOrEmail(usernameOrEmail);
@@ -43,12 +42,10 @@ export default function LoginPage() {
 
     try {
       if (userInputType === "username") {
-        const username = usernameOrEmail;
-        // ค้นหา Email จาก Username
         const { data, error } = await supabase
           .from("users")
           .select("email")
-          .eq("username", username)
+          .eq("username", usernameOrEmail)
           .single();
 
         if (error || !data) {
@@ -60,7 +57,6 @@ export default function LoginPage() {
         email = usernameOrEmail;
       }
 
-      // ส่งคำขอไปที่ API เพื่อเข้าสู่ระบบ
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -75,10 +71,8 @@ export default function LoginPage() {
         throw new Error(data.message || "Login failed.");
       }
 
-      // เก็บ JWT Token ไว้ใน Local Storage
       localStorage.setItem("token", data.token);
 
-      // ดึงข้อมูลมาเช็ค role
       const userResponse = await axios.get("/api/getUser", {
         headers: {
           Authorization: `Bearer ${data.token}`,
@@ -86,8 +80,6 @@ export default function LoginPage() {
       });
 
       const userData = userResponse.data.data;
-
-      // อัพเดตสถานะของ customer ว่า login เข้ามาแล้ว
       setIsLoggedIn(true);
 
       // ทำการ redirect ตาม role
@@ -104,78 +96,72 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex min-h-min flex-col">
       <Navbar />
-      {/* รูปภาพ */}
-      <div className="flex flex-col md:flex-row md:items-start md:gap-20 md:bg-[#F7F7FB]">
-        <img
-          src="/asset/login3chair_mobile.jpeg"
-          className="h-fit w-full md:hidden" // รูปภาพสำหรับ Mobile
-          alt="Login Illustration for Mobile"
-        />
-        <img
-          src="/asset/login3chair.jpeg"
-          className="md:full hidden md:block md:h-screen md:w-1/2" // รูปภาพสำหรับ Desktop
-          alt="Login Illustration for Desktop"
-        />
 
-        {/* กลุ่มเนื้อหาหลังรูปภาพ */}
-        <div className="md: flex flex-col gap-10 p-10 md:ml-16 md:mt-48 md:w-[452px] md:gap-10 md:p-0">
-          <h1 className="h-14 w-80 font-notoSerif text-5xl font-medium text-green-800 md:text-7xl">
-            Log In
-          </h1>
-          <div className="flex flex-col gap-10 md:mt-10">
-            <div>
-              <label
-                htmlFor="usernameOrEmail"
-                className="mb-1 block font-inter font-medium text-gray-900"
-              >
-                Username or Email
-              </label>
-              <input
-                className="w-full rounded border border-gray-300 p-4 font-inter text-gray-900 placeholder-gray-400"
-                id="usernameOrEmail"
-                type="text"
-                placeholder="Enter your username or email"
-                value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-1 block font-inter font-medium text-gray-900"
-              >
-                Password
-              </label>
-              <input
-                className="w-full rounded border border-gray-300 p-4 text-gray-900 placeholder-gray-400"
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+      {/* Main Content Container */}
+      <div className="flex flex-1 flex-col lg:flex-row lg:bg-[#F7F7FB]">
+        {/* Image Section */}
+        <div className="relative w-full md:h-[50vh] lg:h-screen lg:w-1/2">
+          <img
+            src="/asset/login3chair.jpeg"
+            alt="Login Illustration"
+            className="h-[375px] w-full object-cover object-[center_70%] md:h-full md:object-center"
+          />
+        </div>
 
-            <button
-              className="rounded bg-orange-600 p-4 font-openSans text-base font-semibold text-white"
-              onClick={handleLogin}
-              disabled={loading} // ปิดการใช้งานปุ่มเมื่อกำลังโหลด
-            >
-              {loading ? "Logging in..." : "Log In"}
-            </button>
-            {/* ข้อความพร้อมลิงก์ไปยังหน้าลงทะเบียน */}
-            <p className="-mt-4 font-inter text-base font-normal text-gray-700">
-              Don&apos;t have an account yet?{" "}
-              <Link
-                href="/register"
-                className="font-openSans text-base font-semibold text-orange-500 hover:underline"
+        {/* Form Section */}
+        <div className="flex-1 px-6 py-8 md:px-12 md:py-10 lg:flex lg:items-center lg:px-20 lg:py-0">
+          <div className="w-full max-w-[452px] lg:mx-auto ">
+            <h1 className="mb-10 font-notoSerif text-[40px] leading-[1.2] text-[#2F3337] md:text-[56px] lg:text-[72px] lg:leading-[87px]">
+              Log In
+            </h1>
+            <div className="space-y-6 md:space-y-8">
+              <div>
+                <label className="mb-2 block font-medium text-[#2F3337] md:text-lg">
+                  Username or Email
+                </label>
+                <input
+                  type="text"
+                  value={usernameOrEmail}
+                  onChange={(e) => setUsernameOrEmail(e.target.value)}
+                  placeholder="Enter your username or email"
+                  className="w-full rounded border border-[#D7D7D7] p-3 text-[#2F3337] placeholder:text-[#9AA1B9] md:text-lg"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block font-medium text-[#2F3337] md:text-lg">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full rounded border border-[#D7D7D7] p-3 text-[#2F3337] placeholder:text-[#9AA1B9]  md:text-lg"
+                />
+              </div>
+
+              <button
+                onClick={handleLogin}
+                disabled={loading}
+                className="w-full rounded bg-[#C14817] p-3 font-semibold text-white  md:text-lg"
               >
-                Register
-              </Link>
-            </p>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+                {loading ? "Logging in..." : "Log In"}
+              </button>
+
+              <p className="text-[#646D89] md:text-lg">
+                Don&apos;t have an account yet?{" "}
+                <Link
+                  href="/register"
+                  className="font-semibold text-[#C14817] hover:underline"
+                >
+                  Register
+                </Link>
+              </p>
+              {error && <p style={{ color: "red" }}>{error}</p>}
+            </div>
           </div>
         </div>
       </div>
