@@ -24,7 +24,7 @@ export function FormCash() {
   const [loading, setLoading] = useState(false);
 
   const handleBack = () => {
-    router.push("http://localhost:3000");
+    router.push("/payment/step2");
   };
 
   const handleSubmit = async (e) => {
@@ -52,7 +52,7 @@ export function FormCash() {
         </div>
 
         {/* Promotion Code */}
-        <div>
+        {/*  <div>
           <label className="mb-1 block font-inter text-sm font-normal">
             Promotion Code
           </label>
@@ -67,7 +67,7 @@ export function FormCash() {
               color: "#A0AEC0",
             }}
           />
-        </div>
+        </div> */}
 
         {/* Booking Detail */}
 

@@ -92,7 +92,6 @@ const RegisterForm = () => {
       if (profile) {
         const url = await uploadFile(profile); // อัพโหลดไฟล์และรับ URL
         if (url) {
-          console.log(url);
           formData.profile_picture_url = url;
         } else {
           console.error("Failed to upload file.");
@@ -111,7 +110,7 @@ const RegisterForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        router.push("http://localhost:3000/homepage");
+        router.push("/");
       } else {
         alert(result.message || "Something went wrong!");
       }

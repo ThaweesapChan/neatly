@@ -13,7 +13,7 @@ const DeleteRoomWithModal = ({ roomId }) => {
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
-      console.log("Attempting to delete room with ID:", roomId);
+      /* console.log("Attempting to delete room with ID:", roomId); */
 
       const response = await axios.delete(
         `/api/deleteRoomPropertyById/${roomId}`,

@@ -1,11 +1,15 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-export default function RoomsSuitsPost({ label = "", src = "", roomId, labelStyle }) {
+export default function RoomsSuitsPost({
+  label = "",
+  src = "",
+  roomId,
+  labelStyle,
+}) {
   const router = useRouter();
 
   const handleExploreRoom = () => {
-    console.log("Navigating to room:", roomId);
     router.push(`/roomdetail/${roomId}`);
   };
 

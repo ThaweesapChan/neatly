@@ -60,15 +60,13 @@ const CreateRoomWithModal = ({ formData, resetFormData }) => {
       };
 
       const response = await axios.post("/api/createRoom", data);
-      console.log(response.data);
       resetFormData();
       setShowSuccessModal(true);
-      
+
       // Redirect after 2 seconds
       setTimeout(() => {
         router.push("/agent/roomproperty/roomproperty");
       }, 2000);
-
     } catch (error) {
       console.error("Error creating room:", error);
       setError(error.response?.data?.message || "Failed to create room");

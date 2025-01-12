@@ -180,7 +180,7 @@ export function FormCreditCard() {
         </div>
 
         {/* Promotion Code */}
-        <div>
+        {/* <div>
           <label className="mb-1 block font-inter text-sm font-normal">
             Promotion Code
           </label>
@@ -195,7 +195,7 @@ export function FormCreditCard() {
               color: "#A0AEC0",
             }}
           />
-        </div>
+        </div> */}
 
         {error && <p className="mt-2 text-red-500">{error}</p>}
 
