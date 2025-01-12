@@ -3,7 +3,7 @@ import supabase from "@/utils/supabaseClient";
 export default async function handler(req, res) {
   const { id } = req.query;
 
-  console.log("Received delete request for room ID:", id);
+  /*   console.log("Received delete request for room ID:", id); */
 
   if (req.method !== "DELETE") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       .eq("room_id", id)
       .single();
 
-    console.log("Fetched room data:", roomData);
+    /*     console.log("Fetched room data:", roomData); */
 
     if (fetchError) {
       return res.status(500).json({
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log("Images to delete:", imagePaths);
+    /* console.log("Images to delete:", imagePaths); */
 
     // 3. Delete images from storage
     if (imagePaths.length > 0) {
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
         console.error("Storage deletion error:", storageError);
         // Continue with database deletion even if storage deletion fails
       } else {
-        console.log("Successfully deleted images from storage");
+        /* console.log("Successfully deleted images from storage"); */
       }
     }
 
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
       .delete()
       .eq("room_id", roomId);
 
-    console.log("Database deletion result:", deleteData);
+    /* console.log("Database deletion result:", deleteData); */
 
     if (deleteError) {
       return res.status(500).json({

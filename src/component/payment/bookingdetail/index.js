@@ -3,6 +3,7 @@ import CountdownTimer from "@/components/CountdownTimer";
 import { BriefcaseBusiness } from "lucide-react";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import TimeUpPopup from "@/components/TimePopup/idex";
 
 export default function Bookingdetail() {
   const { bookingDetail, updateBookingDetail } = useBookingDetail();
@@ -76,6 +77,7 @@ export default function Bookingdetail() {
           <h2 className="flex items-center gap-4 text-xl font-semibold">
             <BriefcaseBusiness className="text-[#81A08F]" /> Booking Detail
           </h2>
+          <TimeUpPopup />
           <CountdownTimer className="h-[25px] w-[56px]" />
         </div>
 

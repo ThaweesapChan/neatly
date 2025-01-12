@@ -15,6 +15,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/component/button";
 import axios from "axios";
 import { useBookingDetail } from "@/lib/BookingDetailContext";
+import { PaymentFailed } from "@/component/payment/payment-failed";
 
 // โหลด Stripe ด้วย Publishable Key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISABLE_KEY);
@@ -28,15 +29,21 @@ export function FormCreditCard() {
   const [loading, setLoading] = useState(false);
   const { bookingData } = useBooking();
   const [error, setError] = useState("");
-  //ยังสงสัย bookingDetail ว่าเปลี่ยนชื่อเป็นอย่างอื่นได้หรือป่าว
   const { bookingDetail } = useBookingDetail();
+
+  // state for showing the PaymentFailed popup
+  const [showPaymentFailed, setShowPaymentFailed] = useState(false);
 
   const handleBack = () => {
     router.push("/payment/step2");
   };
 
   const handlePaymentFailed = () => {
-    router.push("/payment/payment-failed");
+    setShowPaymentFailed(true); // Show the PaymentFailed popup
+  };
+
+  const handleClosePopup = () => {
+    setShowPaymentFailed(false); // Close the popup
   };
 
   const handleSubmit = async (e) => {
@@ -56,7 +63,6 @@ export function FormCreditCard() {
     setLoading(true);
 
     try {
-      // เรียกข้อมูลจาก Context
       const {
         roominfo,
         check_in_date,
@@ -66,7 +72,6 @@ export function FormCreditCard() {
         additionalInfo,
       } = bookingDetail;
 
-      // เรียก API Backend เพื่อสร้าง PaymentIntent และรับ client_secret
       const response = await axios.post("/api/stripe/bookingHandler", {
         roominfo,
         check_in_date,
@@ -78,14 +83,12 @@ export function FormCreditCard() {
         user_id: bookingDetail.user_id,
       });
 
-      // ตรวจสอบ Response
       if (!response.data.client_secret) {
         throw new Error("No client_secret received from API");
       }
 
       const { client_secret } = response.data;
 
-      // ใช้ client_secret กับ stripe.confirmCardPayment
       const { error: confirmError, paymentIntent } =
         await stripe.confirmCardPayment(client_secret, {
           payment_method: {
@@ -97,141 +100,121 @@ export function FormCreditCard() {
         });
 
       if (confirmError) {
-        //console.error("Error confirming payment:", confirmError);
-        handlePaymentFailed();
+        handlePaymentFailed(); // Trigger the PaymentFailed popup
       } else {
-        router.push("/payment/payment-success"); // Redirect ไปหน้า success
+        router.push("/payment/payment-success");
       }
     } catch (error) {
-      //console.error("Error in handleSubmit:", error);
-      handlePaymentFailed();
+      handlePaymentFailed(); // Trigger the PaymentFailed popup
     } finally {
       setLoading(false);
     }
   };
 
-  // Stripe element styles
   const stripeElementStyle = {
     base: {
       fontSize: "16px",
-      color: "#A0AEC0", // Light gray for text
+      color: "#A0AEC0",
       "::placeholder": {
-        color: "#A0AEC0", // Light gray placeholder
+        color: "#A0AEC0",
       },
     },
     invalid: { color: "#ff6b6b" },
   };
 
   return (
-    <div className="mx-auto rounded bg-white">
-      {/* Payment Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="font-inter text-xl font-semibold text-gray-600">
-          Credit Card
-        </div>
-
-        {/* Card Number */}
-        <div>
-          <label className="mb-1 block font-inter text-sm font-normal">
-            Card Number
-          </label>
-          <div className="h-12 rounded border p-2">
-            <CardNumberElement options={{ style: stripeElementStyle }} />
+    <>
+      <div className="mx-auto mb-4 rounded bg-white">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="font-inter text-xl font-semibold text-gray-600">
+            Credit Card
           </div>
-        </div>
 
-        {/* Card Owner */}
-        <div>
-          <label className="mb-1 block font-inter text-sm font-normal">
-            Card Owner
-          </label>
-          <input
-            type="text"
-            value={cardOwner}
-            onChange={(e) => setCardOwner(e.target.value)}
-            placeholder="Name"
-            className="w-full rounded border p-2 text-gray-400 placeholder-gray-400"
-            style={{
-              fontSize: "16px",
-              color: "#A0AEC0",
-            }}
-            required
-          />
-        </div>
-
-        {/* Expiry Date และ CVC */}
-        <div className="flex space-x-4">
-          <div className="w-1/2">
+          <div>
             <label className="mb-1 block font-inter text-sm font-normal">
-              Expiry Date
+              Card Number
             </label>
             <div className="h-12 rounded border p-2">
-              <CardExpiryElement options={{ style: stripeElementStyle }} />
+              <CardNumberElement options={{ style: stripeElementStyle }} />
             </div>
           </div>
-          <div className="w-1/2">
+
+          <div>
             <label className="mb-1 block font-inter text-sm font-normal">
-              CVC/CVV
+              Card Owner
             </label>
-            <div className="h-12 rounded border p-2">
-              <CardCvcElement options={{ style: stripeElementStyle }} />
+            <input
+              type="text"
+              value={cardOwner}
+              onChange={(e) => setCardOwner(e.target.value)}
+              placeholder="Name"
+              className="w-full rounded border p-2 text-gray-400 placeholder-gray-400"
+              style={{
+                fontSize: "16px",
+                color: "#A0AEC0",
+              }}
+              required
+            />
+          </div>
+
+          <div className="flex space-x-4">
+            <div className="w-1/2">
+              <label className="mb-1 block font-inter text-sm font-normal">
+                Expiry Date
+              </label>
+              <div className="h-12 rounded border p-2">
+                <CardExpiryElement options={{ style: stripeElementStyle }} />
+              </div>
+            </div>
+            <div className="w-1/2">
+              <label className="mb-1 block font-inter text-sm font-normal">
+                CVC/CVV
+              </label>
+              <div className="h-12 rounded border p-2">
+                <CardCvcElement options={{ style: stripeElementStyle }} />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Promotion Code */}
-        <div>
-          <label className="mb-1 block font-inter text-sm font-normal">
-            Promotion Code
-          </label>
-          <input
-            type="text"
-            value={promotionCode}
-            onChange={(e) => setPromotionCode(e.target.value)}
-            placeholder="NEATLYNEW400"
-            className="w-full rounded border p-2 text-gray-400 placeholder-gray-400"
-            style={{
-              fontSize: "16px",
-              color: "#A0AEC0",
-            }}
-          />
-        </div>
+          {error && <p className="mt-2 text-red-500">{error}</p>}
 
-        {error && <p className="mt-2 text-red-500">{error}</p>}
+          <div className="md:hidden">
+            <Bookingdetail />
+          </div>
 
-        {/* Booking Detail */}
-        <div className="md:hidden">
-          <Bookingdetail />
-        </div>
+          <div className="md:hidden">
+            <ConditionRefund />
+          </div>
 
-        {/* Conditions refund */}
-        <div className="md:hidden">
-          <ConditionRefund />
-        </div>
+          <div className="flex flex-row justify-between">
+            <Button
+              type="3"
+              name="Back"
+              style="w-[101PX] md:w-48"
+              onClick={handleBack}
+            />
 
-        <div className="flex flex-row justify-between">
-          <Button
-            type="3"
-            name="Back"
-            style="w-[101PX] md:w-48"
-            onClick={handleBack}
-          />
-
-          <button
-            disabled={!stripe || loading}
-            className={`w-[101PX] rounded py-2 text-white md:w-48 ${
-              loading ? "cursor-not-allowed bg-gray-400" : "bg-orange-500"
-            }`}
-          >
-            {loading ? "Processing..." : "Confirm Booking"}
-          </button>
-        </div>
-      </form>
-    </div>
+            <button
+              disabled={!stripe || loading}
+              className={`w-[101PX] rounded py-2 text-white md:w-48 ${
+                loading ? "cursor-not-allowed bg-gray-400" : "bg-orange-500"
+              }`}
+            >
+              {loading ? "Processing..." : "Confirm Booking"}
+            </button>
+          </div>
+        </form>
+      </div>
+      {/* Show PaymentFailed pop-up if payment failed */}
+      {showPaymentFailed && (
+        <PaymentFailed onRetry={handleSubmit} onBack={handleClosePopup} />
+      )}
+    </>
   );
 }
+/*
 
-// Test Component ที่ครอบ Step3 ด้วย <Elements>//
+*/
 export default function CreditCard() {
   return (
     <Elements stripe={stripePromise}>

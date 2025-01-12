@@ -148,8 +148,6 @@ function Room_management_page() {
                       bgColor: "#FFFFFF",
                     };
 
-                    console.log(`Status: ${status}`, styles); // สำหรับตรวจสอบในคอนโซล
-
                     return (
                       <tr
                         key={room.room_id}

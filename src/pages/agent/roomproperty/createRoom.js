@@ -39,7 +39,7 @@ export default function CreateRoom() {
       amenities: [],
     });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -89,7 +89,7 @@ export default function CreateRoom() {
 
     try {
       const response = await axios.post("/api/createRoom", data);
-      console.log(response.data);
+
       resetFormData(); // รีเซ็ต formData หลังจากสร้างห้องพักเสร็จสิ้น
       alert("Room created successfully");
     } catch (error) {

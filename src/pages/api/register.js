@@ -3,7 +3,6 @@ import { connectionPool } from "@/utils/db";
 
 export default async function handler(req, res) {
   const newUsers = req.body;
-  console.log("newUsers", newUsers);
 
   try {
     // Insert ข้อมูลลงในตาราง users
