@@ -58,7 +58,7 @@ export default async function cashBookingHandler(req, res) {
         original_price: roominfo?.price || null,
         guests: roominfo?.guests || 1,
         promotion_code: roominfo?.promotion_code || null,
-        status: "pending", // สถานะเริ่มต้น
+        status: "pending payment", // สถานะเริ่มต้น
         total_price: totalprice,
         amount, // จำนวนห้องที่จอง
         booking_date: new Date().toISOString(),
