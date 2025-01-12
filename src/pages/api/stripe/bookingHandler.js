@@ -44,6 +44,10 @@ export default async function bookingHandler(req, res) {
       const bookingId = uuidv4();
       /* console.log("Generated bookingId:", bookingId); // ตรวจสอบการสร้าง bookingId */
 
+      const capacityPerRoom = 2;
+
+      const roomQuantity = Math.ceil(roominfo.guests / capacityPerRoom);
+
       // บันทึกข้อมูลการจองใน Database
       // Prepare booking data
       const bookingData = {
@@ -66,7 +70,7 @@ export default async function bookingHandler(req, res) {
         promotion_code: roominfo?.promotion_code || null,
         status: "pending",
         total_price: totalprice,
-        amount: 1,
+        amount: roomQuantity,
         booking_date: new Date().toISOString(),
       };
 
