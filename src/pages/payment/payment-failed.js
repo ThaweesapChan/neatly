@@ -7,13 +7,11 @@ export default function PaymentFailed() {
   const router = useRouter();
 
   const handleBackToPaymentDetail = () => {
-    console.log("Back button clicked");
-    router.push("http://localhost:3000/payment");
+    router.push("/payment");
   };
 
   const handleRetryPayment = async () => {
-    console.log("Back button clicked");
-    router.push("http://localhost:3000/payment/step3");
+    router.push("/payment/step3");
   };
 
   return (

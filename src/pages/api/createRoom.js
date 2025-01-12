@@ -116,7 +116,6 @@ export default async function handler(req, res) {
         details: error.message,
       });
     }
-    console.log(data);
 
     // Successful insertion
     res.status(201).json({

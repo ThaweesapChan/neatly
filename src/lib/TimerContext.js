@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const TimerContext = createContext();
 
 export const TimerProvider = ({ children }) => {
-  const initialTime = 5; // 5 นาที in seconds
+  const initialTime = 5 * 60; // 5 นาที in seconds
   const [remainingTime, setRemainingTime] = useState(initialTime);
   const [isTimeUp, setIsTimeUp] = useState(false);
 

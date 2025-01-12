@@ -77,7 +77,6 @@ export default function LoginPage() {
 
       // เก็บ JWT Token ไว้ใน Local Storage
       localStorage.setItem("token", data.token);
-      console.log("Login successful!");
 
       // ดึงข้อมูลมาเช็ค role
       const userResponse = await axios.get("/api/getUser", {
@@ -87,8 +86,6 @@ export default function LoginPage() {
       });
 
       const userData = userResponse.data.data;
-
-      console.log("Login successful!");
 
       // อัพเดตสถานะของ customer ว่า login เข้ามาแล้ว
       setIsLoggedIn(true);

@@ -179,7 +179,7 @@ const RegisterForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        router.push("http://localhost:3000/homepage");
+        router.push("/");
       } else {
         setError(result.message || "Something went wrong!");
       }

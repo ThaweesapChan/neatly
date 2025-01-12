@@ -10,7 +10,6 @@ import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import DeleteRoomWithModal from "@/component/deleteroombutton-modal";
 
-
 // fn to convert image to base64
 const toBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -158,7 +157,6 @@ export default function PropertyViewEdit() {
         `/api/updateRoomPropertyById/${id}`,
         data,
       );
-      console.log(response.data);
       router.push("/agent/roomproperty/roomproperty"); // Redirect after successful update
     } catch (error) {
       console.error("Error updating room:", error);
@@ -170,12 +168,9 @@ export default function PropertyViewEdit() {
 
     if (isConfirmed) {
       try {
-        console.log("Attempting to delete room with ID:", id);
-
         const response = await axios.delete(
           `/api/deleteRoomPropertyById/${id}`,
         );
-        console.log("Delete response:", response.data);
 
         if (response.data) {
           alert("ลบห้องสำเร็จ");
