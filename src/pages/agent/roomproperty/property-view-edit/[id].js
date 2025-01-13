@@ -297,9 +297,11 @@ export default function PropertyViewEdit() {
                   id="guests"
                   list="guestOptions"
                   value={formData.guests}
-                  onChange={(e) =>
-                    setFormData({ ...formData, guests: e.target.value })
-                  }
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      setFormData({ ...formData, guests: e.target.value });
+                    }
+                  }}
                 />
                 <datalist id="guestOptions">
                   <option value="2" />

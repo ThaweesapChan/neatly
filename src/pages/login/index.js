@@ -11,7 +11,10 @@ export default function LoginPage() {
   const router = useRouter();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState({
+    field: "",
+    message: "",
+  });
   const [loading, setLoading] = useState(false);
 
   function validateUsernameOrEmail(input) {
@@ -27,29 +30,37 @@ export default function LoginPage() {
   }
 
   async function handleLogin() {
-    setError("");
+    setError({ field: "", message: "" });
     setLoading(true);
     let email = "";
 
-    // ตรวจสอบ Input ของผู้ใช้
+    // Validate input
     const userInputType = validateUsernameOrEmail(usernameOrEmail);
 
     if (userInputType === "invalid") {
-      setError("Invalid username or email. Please try again.");
+      setError({
+        field: "usernameOrEmail",
+        message: "Invalid username or email. Please try again.",
+      });
       setLoading(false);
       return;
     }
 
     try {
       if (userInputType === "username") {
-        const { data, error } = await supabase
+        const { data, error: supabaseError } = await supabase
           .from("users")
           .select("email")
           .eq("username", usernameOrEmail)
           .single();
 
-        if (error || !data) {
-          throw new Error("Username not found.");
+        if (supabaseError || !data) {
+          setError({
+            field: "usernameOrEmail",
+            message: "Username not found.",
+          });
+          setLoading(false);
+          return;
         }
 
         email = data.email;
@@ -68,7 +79,11 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed.");
+        setError({
+          field: "password",
+          message: data.message || "Login failed.",
+        });
+        return;
       }
 
       localStorage.setItem("token", data.token);
@@ -82,26 +97,25 @@ export default function LoginPage() {
       const userData = userResponse.data.data;
       setIsLoggedIn(true);
 
-      // ทำการ redirect ตาม role
       if (userData.role === "agent") {
         router.push("/agent/customer-booking");
       } else {
         router.push("/");
       }
     } catch (err) {
-      setError(err.message || "An unexpected error occurred.");
+      setError({
+        field: "general",
+        message: err.message || "An unexpected error occurred.",
+      });
     } finally {
-      setLoading(false); // ยกเลิกสถานะโหลด..
+      setLoading(false);
     }
   }
 
   return (
     <div className="flex min-h-min flex-col">
       <Navbar />
-
-      {/* Main Content Container */}
       <div className="flex flex-1 flex-col lg:flex-row lg:bg-[#F7F7FB]">
-        {/* Image Section */}
         <div className="relative w-full md:h-[50vh] lg:h-screen lg:w-1/2">
           <img
             src="/asset/login3chair.jpeg"
@@ -109,10 +123,8 @@ export default function LoginPage() {
             className="h-[375px] w-full object-cover object-[center_70%] md:h-full md:object-center"
           />
         </div>
-
-        {/* Form Section */}
         <div className="flex-1 px-6 py-8 md:px-12 md:py-10 lg:flex lg:items-center lg:px-20 lg:py-0">
-          <div className="w-full max-w-[452px] lg:mx-auto ">
+          <div className="w-full max-w-[452px] lg:mx-auto">
             <h1 className="mb-10 font-notoSerif text-[40px] leading-[1.2] text-[#2F3337] md:text-[56px] lg:text-[72px] lg:leading-[87px]">
               Log In
             </h1>
@@ -128,6 +140,9 @@ export default function LoginPage() {
                   placeholder="Enter your username or email"
                   className="w-full rounded border border-[#D7D7D7] p-3 text-[#2F3337] placeholder:text-[#9AA1B9] md:text-lg"
                 />
+                {error.field === "usernameOrEmail" && (
+                  <p className="mt-2 text-sm text-red-500">{error.message}</p>
+                )}
               </div>
 
               <div>
@@ -139,14 +154,21 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full rounded border border-[#D7D7D7] p-3 text-[#2F3337] placeholder:text-[#9AA1B9]  md:text-lg"
+                  className="w-full rounded border border-[#D7D7D7] p-3 text-[#2F3337] placeholder:text-[#9AA1B9] md:text-lg"
                 />
+                {error.field === "password" && (
+                  <p className="mt-2 text-sm text-red-500">{error.message}</p>
+                )}
               </div>
+
+              {error.field === "general" && (
+                <p className="text-sm text-red-500">{error.message}</p>
+              )}
 
               <button
                 onClick={handleLogin}
                 disabled={loading}
-                className="w-full rounded bg-[#C14817] p-3 font-semibold text-white  md:text-lg"
+                className="w-full rounded bg-[#C14817] p-3 font-semibold text-white md:text-lg"
               >
                 {loading ? "Logging in..." : "Log In"}
               </button>
@@ -160,7 +182,6 @@ export default function LoginPage() {
                   Register
                 </Link>
               </p>
-              {error && <p style={{ color: "red" }}>{error}</p>}
             </div>
           </div>
         </div>

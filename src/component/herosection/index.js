@@ -24,7 +24,7 @@ function Herosection() {
   };
 
   const handleSearch = () => {
-    if (!checkinValue) {
+    if (!checkinValue) { 
       setCurrentError("checkin");
       return;
     }

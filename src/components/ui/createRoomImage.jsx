@@ -122,7 +122,7 @@ const RoomImage = ({ formData, setFormData }) => {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-2 top-2 text-orange-500 hover:bg-orange-50"
+                className="absolute right-2 top-2 text-orange-500 hover:bg-orange-50 hover:text-orange-500 rounded-full"
                 onClick={() => setFormData({ ...formData, mainImage: null })}
               >
                 <X className="h-4 w-4" />
@@ -175,7 +175,7 @@ const RoomImage = ({ formData, setFormData }) => {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-2 top-2 text-orange-500 hover:bg-orange-50"
+                className="absolute right-2 top-2 rounded-full text-orange-500 hover:bg-orange-50 hover:text-orange-500"
                 onClick={() => removeGalleryImage(index)}
               >
                 <X className="h-4 w-4" />
