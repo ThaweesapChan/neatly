@@ -21,8 +21,45 @@ export default function Basicinformation() {
     dateOfBirth: "",
     country: "",
   });
+
+  const [errors, setErrors] = useState({});
   const [country, setCountry] = useState([]);
   const [loading, setLoading] = useState(true); // สำหรับแสดงสถานะโหลดข้อมูล
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.firstName || formData.firstName.length < 4) {
+      newErrors.firstName = "First name must be at least 4 characters long.";
+    }
+
+    if (!formData.lastName || formData.lastName.length < 5) {
+      newErrors.lastName = "Last name must be at least 5 characters long.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (!formData.phoneNumber || !phoneRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Phone number must be exactly 10 digits.";
+    }
+
+    const dob = new Date(formData.dateOfBirth);
+    const age = new Date().getFullYear() - dob.getFullYear();
+    if (!formData.dateOfBirth || age < 18) {
+      newErrors.dateOfBirth = "You must be at least 18 years old.";
+    }
+
+    if (!formData.country) {
+      newErrors.country = "Please select a country.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // ฟังก์ชันจัดการการเปลี่ยนแปลงในฟอร์ม
   const handleChange = (e) => {
@@ -39,6 +76,11 @@ export default function Basicinformation() {
   // ฟังก์ชันเมื่อกดปุ่ม Next
   const handleNext = (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
+
     updateBookingDetail({ userinfo: formData });
     router.push("/payment/step2");
   };
@@ -128,6 +170,9 @@ export default function Basicinformation() {
                   placeholder="Enter your first name"
                   required
                 />
+                {errors.firstName && (
+                  <p className="text-red-500">{errors.firstName}</p>
+                )}
               </div>
 
               <div>
@@ -147,6 +192,9 @@ export default function Basicinformation() {
                   placeholder="Enter your last name"
                   required
                 />
+                {errors.lastName && (
+                  <p className="text-red-500">{errors.lastName}</p>
+                )}
               </div>
             </div>
 
@@ -167,6 +215,7 @@ export default function Basicinformation() {
                 placeholder="Enter your email"
                 required
               />
+              {errors.email && <p className="text-red-500">{errors.email}</p>}
             </div>
 
             <div>
@@ -186,6 +235,9 @@ export default function Basicinformation() {
                 placeholder="Enter your phone number"
                 required
               />
+              {errors.phoneNumber && (
+                <p className="text-red-500">{errors.phoneNumber}</p>
+              )}
             </div>
 
             <div>
@@ -204,6 +256,9 @@ export default function Basicinformation() {
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 p-3 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
+              {errors.dateOfBirth && (
+                <p className="text-red-500">{errors.dateOfBirth}</p>
+              )}
             </div>
 
             <div>
@@ -237,6 +292,9 @@ export default function Basicinformation() {
                   </option>
                 ))}
               </select>
+              {errors.country && (
+                <p className="text-red-500">{errors.country}</p>
+              )}
             </div>
             <div className="ml-4 flex flex-col gap-4 md:hidden">
               <div className="w-[385px] md:block">

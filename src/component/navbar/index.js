@@ -21,7 +21,6 @@ function Navbar() {
   const [toastShown, setToastShown] = useState(false);
   const router = useRouter();
 
-
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -170,11 +169,11 @@ function Navbar() {
           {/* ถ้า customer ทำการ login แล้วให้แสดง เป็นตัวนี้แทน */}
           {isLoggedIn ? (
             <div className="hidden items-center gap-8 pr-14 md:flex">
-              <button aria-label="Notifications">
+              {/* <button aria-label="Notifications">
                 <span className="cursor-pointer text-xl text-gray-700">
                   <HiBell />
                 </span>
-              </button>
+              </button> */}
 
               {/* Dropdown for User Profile */}
               <DropdownMenu>
