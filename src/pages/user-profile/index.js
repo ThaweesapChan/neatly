@@ -15,12 +15,50 @@ export default function ProfilePage() {
     country: "",
     profile_picture: null,
     profilePictureChanged: false, // ใช้สำหรับตรวจสอบว่าเปลี่ยนรูปหรือไม่
+    remove_picture: false,
   });
+
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [country, setCountry] = useState([]);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.first_name || formData.first_name.length < 4) {
+      newErrors.first_name = "First Name must be at least 4 characters long.";
+    }
+
+    if (!formData.last_name || formData.last_name.length < 5) {
+      newErrors.last_name = "Last Name must be at least 5 characters long.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (!formData.phone_number || !phoneRegex.test(formData.phone_number)) {
+      newErrors.phone_number = "Phone Number must be exactly 10 digits.";
+    }
+
+    if (!formData.country) {
+      newErrors.country = "Please select a country.";
+    }
+
+    const dob = new Date(formData.date_of_birth);
+    const age = new Date().getFullYear() - dob.getFullYear();
+    if (!formData.date_of_birth || age < 18) {
+      newErrors.date_of_birth = "You must be at least 18 years old.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const fetchUserProfile = async () => {
     try {
@@ -64,6 +102,7 @@ export default function ProfilePage() {
           ...prev,
           profile_picture: { preview: reader.result, file }, // ใช้ทั้ง preview และ file
           profilePictureChanged: true,
+          remove_picture: false,
         }));
       };
       reader.onerror = () => {
@@ -80,12 +119,17 @@ export default function ProfilePage() {
     setFormData({
       ...formData,
       profile_picture: null, // รีเซ็ตเป็น null
-      profilePictureChanged: true, // ตั้งค่าว่าเปลี่ยนแปลง
+      profilePictureChanged: true, // ตั้งค่าว่ามีการเปลี่ยนแปลงรูปภาพ
+      remove_picture: true, // เพิ่มตัวบอกว่า user ต้องการลบรูปภาพ
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
 
     // ฟังก์ชันแปลงไฟล์เป็น base64
     const toBase64 = (file) =>
@@ -113,6 +157,7 @@ export default function ProfilePage() {
     const updatedData = {
       ...formData,
       profile_picture: profilePictureData, // ส่งรูปภาพที่อัปเดต
+      remove_picture: formData.remove_picture,
     };
 
     try {
@@ -194,6 +239,9 @@ export default function ProfilePage() {
                 }
                 className="w-full rounded-md border border-gray-300 p-2 pl-3"
               />
+              {errors.first_name && (
+                <p className="text-red-500">{errors.first_name}</p>
+              )}
             </div>
             <div>
               <label className="mb-1 block font-inter text-gray-700">
@@ -208,6 +256,9 @@ export default function ProfilePage() {
                 }
                 className="w-full rounded-md border border-gray-300 p-2 pl-3"
               />
+              {errors.last_name && (
+                <p className="text-red-500">{errors.last_name}</p>
+              )}
             </div>
           </div>
 
@@ -226,6 +277,9 @@ export default function ProfilePage() {
                 }
                 className="w-full rounded-md border border-gray-300 p-2 pl-3"
               />
+              {errors.phone_number && (
+                <p className="text-red-500">{errors.phone_number}</p>
+              )}
             </div>
 
             <div>
@@ -236,9 +290,13 @@ export default function ProfilePage() {
                 type="email"
                 name="email"
                 value={formData.email}
-                disabled
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                /* disabled */
                 className="w-full rounded-md border border-gray-300 p-2 pl-3"
               />
+              {/* {errors.email && <p className="text-red-500">{errors.email}</p>} */}
             </div>
           </div>
 
@@ -257,6 +315,9 @@ export default function ProfilePage() {
                 }
                 className="w-full rounded-md border border-gray-300 p-2 pl-3"
               />
+              {errors.date_of_birth && (
+                <p className="text-red-500">{errors.date_of_birth}</p>
+              )}
             </div>
 
             <div className="md:mt-1">
@@ -291,6 +352,9 @@ export default function ProfilePage() {
                   </option>
                 ))}
               </select>
+              {errors.country && (
+                <p className="text-red-500">{errors.country}</p>
+              )}
             </div>
           </div>
 

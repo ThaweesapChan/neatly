@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 const CancelModal = ({ booking, onClose, onConfirm }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-45">
-      <div className="relative w-10/12 max-w-md rounded-md bg-white p-6 md:max-w-full">
+      <div className="relative w-10/12 max-w-md rounded-md bg-white p-6 md:w-4/12 md:max-w-full">
         <div>
           {/* ปุ่ม X */}
           <button
