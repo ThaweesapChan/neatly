@@ -62,6 +62,9 @@ export function FormCreditCard() {
 
     setLoading(true);
 
+    // เพิ่ม booking_id ใน request ถ้ามี
+    const bookingId = bookingDetail?.booking_id;
+
     try {
       const {
         roominfo,
@@ -81,6 +84,7 @@ export function FormCreditCard() {
         totalprice,
         amount: totalprice,
         user_id: bookingDetail.user_id,
+        booking_id: bookingId,
       });
 
       if (!response.data.client_secret) {
