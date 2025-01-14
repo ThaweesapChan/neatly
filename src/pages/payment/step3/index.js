@@ -27,7 +27,10 @@ export default function Step3() {
             <div className="mb-6 flex items-center justify-between space-x-4">
               {/* ปุ่ม Credit Card */}
               <button
-                onClick={() => setSelectedPayment("credit")}
+                onClick={() => {
+                  setSelectedPayment("credit");
+                  updateBookingDetail({ payment_method: "Credit Card" });
+                }}
                 className={`flex h-16 w-44 items-center justify-center rounded border-2 p-2 font-inter text-xl font-semibold text-gray-300 md:h-20 md:w-80 ${
                   selectedPayment === "credit"
                     ? "border-orange-500 text-orange-500"
@@ -41,7 +44,10 @@ export default function Step3() {
               </button>
               {/* ปุ่ม Cash */}
               <button
-                onClick={() => setSelectedPayment("cash")}
+                onClick={() => {
+                  setSelectedPayment("cash");
+                  updateBookingDetail({ payment_method: "Cash" });
+                }}
                 className={`flex h-16 w-44 items-center justify-center rounded border-2 p-2 font-inter text-xl font-semibold text-gray-300 md:h-20 md:w-80 ${
                   selectedPayment === "cash"
                     ? "border-orange-500 text-orange-500"

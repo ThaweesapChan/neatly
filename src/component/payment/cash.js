@@ -47,6 +47,7 @@ export function FormCash() {
           totalprice,
           amount: 1,
           user_id,
+          payment_method: "Cash",
         }),
       });
 

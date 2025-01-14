@@ -176,7 +176,7 @@ function BookingHistoryCard({ bookings }) {
                           <span>
                             Payment success via{" "}
                             <span className="font-semibold">
-                              {booking.payment[0]?.payment_method || "N/A"}
+                              {booking.payment[0]?.payment_method || null}
                             </span>
                           </span>
                         </div>

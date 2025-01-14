@@ -13,6 +13,7 @@ export default async function cashBookingHandler(req, res) {
       additionalInfo, // ข้อมูลคำขอเพิ่มเติม
       totalprice, // ราคารวม
       amount, // จำนวนห้องที่จอง
+      payment_method,
     } = req.body;
 
     try {
@@ -30,7 +31,8 @@ export default async function cashBookingHandler(req, res) {
         !check_in_date ||
         !check_out_date ||
         !totalprice ||
-        !amount
+        !amount ||
+        !payment_method
       ) {
         console.error("Missing required fields");
         return res.status(400).json({ message: "Missing required fields" });
@@ -75,6 +77,30 @@ export default async function cashBookingHandler(req, res) {
         return res.status(500).json({
           message: "Failed to save booking",
           error: insertError,
+        });
+      }
+
+      // เตรียมข้อมูลการชำระเงินสำหรับตาราง payments
+      const paymentData = {
+        booking_id: bookingId,
+        payment_method: payment_method || "Cash",
+        payment_status: "pending",
+      };
+
+      // บันทึกข้อมูลลงในตาราง payments
+      const { error: insertPaymentError } = await supabase
+        .from("payments")
+        .insert(paymentData);
+
+      // ตรวจสอบข้อผิดพลาดในการบันทึกข้อมูลใน payments
+      if (insertPaymentError) {
+        console.error(
+          "Error inserting payment to database:",
+          insertPaymentError,
+        );
+        return res.status(500).json({
+          message: "Failed to save payment",
+          error: insertPaymentError,
         });
       }
 
