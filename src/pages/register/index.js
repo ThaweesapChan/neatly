@@ -344,7 +344,7 @@ const RegisterForm = () => {
                     {/* ปุ่มยกเลิกที่มุมขวาบน */}
                     <button
                       onClick={handleCancel}
-                      className="absolute right-2 top-2 rounded-full bg-white p-2 text-black"
+                      className="absolute right-2 top-2 rounded-full px-2 text-orange-600 bg-white"
                     >
                       &times;
                     </button>
@@ -545,7 +545,7 @@ const RegisterForm = () => {
                         {/* ปุ่มยกเลิกที่มุมขวาบน */}
                         <button
                           onClick={handleCancel}
-                          className="absolute right-2 top-2 rounded-full bg-white p-2 text-black"
+                          className="absolute right-2 top-2 rounded-full px-2 text-orange-600 bg-white"
                         >
                           &times;
                         </button>

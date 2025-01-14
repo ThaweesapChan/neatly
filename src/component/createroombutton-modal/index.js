@@ -34,16 +34,31 @@ const CreateRoomWithModal = ({ formData, resetFormData }) => {
         );
       };
 
-      // แปลง mainImage เป็น base64 ถ้ามี
-      const mainImageData = formData.mainImage
-        ? await toBase64(formData.mainImage)
-        : null;
+      // ตรวจสอบว่าฟิลด์สำคัญครบถ้วนหรือไม่
+      if (!formData.roomType || !formData.roomSize || !formData.pricePerNight) {
+        setError(
+          "Please fill out all required fields: Room Type, Room Size, and Price Per Night.",
+        );
+        setIsCreating(false);
+        return;
+      }
 
-      // แปลง imageGallery เป็น base64 ถ้ามี
-      const imageGalleryData =
-        formData.imageGallery.length > 0
-          ? await convertToBase64(formData.imageGallery)
-          : [];
+      // ตรวจสอบว่าได้อัปโหลดรูปภาพหรือยัง
+      if (!formData.mainImage) {
+        setError("Please upload a main image for the room.");
+        setIsCreating(false);
+        return;
+      }
+
+      if (formData.imageGallery.length === 0) {
+        setError("Please upload at least 4 images to the gallery.");
+        setIsCreating(false);
+        return;
+      }
+
+      // แปลง mainImage และ imageGallery เป็น base64
+      const mainImageData = await toBase64(formData.mainImage);
+      const imageGalleryData = await convertToBase64(formData.imageGallery);
 
       const data = {
         roomNumber: formData.roomNumber || null,
@@ -54,8 +69,8 @@ const CreateRoomWithModal = ({ formData, resetFormData }) => {
         pricePerNight: formData.pricePerNight || null,
         promotionPrice: formData.promotionPrice || null,
         roomDescription: formData.roomDescription || "",
-        mainImage: mainImageData || null,
-        imageGallery: imageGalleryData || [],
+        mainImage: mainImageData,
+        imageGallery: imageGalleryData,
         amenities: formData.amenities.map((x) => x.value) || [],
       };
 
@@ -68,12 +83,23 @@ const CreateRoomWithModal = ({ formData, resetFormData }) => {
         router.push("/agent/roomproperty/roomproperty");
       }, 2000);
     } catch (error) {
-      console.error("Error creating room:", error);
-      setError(error.response?.data?.message || "Failed to create room");
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      switch (error.response?.status) {
+        case 400:
+          setError("Invalid input. Please check your form and try again.");
+          break;
+        case 401:
+          setError("Unauthorized. Please log in and try again.");
+          break;
+        default:
+          setError(errorMessage);
+      }
     } finally {
       setIsCreating(false);
     }
   };
+
 
   return (
     <>
@@ -147,10 +173,10 @@ const CreateRoomWithModal = ({ formData, resetFormData }) => {
                   />
                 </svg>
               </div>
-              <h2 className="mb-2 text-2xl font-semibold text-gray-900">
+              <h2 className="mb-2 text-2xl font-semibold text-red-600">
                 Error
               </h2>
-              <p className="text-gray-600">{error}</p>
+              <p className="text-gray-700">{error}</p>
             </div>
             <div className="mt-6 flex justify-center">
               <button

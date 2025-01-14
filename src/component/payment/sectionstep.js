@@ -11,7 +11,7 @@ export function SectionsStep1() {
             <div className="flex h-12 w-12 items-center justify-center rounded-md bg-orange-500 text-2xl font-bold text-white">
               1
             </div>
-            <div className="text-lg font-semibold text-gray-800">
+            <div className="text-lg font-semibold text-orange-500">
               Basic Information
             </div>
           </div>
@@ -60,7 +60,7 @@ export function SectionsStep2() {
             <div className="flex h-12 w-12 items-center justify-center rounded-md bg-orange-500 text-2xl font-bold text-white">
               2
             </div>
-            <div className="text-lg font-semibold text-gray-800">
+            <div className="text-lg font-semibold text-orange-500">
               Special Request
             </div>
           </div>

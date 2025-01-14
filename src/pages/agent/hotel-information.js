@@ -1,12 +1,37 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "@/component/sidebar";
 import NavHotelInformation from "@/components/room-information-nav";
+import supabase from "@/utils/supabaseClient"; // เพิ่ม import สำหรับ supabase
 
 function HotelInformationPage() {
   const [hotelName, setHotelName] = useState("");
   const [hotelDescription, setHotelDescription] = useState("");
   const [hotelLogo, setHotelLogo] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    // ดึงข้อมูลโรงแรมโดยใช้ id ที่ต้องการ
+    const fetchHotelData = async () => {
+      const hotelId = "3170d8e3-7cab-4468-8df6-16b836306752"; // id ที่ต้องการค้นหา
+      const { data, error } = await supabase
+        .from("hotel_information")
+        .select("hotel_name, hotel_description") // เลือกเฉพาะฟิลด์ที่ต้องการ
+        .eq("id", hotelId);
+
+      if (error) {
+        console.error("Error fetching hotel data:", error.message);
+        return;
+      }
+
+      // ตั้งค่าข้อมูลที่ดึงมา
+      if (data && data.length > 0) {
+        setHotelName(data[0].hotel_name);
+        setHotelDescription(data[0].hotel_description);
+      }
+    };
+
+    fetchHotelData();
+  }, []);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -66,7 +91,7 @@ function HotelInformationPage() {
                 ></textarea>
               </div>
 
-              <div className="flex flex-col items-start ">
+              <div className="flex flex-col items-start">
                 <label htmlFor="hotelName" className="block font-medium">
                   Hotel logo*
                 </label>

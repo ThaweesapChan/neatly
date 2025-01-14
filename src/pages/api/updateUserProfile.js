@@ -43,10 +43,13 @@ export default async function handler(req, res) {
     date_of_birth,
     country,
     profile_picture, // รูปภาพใหม่ในรูปแบบ Base64
+    remove_picture, // ตัวบอกว่า user ต้องการลบรูปโปรไฟล์
   } = req.body;
 
   try {
-    if (profile_picture === null) {
+    let profilePictureURL = null;
+
+    if ((profile_picture && !remove_picture) || remove_picture) {
       // 1. ดึงข้อมูลรูปภาพเก่าจาก Database
       const { data: oldData, error: oldDataError } = await supabase
         .from("users")
@@ -79,8 +82,8 @@ export default async function handler(req, res) {
     }
 
     // 3. อัปโหลดรูปภาพใหม่
-    let profilePictureURL = null;
-    if (profile_picture) {
+
+    if (profile_picture && !remove_picture) {
       const { buffer, mimeType } = fromBase64(profile_picture);
       const fileName = `profile-${Date.now()}.jpg`;
       const filePath = `profile_images/${userId}/${fileName}`;
@@ -101,6 +104,17 @@ export default async function handler(req, res) {
       profilePictureURL = publicUrlData?.publicUrl;
     }
 
+    // ถ้าไม่มีการเปลี่ยนแปลงรูปภาพ เก็บ URL รูปโปรไฟล์เดิมไว้
+    if (!remove_picture && !profile_picture) {
+      const { data: oldData } = await supabase
+        .from("users")
+        .select("profile_picture_url")
+        .eq("user_id", userId)
+        .single();
+
+      profilePictureURL = oldData?.profile_picture_url || null;
+    }
+
     // 4. อัปเดตข้อมูลในฐานข้อมูล
     const updateData = {
       first_name,
@@ -108,7 +122,9 @@ export default async function handler(req, res) {
       phone_number,
       date_of_birth,
       country,
-      profile_picture_url: profile_picture === null ? null : profilePictureURL, // ลบค่า profile_picture_url ถ้า profile_picture เป็น null
+      profile_picture_url: remove_picture
+        ? null // หาก remove_picture เป็น true ให้ลบ URL รูปภาพ
+        : profilePictureURL || null, // ลบค่า profile_picture_url ถ้า profile_picture เป็น null
     };
 
     const { data: updatedUser, error: dbError } = await supabase
