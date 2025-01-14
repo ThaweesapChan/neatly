@@ -1,8 +1,18 @@
-const InputField = ({ label, type, name, value, onChange, placeholder }) => {
+const InputField = ({
+  label,
+  type,
+  name,
+  value,
+  onChange,
+  placeholder,
+  errorInput,
+  errorSpec,
+}) => {
+  const showError = errorInput === errorSpec;
+
   return (
     <div className="form-group my-[16px] w-full font-inter">
-      <label className="mb-2 block text-[16px] font-normal" 
-      htmlFor={name}>
+      <label className="mb-2 block text-[16px] font-normal" htmlFor={name}>
         {label}
       </label>
 
@@ -22,6 +32,7 @@ const InputField = ({ label, type, name, value, onChange, placeholder }) => {
           borderWidth: "1px",
         }}
       />
+      {showError && <p className="mt-2 text-red-500">{errorSpec}</p>}
     </div>
   );
 };
