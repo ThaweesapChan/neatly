@@ -83,7 +83,11 @@ export default function PaymentSuccess() {
               <p className="flex justify-between">
                 Payment success via{"   "}
                 <span className="font-semibold">
-                  {bookingDetail.payment_method || "Credit Card"}
+                  {bookingDetail.payment_method === "Cash"
+                    ? "Cash"
+                    : bookingDetail.payment_method === "Credit Card"
+                      ? "Credit Card"
+                      : "Unknown Method"}
                 </span>
               </p>
             </div>
