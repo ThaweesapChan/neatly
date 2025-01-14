@@ -29,12 +29,18 @@ export default function Basicinformation() {
   const validate = () => {
     const newErrors = {};
 
+    const nameRegex = /^[a-zA-Z\s]+$/;
+
     if (!formData.firstName || formData.firstName.length < 4) {
       newErrors.firstName = "First name must be at least 4 characters long.";
+    } else if (!nameRegex.test(formData.firstName)) {
+      newErrors.firstName = "First name must contain only letters.";
     }
 
     if (!formData.lastName || formData.lastName.length < 5) {
       newErrors.lastName = "Last name must be at least 5 characters long.";
+    } else if (!nameRegex.test(formData.lastName)) {
+      newErrors.lastName = "Last name must contain only letters.";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

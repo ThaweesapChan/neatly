@@ -28,12 +28,17 @@ export default function ProfilePage() {
   const validate = () => {
     const newErrors = {};
 
+    const nameRegex = /^[a-zA-Z\s]+$/; // ยอมรับเฉพาะตัวอักษรและช่องว่าง
     if (!formData.first_name || formData.first_name.length < 4) {
       newErrors.first_name = "First Name must be at least 4 characters long.";
+    } else if (!nameRegex.test(formData.first_name)) {
+      newErrors.first_name = "First Name must contain only letters.";
     }
 
     if (!formData.last_name || formData.last_name.length < 5) {
       newErrors.last_name = "Last Name must be at least 5 characters long.";
+    } else if (!nameRegex.test(formData.last_name)) {
+      newErrors.last_name = "Last Name must contain only letters.";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

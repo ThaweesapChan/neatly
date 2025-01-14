@@ -74,6 +74,35 @@ export default async function bookingHandler(req, res) {
         booking_date: new Date().toISOString(),
       };
 
+      // ตรวจสอบว่าการจองเดิมมีอยู่แล้วหรือไม่
+      const existingBooking = await supabase
+        .from("bookings")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("room_id", roominfo.room_id)
+        .eq("status", "pending")
+        .single();
+
+      if (existingBooking.data) {
+        // อัปเดต PaymentIntent และคืน client_secret เดิม
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(amount * 100),
+          currency: "thb",
+          metadata: { booking_id: existingBooking.data.booking_id },
+        });
+
+        // อัปเดต payment_intent_id ใหม่ใน database
+        await supabase
+          .from("bookings")
+          .update({ payment_intent_id: paymentIntent.id })
+          .eq("booking_id", existingBooking.data.booking_id);
+
+        return res.status(200).json({
+          client_secret: paymentIntent.client_secret,
+          message: "Existing booking updated",
+        });
+      }
+
       // Insert booking to database
       const { error: insertError } = await supabase
         .from("bookings")
