@@ -7,7 +7,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export default async function bookingHandler(req, res) {
   // Logic สำหรับจัดการคำขอแบบ POST ดึงข้อมูลที่ส่งมาจาก Front-End ผ่าน req.body
   if (req.method === "POST") {
-    /* console.log("Request received:", req.body); */
     const {
       user_id,
       roominfo, // ข้อมูลห้องพัก
@@ -17,6 +16,7 @@ export default async function bookingHandler(req, res) {
       additionalInfo, // ข้อมูลคำขอเพิ่มเติม
       totalprice, // ราคารวม
       amount, // จำนวนเงิน
+      payment_method,
     } = req.body;
 
     try {
@@ -34,6 +34,7 @@ export default async function bookingHandler(req, res) {
         !check_in_date ||
         !check_out_date ||
         !totalprice ||
+        !payment_method ||
         !amount
       ) {
         console.error("Missing required fields"); // Log fields missing
@@ -84,22 +85,26 @@ export default async function bookingHandler(req, res) {
         .single();
 
       if (existingBooking.data) {
-        // อัปเดต PaymentIntent และคืน client_secret เดิม
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: Math.round(amount * 100),
-          currency: "thb",
-          metadata: { booking_id: existingBooking.data.booking_id },
-        });
+        if (payment_method === "Credit Card") {
+          const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(amount * 100),
+            currency: "thb",
+            metadata: { booking_id: existingBooking.data.booking_id },
+          });
 
-        // อัปเดต payment_intent_id ใหม่ใน database
-        await supabase
-          .from("bookings")
-          .update({ payment_intent_id: paymentIntent.id })
-          .eq("booking_id", existingBooking.data.booking_id);
+          await supabase
+            .from("bookings")
+            .update({ payment_intent_id: paymentIntent.id })
+            .eq("booking_id", existingBooking.data.booking_id);
+
+          return res.status(200).json({
+            client_secret: paymentIntent.client_secret,
+            message: "Existing booking updated",
+          });
+        }
 
         return res.status(200).json({
-          client_secret: paymentIntent.client_secret,
-          message: "Existing booking updated",
+          message: "Existing booking updated without PaymentIntent",
         });
       }
 
@@ -113,6 +118,25 @@ export default async function bookingHandler(req, res) {
         return res.status(500).json({
           message: "Failed to save booking",
           error: insertError,
+        });
+      }
+
+      const paymentData = {
+        booking_id: bookingId,
+        payment_method: payment_method || "Credit Card",
+        payment_status: "pending",
+      };
+
+      // Insert payment into database
+      const { error: paymentError } = await supabase
+        .from("payments")
+        .insert(paymentData);
+
+      if (paymentError) {
+        console.error("Error inserting payment:", paymentError);
+        return res.status(500).json({
+          message: "Failed to save payment",
+          error: paymentError,
         });
       }
 

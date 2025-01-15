@@ -85,6 +85,7 @@ export function FormCreditCard() {
         amount: totalprice,
         user_id: bookingDetail.user_id,
         booking_id: bookingId,
+        payment_method: "Credit Card",
       });
 
       if (!response.data.client_secret) {

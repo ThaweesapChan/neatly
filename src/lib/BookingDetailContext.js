@@ -11,6 +11,7 @@ export function BookingDetailProvider({ children }) {
     userinfo: {},
     additionalInfo: {},
     totalprice: 0,
+    payment_method: "Credit Card",
   });
 
   const resetBookingDetail = () => {
@@ -22,6 +23,7 @@ export function BookingDetailProvider({ children }) {
       userinfo: {},
       additionalInfo: {},
       totalprice: 0,
+      payment_method: "Credit Card",
     });
   };
 

@@ -9,9 +9,10 @@ const RegisterForm = () => {
   const router = useRouter();
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [error, setError] = useState("");
+  const [country, setCountry] = useState([]);
 
+  const [profile, setProfile] = useState(null);
+  const [errorMSG, setErrorMSG] = useState("");
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -24,8 +25,7 @@ const RegisterForm = () => {
     confirmPassword: "",
     profile_picture_url: "",
   });
-
-  const [country, setCountry] = useState([]);
+  const showError = errorMSG === "";
 
   useEffect(() => {
     // โหลดรายชื่อประเทศจาก API
@@ -72,7 +72,7 @@ const RegisterForm = () => {
     // ตรวจสอบ First Name
     const nameRegex = /^[A-Za-z\s]{5,}$/; // รองรับการเว้นวรรค
     if (!formData.first_name.trim() || !nameRegex.test(formData.first_name)) {
-      setError(
+      setErrorMSG(
         "First Name must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
@@ -80,7 +80,7 @@ const RegisterForm = () => {
 
     // ตรวจสอบ Last Name
     if (!formData.last_name.trim() || !nameRegex.test(formData.last_name)) {
-      setError(
+      setErrorMSG(
         "Last Name must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
@@ -88,7 +88,7 @@ const RegisterForm = () => {
 
     // ตรวจสอบ Username
     if (!formData.username.trim() || !nameRegex.test(formData.username)) {
-      setError(
+      setErrorMSG(
         "Username must contain only letters, spaces, and be at least 5 characters long.",
       );
       return;
@@ -97,7 +97,7 @@ const RegisterForm = () => {
     // 4) ตรวจสอบ Date of Birth
     // ตรวจสอบว่า Date of Birth ไม่ว่าง
     if (!formData.date_of_birth) {
-      setError("Please select your Date of Birth.");
+      setErrorMSG("Please select your Date of Birth.");
       return;
     }
 
@@ -116,40 +116,40 @@ const RegisterForm = () => {
 
     // ตรวจสอบว่าอายุ < 18 ปี
     if (age < 18) {
-      setError("You must be at least 18 years old to register.");
+      setErrorMSG("You must be at least 18 years old to register.");
       return;
     }
 
     // ตรวจสอบว่า Date of Birth เป็นวันในอนาคตหรือไม่
     if (birthDate >= new Date(today.toDateString())) {
-      setError("Date of Birth must be in the past (before today).");
+      setErrorMSG("Date of Birth must be in the past (before today).");
       return;
     }
 
     // 5) ตรวจสอบ Country
     //    - ต้องไม่เป็นค่าว่าง
     if (!formData.country) {
-      setError("Please select your country.");
+      setErrorMSG("Please select your country.");
       return;
     }
 
     // ตรวจสอบว่า password และ confirmPassword ตรงกัน
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setErrorMSG("Passwords do not match");
       return;
     }
 
     // ตรวจสอบว่า email ถูกต้อง
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError("Invalid email format");
+      setErrorMSG("Invalid email format");
       return;
     }
 
     // ตรวจสอบว่า phone_number ต้องเป็นตัวเลขเท่านั้น
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(formData.phone_number)) {
-      setError("Phone number must contain 10 digits only");
+      setErrorMSG("Phone number must contain 10 digits only");
       return;
     }
 
@@ -181,11 +181,11 @@ const RegisterForm = () => {
       if (response.ok) {
         router.push("/");
       } else {
-        setError(result.message || "Something went wrong!");
+        setErrorMSG(result.message || "Something went wrong!");
       }
     } catch (error) {
       //console.error(error);
-      setError("An error occurred while submitting the form.");
+      setErrorMSG("An error occurred while submitting the form.");
     }
   };
   return (
@@ -210,6 +210,10 @@ const RegisterForm = () => {
               value={formData.first_name}
               onChange={handleChange}
               placeholder="Enter your first name"
+              errorInput={errorMSG}
+              errorSpec={
+                "First Name must contain only letters, spaces, and be at least 5 characters long."
+              }
               required
             />
             <InputField
@@ -219,6 +223,10 @@ const RegisterForm = () => {
               value={formData.last_name}
               onChange={handleChange}
               placeholder="Enter your last name"
+              errorInput={errorMSG}
+              errorSpec={
+                "Last Name must contain only letters, spaces, and be at least 5 characters long."
+              }
               required
             />
             <InputField
@@ -228,6 +236,10 @@ const RegisterForm = () => {
               value={formData.username}
               onChange={handleChange}
               placeholder="Enter your username"
+              errorInput={errorMSG}
+              errorSpec={
+                "Username must contain only letters, spaces, and be at least 5 characters long."
+              }
               required
             />
             <InputField
@@ -237,6 +249,9 @@ const RegisterForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
+              errorInput={errorMSG}
+              errorSpec={"Invalid email format"}
+              required
             />
             <InputField
               label="Password"
@@ -254,6 +269,8 @@ const RegisterForm = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
+              errorInput={errorMSG}
+              errorSpec={"Passwords do not match"}
               required
             />
             <InputField
@@ -263,6 +280,8 @@ const RegisterForm = () => {
               value={formData.phone_number}
               onChange={handleChange}
               placeholder="Enter your phone number"
+              errorInput={errorMSG}
+              errorSpec={"Phone number must contain 10 digits only"}
               required
             />
             <div className="form-group my-[16px] w-full font-inter">
@@ -280,6 +299,20 @@ const RegisterForm = () => {
                 onChange={handleChange}
                 className="w-full rounded border border-gray-300 p-3 text-gray-400"
               />
+
+              {errorMSG ===
+                "You must be at least 18 years old to register." && (
+                <p className="mt-2 text-red-500">
+                  You must be at least 18 years old to register.
+                </p>
+              )}
+
+              {errorMSG === "Please select your Date of Birth." && (
+                <p className="mt-2 text-red-500">
+                  Please select your Date of Birth.
+                </p>
+              )}
+
               <style jsx>{`
                 input[type="date"]::-webkit-calendar-picker-indicator {
                   color: gray;
@@ -317,12 +350,12 @@ const RegisterForm = () => {
                   </option>
                 ))}
               </select>
+              {errorMSG === "Please select your country." && (
+                <p className="mt-2 text-red-500">Please select your country.</p>
+              )}
             </div>
 
             {/*input picture*/}
-
-            {error && <p className="mt-2 text-red-500">{error}</p>}
-
             <div className="my-10 border-t-2 border-gray-400"></div>
 
             <div className="flex flex-col items-start gap-6">
@@ -344,7 +377,7 @@ const RegisterForm = () => {
                     {/* ปุ่มยกเลิกที่มุมขวาบน */}
                     <button
                       onClick={handleCancel}
-                      className="absolute right-2 top-2 rounded-full px-2 text-orange-600 bg-white"
+                      className="absolute right-2 top-2 rounded-full bg-white px-2 text-orange-600"
                     >
                       &times;
                     </button>
@@ -410,6 +443,10 @@ const RegisterForm = () => {
                       value={formData.first_name}
                       onChange={handleChange}
                       placeholder="Enter your first name"
+                      errorInput={errorMSG}
+                      errorSpec={
+                        "First Name must contain only letters, spaces, and be at least 5 characters long."
+                      }
                       required
                     />
                     <InputField
@@ -419,6 +456,10 @@ const RegisterForm = () => {
                       value={formData.username}
                       onChange={handleChange}
                       placeholder="Enter your username"
+                      errorInput={errorMSG}
+                      errorSpec={
+                        "Username must contain only letters, spaces, and be at least 5 characters long."
+                      }
                       required
                     />
                     <InputField
@@ -428,6 +469,8 @@ const RegisterForm = () => {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="Enter your password"
+                      errorInput={errorMSG}
+                      errorSpec={"Signup requires a valid password"}
                       required
                     />
                     <InputField
@@ -437,6 +480,8 @@ const RegisterForm = () => {
                       value={formData.phone_number}
                       onChange={handleChange}
                       placeholder="Enter your phone number"
+                      errorInput={errorMSG}
+                      errorSpec={"Phone number must contain 10 digits only"}
                       required
                     />
                     <div className="form-group my-[16px] w-full font-inter">
@@ -469,6 +514,11 @@ const RegisterForm = () => {
                           </option>
                         ))}
                       </select>
+                      {errorMSG === "Please select your country." && (
+                        <p className="mt-2 text-red-500">
+                          Please select your country.
+                        </p>
+                      )}
                     </div>
                   </div>
                   {/* ส่วนของ form ขวา*/}
@@ -480,6 +530,10 @@ const RegisterForm = () => {
                       value={formData.last_name}
                       onChange={handleChange}
                       placeholder="Enter your last name"
+                      errorInput={errorMSG}
+                      errorSpec={
+                        "Last Name must contain only letters, spaces, and be at least 5 characters long."
+                      }
                       required
                     />
                     <InputField
@@ -489,6 +543,8 @@ const RegisterForm = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Enter your email"
+                      errorInput={errorMSG}
+                      errorSpec={"Invalid email format"}
                     />
                     <InputField
                       label="Confirm Password"
@@ -497,6 +553,8 @@ const RegisterForm = () => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       placeholder="Confirm your password"
+                      errorInput={errorMSG}
+                      errorSpec={"Passwords do not match"}
                       required
                     />
                     <div className="form-group my-[16px] w-full font-inter">
@@ -514,6 +572,19 @@ const RegisterForm = () => {
                         onChange={handleChange}
                         className="w-full rounded border border-gray-300 p-3 text-gray-400"
                       />
+
+                      {errorMSG ===
+                        "You must be at least 18 years old to register." && (
+                        <p className="mt-2 text-red-500">
+                          You must be at least 18 years old to register.
+                        </p>
+                      )}
+
+                      {errorMSG === "Please select your Date of Birth." && (
+                        <p className="mt-2 text-red-500">
+                          Please select your Date of Birth.
+                        </p>
+                      )}
                       <style jsx>{`
                         input[type="date"]::-webkit-calendar-picker-indicator {
                           color: gray;
@@ -524,7 +595,6 @@ const RegisterForm = () => {
                   </div>
                 </div>
                 {/* ส่วนของ profile picture*/}
-                {error && <p className="mt-2 text-red-500">{error}</p>}
                 <div className="my-10 border-t-2 border-gray-400"></div>
                 <div className="flex flex-col items-start gap-6">
                   <h1 className="font-inter text-xl font-semibold leading-6 text-gray-600">
@@ -545,7 +615,7 @@ const RegisterForm = () => {
                         {/* ปุ่มยกเลิกที่มุมขวาบน */}
                         <button
                           onClick={handleCancel}
-                          className="absolute right-2 top-2 rounded-full px-2 text-orange-600 bg-white"
+                          className="absolute right-2 top-2 rounded-full bg-white px-2 text-orange-600"
                         >
                           &times;
                         </button>
