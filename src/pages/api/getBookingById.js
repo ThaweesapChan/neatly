@@ -9,7 +9,7 @@ export default async function getBookingById(req, res) {
         `
         booking_id,
         user:users ( first_name, last_name ),
-        room:rooms ( room_type, bed_type, price, room_image_url ),
+        room:rooms ( room_type, bed_type, price, room_image_url, promotion_price ),
         guests,
         amount,
         total_price,
@@ -34,7 +34,9 @@ export default async function getBookingById(req, res) {
       );
       booking.stay = stay;
 
-      const totalPrice = stay * booking.room.price;
+      // คำนวณจาก promotion_price ก่อนถ้ามี ถ้าไม่มีให้ใช้ price
+      const roomPrice = booking.room.promotion_price ?? booking.room.price;
+      const totalPrice = stay * roomPrice;
 
       booking.total_price = totalPrice;
     }

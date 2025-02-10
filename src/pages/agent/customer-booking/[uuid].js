@@ -17,7 +17,7 @@ function BookingDetailPage() {
       setBookingDetail(response.data);
 
       // Calculate Total price
-      const roomPrice = Number(response.data?.room?.price || 0); // ราคา Room
+      const roomPrice = Number(response.data?.total_price || 0); // ราคา Room
       const promotionCodeDiscount = Number(response.data?.promotion_code || 0); // ส่วนลดจาก Promotion Code
       const specialRequestsTotal = (
         response.data?.special_requests || []
@@ -174,7 +174,10 @@ function BookingDetailPage() {
                 <div className="mb-6 flex justify-between font-inter text-gray-900">
                   <span>{bookingDetails.room.room_type} Room</span>
                   <span className="font-semibold leading-6">
-                    {Number(bookingDetails.room.price).toLocaleString("en-US", {
+                    {Number(
+                      bookingDetails.room.promotion_price ??
+                        bookingDetails.room.price,
+                    ).toLocaleString("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
